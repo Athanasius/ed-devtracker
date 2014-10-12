@@ -16,6 +16,12 @@ my $ua = LWP::UserAgent->new;
 
 my $whoid = 2;
 my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=';
+
+
+my $latest_post = $db->user_latest_known($whoid);
+if (!defined($latest_post)) {
+  $latest_post = { 'url' => 'nothing_yet' };
+}
 my $req = HTTP::Request->new('GET', $url . $whoid);
 my $res = $ua->request($req);
 if (! $res->is_success) {
@@ -111,6 +117,10 @@ foreach my $p (@posts) {
         if ($a) {
           $post{'url'} = $a->attr('href');
           $post{'url'} =~ s/\?s=[^\&]+\&/\?/;
+          if ($post{'url'} eq ${$latest_post}{'url'}) {
+            printf STDERR "We already knew this post, bailing on: ", $post{'url'};
+            last;
+          }
           $post{'urltext'} = $a->as_text;
         }
   # precis

@@ -58,7 +58,18 @@ sub insert_post {
 
 sub user_latest_known {
 	my ($self, $id) = @_;
-	my $sth = $dbh->prepare('SELECT * FROM posts WHERE whoid=? ORDER BY DATESTAMP ASC LIMIT 1');
+	my $sth = $dbh->prepare('SELECT * FROM posts WHERE whoid=? ORDER BY DATESTAMP DESC LIMIT 1');
+	my $rv = $sth->execute($id);
+	if (! $rv) {
+		printf "ED::DevTracker::DB->user_latest_known - Failed to get latest known post by id", $id, "\n";
+		return undef;
+	}
+	my $row = $sth->fetchrow_hashref;
+	if (!defined($row)) {
+		printf STDERR "ED::DevTracker::DB->user_latest_known - No data from query\n";
+		return undef;
+	}
+	return $row;
 }
 
 1;
