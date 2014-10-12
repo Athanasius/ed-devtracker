@@ -32,7 +32,7 @@ $rss->channel(
   link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
   language        => 'en',
   description     => 'Elite: Dangerous Dev Posts',
-  pubDate         => $latest_date,
+  # pubDate         => $latest_date,
   lastBuildDate   => $latest_date,
   generator       => 'XML::RSS from custom scraped data',
   managingEditor  => 'edrss@miggy.org (Athanasius)',
