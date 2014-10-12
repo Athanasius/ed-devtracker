@@ -8,6 +8,10 @@ use LWP;
 use HTML::TreeBuilder;
 use Date::Manip;
 
+use ED::DevTracker::DB;
+
+my $db = new ED::DevTracker::DB;
+
 my $ua = LWP::UserAgent->new;
 
 my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=2';
@@ -126,5 +130,6 @@ foreach my $p (@posts) {
   }
 
   print Dumper(\%post);
+  $db->insert_post(\%post);
 }
 exit(0);
