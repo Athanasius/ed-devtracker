@@ -14,8 +14,9 @@ my $db = new ED::DevTracker::DB;
 
 my $ua = LWP::UserAgent->new;
 
-my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=2';
-my $req = HTTP::Request->new('GET', $url);
+my $whoid = 2;
+my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=';
+my $req = HTTP::Request->new('GET', $url . $whoid);
 my $res = $ua->request($req);
 if (! $res->is_success) {
   print STDERR "Failed to retrieve Michael Brookes' profile page";
@@ -130,6 +131,7 @@ foreach my $p (@posts) {
   }
 
   print Dumper(\%post);
+  $post{'whoid'} = $whoid;
   $db->insert_post(\%post);
 }
 exit(0);

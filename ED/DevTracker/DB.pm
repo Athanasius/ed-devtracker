@@ -48,12 +48,17 @@ sub insert_post {
 #	          'url' => 'showthread.php?p=805408#post805408',
 #	          'whourl' => 'member.php?u=2'
 #	        };
-	my $sth = $dbh->prepare('INSERT INTO posts VALUES(DEFAULT,?,?,?,?,?,?,?,?,?)');
-	my $rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'});
+	my $sth = $dbh->prepare('INSERT INTO posts VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)');
+	my $rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'});
 	if (! $rv) {
 		printf STDERR "Error inserting a post\n";
 		return undef;
 	}
+}
+
+sub user_latest_known {
+	my ($self, $id) = @_;
+	my $sth = $dbh->prepare('SELECT * FROM posts WHERE whoid=? ORDER BY DATESTAMP ASC LIMIT 1');
 }
 
 1;
