@@ -21,9 +21,10 @@ $date->config(
 );
 my $err = $date->parse(${${$posts}[0]}{'datestamp'});
 if ($err) {
-  printf STDERR "rss.pl - Couldn't parse first posts date from DB\n";
+  printf STDERR "rss.pl - Couldn't parse first post's date from DB\n";
   exit(1);
 }
+my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
 
 my $rss = XML::RSS->new(version => '2.0');
 $rss->channel(
@@ -31,17 +32,26 @@ $rss->channel(
   link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
   language        => 'en',
   description     => 'Elite: Dangerous Dev Posts',
-  pubDate         => $date->printf("%a, %e %b %Y %H:%M:%S %z"),
-  managingEditor  => 'Athanasius <edrss@miggy.org>',
-  webMaster       => 'Athanasius <edrss@miggy.org>'
+  pubDate         => $latest_date,
+  managingEditor  => 'edrss@miggy.org (Athanasius)',
+  webMaster       => 'edrss@miggy.org (Athanasius)'
 );
 
 foreach my $p (@{$posts}) {
+  my $err = $date->parse(${$p}{'datestamp'});
+  my $post_date;
+  if ($err) {
+    printf STDERR "rss.pl - Couldn't parse a post's date from DB\n";
+    $post_date = $latest_date;
+  } else {
+    $post_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
+  }
   my $precis = ${$p}{'precis'};
   $precis =~ s/\n/<br\/>/g;
   $rss->add_item(
     title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'},
     link  => $base_url . ${$p}{'url'},
+    pubDate => $post_date,
     permaLink  => $base_url . ${$p}{'url'},
     description => "<a href=\"" . $base_url . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $precis . "\n</p>",
     mode => 'append'
