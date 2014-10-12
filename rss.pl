@@ -10,7 +10,7 @@ use Date::Manip;
 use ED::DevTracker::DB;
 
 my $db = new ED::DevTracker::DB;
-my $posts = $db->get_latest_posts(10);
+my $posts = $db->get_latest_posts(100);
 my $base_url = "http://forums.frontier.co.uk/";
 
 $ENV{'TZ'} = 'UTC';
@@ -33,6 +33,8 @@ $rss->channel(
   language        => 'en',
   description     => 'Elite: Dangerous Dev Posts',
   pubDate         => $latest_date,
+  lastBuildDate   => $latest_date,
+  generator       => 'XML::RSS from custom scraped data',
   managingEditor  => 'edrss@miggy.org (Athanasius)',
   webMaster       => 'edrss@miggy.org (Athanasius)'
 );

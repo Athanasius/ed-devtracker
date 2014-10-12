@@ -48,12 +48,12 @@ my %developers = (
 	32574 => 'Matt Dickinson',
 	33683 => 'Mark Brett',
 	34604 => 'Matthew Florianz',
-	47519 => 'Edward Lewis'
+	47159 => 'Edward Lewis'
 # Michael Gapper ?
 );
 my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=';
 
-
+my $new_posts = 0;
 foreach my $whoid (keys(%developers)) {
   my $latest_post = $db->user_latest_known($whoid);
 	if (!defined($latest_post)) {
@@ -63,7 +63,7 @@ foreach my $whoid (keys(%developers)) {
 	my $res = $ua->request($req);
 	if (! $res->is_success) {
 	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")\n";
-	  exit(1);
+	  next;
 	}
 	
 	#print Dumper($res->content);
@@ -72,8 +72,8 @@ foreach my $whoid (keys(%developers)) {
 	$tree->eof();
 	my $inlinemodform = $tree->look_down('id', 'inlinemodform');
 	if (! $inlinemodform) {
-	  print STDERR "Failed to find the list of posts";
-	  exit(2);
+	  #print STDERR "Failed to find the list of posts for ", $developers{$whoid}, " (" . $whoid, ")\n";
+	  next;
 	}
 	
 	my @posts = $inlinemodform->look_down(
@@ -84,7 +84,7 @@ foreach my $whoid (keys(%developers)) {
 	foreach my $p (@posts) {
 	  my %post;
 	
-	  printf "Post: %s\n", $p->attr('id');
+	  #printf "Post: %s\n", $p->attr('id');
 	
 	### tr class="thead" - For forum and datestamp
 	  my $thead = $p->look_down(
@@ -155,7 +155,7 @@ foreach my $whoid (keys(%developers)) {
 	          $post{'url'} = $a->attr('href');
 	          $post{'url'} =~ s/\?s=[^\&]+\&/\?/;
 	          if ($post{'url'} eq ${$latest_post}{'url'}) {
-	            printf STDERR "We already knew this post, bailing on: ", $post{'url'};
+	            #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
 	            last;
 	          }
 	          $post{'urltext'} = $a->as_text;
@@ -177,9 +177,13 @@ foreach my $whoid (keys(%developers)) {
 	    }
 	  }
 	
-	  print Dumper(\%post);
+	  #print Dumper(\%post);
 	  $post{'whoid'} = $whoid;
 	  $db->insert_post(\%post);
+    $new_posts++;
 	}
+}
+if ($new_posts > 0) {
+  printf "Found %d new posts.\n", $new_posts;
 }
 exit(0);

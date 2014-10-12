@@ -66,7 +66,7 @@ sub user_latest_known {
 	}
 	my $row = $sth->fetchrow_hashref;
 	if (!defined($row)) {
-		printf STDERR "ED::DevTracker::DB->user_latest_known - No data from query\n";
+		#printf STDERR "ED::DevTracker::DB->user_latest_known - No data from query\n";
 		return undef;
 	}
 	return $row;
