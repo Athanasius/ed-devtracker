@@ -72,4 +72,25 @@ sub user_latest_known {
 	return $row;
 }
 
+sub get_latest_posts {
+	my ($self, $count) = @_;
+	my $sth = $dbh->prepare('SELECT * FROM posts ORDER BY DATESTAMP DESC LIMIT ?');
+	my $rv = $sth->execute($count);
+	if (! $rv) {
+		printf STDERR "ED::DevTracker::DB->get_latest_posts - Failed to get latest known post\n";
+		return undef;
+	}
+	my @posts;
+	my $row = $sth->fetchrow_hashref;
+	while (defined($row)) {
+		push(@posts, $row);
+		$row = $sth->fetchrow_hashref;
+	}
+	if ($#posts == 0) {
+		printf STDERR "ED::DevTracker::DB->get_latest_posts - No posts?\n";
+		return undef;
+	}
+	return \@posts;
+}
+
 1;
