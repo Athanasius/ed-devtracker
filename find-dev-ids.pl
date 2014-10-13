@@ -96,7 +96,11 @@ while ($id <= $latest_id) {
   }
   $id++;
 }
-print "\nNew titles found:\n";
-foreach my $t (sort(keys(%titles))) {
-  print $titles{$t}, ": ", $t, "\n";
+
+print "\n";
+if (keys(%titles) > 0) {
+  print "\nNew titles found:\n";
+  foreach my $t (sort(keys(%titles))) {
+    print $titles{$t}, ": ", $t, "\n";
+  }
 }
