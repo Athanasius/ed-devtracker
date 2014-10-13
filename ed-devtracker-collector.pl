@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -w -I/home/athan/public_html/games/elite-dangerous/devtracker
 # vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
 
 use strict;
@@ -35,8 +35,15 @@ my %developers = (
 	15655 => 'Sandro Sammarco',
 	15737 => 'Andrew Barlow',
 	17666 => 'Sarah Jane Avory',
+  19388 => 'Andrew Gillett',
 	22712 => 'Mike Evans',
+  22717 => 'John Kelly',
+  22717 => 'Igor Terentjev',
+  23261 => 'Raphael Gervaise',
+  24195 => 'James Avery',
 	24222 => 'Greg Ryder',
+# 24659 => 'Josh Atack', # Former Frontier Employee
+  24701 => 'Xavier Henry',
 	25094 => 'Dan Davies',
 	25095 => 'Tom Kewell',
 	25591 => 'Anthony Ross',
