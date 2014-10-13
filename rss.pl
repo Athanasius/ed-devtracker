@@ -28,7 +28,7 @@ my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
 
 my $rss = XML::RSS->new(version => '2.0');
 $rss->channel(
-  title           => 'Elite: Dangerous Dev Posts',
+  title           => 'Elite: Dangerous - Dev Posts',
   link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
   language        => 'en',
   description     => 'Elite: Dangerous Dev Posts',
@@ -38,6 +38,13 @@ $rss->channel(
   managingEditor  => 'edrss@miggy.org (Athanasius)',
   webMaster       => 'edrss@miggy.org (Athanasius)'
 );
+$rss->image(
+  title => 'Elite: Dangerous - Dev Posts',
+  link  => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
+  url   => 'http://www.miggy.org/games/elite-dangerous/pics/elite-dangerous-favicon.png',
+  description => 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
+);
+
 
 foreach my $p (@{$posts}) {
   my $err = $date->parse(${$p}{'datestamp'});
