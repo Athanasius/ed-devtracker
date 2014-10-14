@@ -40,9 +40,9 @@ sub generate {
   
   $self->{'rss'} = XML::RSS->new(version => '2.0');
   $self->{'rss'}->channel(
-    title           => 'Elite: Dangerous - Dev Posts',
+    title           => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
     link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
-    description     => 'Elite: Dangerous Dev Posts',
+    description     => 'Elite: Dangerous Dev Posts (Unofficial Tracker)',
     language        => 'en',
 		# rating
 		# copyright
@@ -54,7 +54,7 @@ sub generate {
     webMaster       => 'edrss@miggy.org (Athanasius)'
   );
   $self->{'rss'}->image(
-    title => 'Elite: Dangerous - Dev Posts',
+    title => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
     link  => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
     url   => 'http://www.miggy.org/games/elite-dangerous/pics/elite-dangerous-favicon.png',
     description => 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
