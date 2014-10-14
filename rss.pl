@@ -4,9 +4,6 @@
 use strict;
 use Data::Dumper;
 
-use XML::RSS;
-use Date::Manip;
-
 use ED::DevTracker::RSS;
 
 my $rss = new ED::DevTracker::RSS;
