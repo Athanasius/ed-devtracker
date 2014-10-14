@@ -11,5 +11,5 @@ my $r = $rss->generate;
 if (!$r) {
   exit(1);
 }
-$rss->output;
+$rss->print;
 

@@ -85,8 +85,20 @@ sub generate {
 sub output {
 	my $self = shift;
 
-	print "Content-Type: application/rss+xml; charset=UTF-8\n\n";
-	print $self->{'rss'}->as_string;
+	return $self->{'rss'}->as_string;
+}
+
+sub header {
+	my $self = shift;
+
+	return "Content-Type: application/rss+xml; charset=UTF-8\n\n";
+}
+
+sub print {
+	my $self = shift;
+
+	print $self->header;
+	print $self->output;
 }
 
 1;
