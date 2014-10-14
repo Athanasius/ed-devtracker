@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I/home/athan/public_html/games/elite-dangerous/devtracker
+#!/usr/bin/perl -w
 # vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
 
 use strict;
@@ -9,11 +9,19 @@ use HTML::TreeBuilder;
 use Date::Manip;
 
 use ED::DevTracker::DB;
+use ED::DevTracker::RSS;
 
 my $db = new ED::DevTracker::DB;
 
 my $ua = LWP::UserAgent->new;
 
+my $rss_filename = 'ed-dev-posts-rss.xml';
+if (! -f $rss_filename) {
+  my $cwd = `pwd`;
+  chomp($cwd);
+  printf STDERR "RSS file %s doesn't exist at %s, did you forget to cd before running this script?\n", $rss_filename, $cwd;
+  exit(4);
+}
 my %developers = (
   1 => 'fdadmin',
   2 => 'Michael Brookes',
@@ -212,5 +220,25 @@ foreach my $whoid (keys(%developers)) {
 }
 if ($new_posts > 0) {
   printf "Found %d new posts.\n", $new_posts;
+  my $rss = new ED::DevTracker::RSS;
+  if (! $rss->generate()) {
+    printf STDERR "Something failed in RSS generation.\n";
+    exit(1);
+  } else {
+    print STDERR "Generation good\n";
+  }
+  my $tmp_name = $rss_filename . ".tmp";
+  if (!open(TMP, ">$tmp_name")) {
+    print STDERR "Couldn't open temporary file '", $tmp_name, "': ", $!, "\n";
+    exit(2);
+  }
+  if (!print TMP $rss->header, $rss->output) {
+    print STDERR "Error writing to tmp RSS file '", $tmp_name, "': ", $!, "\n";#
+    exit(3);
+  }
+  close(TMP);
+  # mv tmp to live
+  rename($tmp_name, $rss_filename);
+  chmod(0644, $rss_filename);
 }
 exit(0);
