@@ -15,7 +15,7 @@ my $db = new ED::DevTracker::DB;
 
 my $ua = LWP::UserAgent->new;
 
-my $rss_filename = 'ed-dev-posts-rss.xml';
+my $rss_filename = 'ed-dev-posts-rss.rss';
 if (! -f $rss_filename) {
   my $cwd = `pwd`;
   chomp($cwd);
@@ -232,7 +232,7 @@ if ($new_posts > 0) {
     print STDERR "Couldn't open temporary file '", $tmp_name, "': ", $!, "\n";
     exit(2);
   }
-  if (!print TMP $rss->header, $rss->output) {
+  if (!print TMP $rss->output) {
     print STDERR "Error writing to tmp RSS file '", $tmp_name, "': ", $!, "\n";#
     exit(3);
   }
