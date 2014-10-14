@@ -15,7 +15,7 @@ my $db = new ED::DevTracker::DB;
 
 my $ua = LWP::UserAgent->new;
 
-my $rss_filename = 'ed-dev-posts-rss.rss';
+my $rss_filename = 'ed-dev-posts.rss';
 if (! -f $rss_filename) {
   my $cwd = `pwd`;
   chomp($cwd);
