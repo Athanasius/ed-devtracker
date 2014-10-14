@@ -42,10 +42,13 @@ sub generate {
   $self->{'rss'}->channel(
     title           => 'Elite: Dangerous - Dev Posts',
     link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
-    language        => 'en',
     description     => 'Elite: Dangerous Dev Posts',
+    language        => 'en',
+		# rating
+		# copyright
     # pubDate         => $latest_date,
     lastBuildDate   => $latest_date,
+		# docs
     generator       => 'XML::RSS from custom scraped data',
     managingEditor  => 'edrss@miggy.org (Athanasius)',
     webMaster       => 'edrss@miggy.org (Athanasius)'
@@ -85,7 +88,12 @@ sub generate {
 sub output {
 	my $self = shift;
 
-	return $self->{'rss'}->as_string;
+	my $output = $self->{'rss'}->as_string;
+
+	$output =~ s/ xmlns:blogChannel="(?<chan>[^"]+)"/ xmlns:blogChannel="$1"\n xmlns:atom="http:\/\/www\.w3\.org\/2005\/Atom"/;
+	$output =~ s/<language>en<\/language>/<language>en<\/language>\n<atom:link href="http:\/\/www\.miggy\.org\/games\/elite-dangerous\/devtracker\/ed-dev-posts\.rss" rel="self" type="application\/rss+xml" \/>/;
+
+	return $output;
 }
 
 sub header {
