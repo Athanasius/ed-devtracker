@@ -7,66 +7,12 @@ use Data::Dumper;
 use XML::RSS;
 use Date::Manip;
 
-use ED::DevTracker::DB;
 use ED::DevTracker::RSS;
 
-my $db = new ED::DevTracker::DB;
-my $posts = $db->get_latest_posts(100);
-my $base_url = "http://forums.frontier.co.uk/";
-
-$ENV{'TZ'} = 'UTC';
-my $date = new Date::Manip::Date;
-$date->config(
- 'DateFormat' => 'GB',
- 'tz' => 'UTC'
-);
-my $err = $date->parse(${${$posts}[0]}{'datestamp'});
-if ($err) {
-  printf STDERR "rss.pl - Couldn't parse first post's date from DB\n";
+my $rss = new ED::DevTracker::RSS;
+my $r = $rss->generate;
+if (!$r) {
   exit(1);
 }
-my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
+$rss->output;
 
-my $rss = XML::RSS->new(version => '2.0');
-$rss->channel(
-  title           => 'Elite: Dangerous - Dev Posts',
-  link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
-  language        => 'en',
-  description     => 'Elite: Dangerous Dev Posts',
-  # pubDate         => $latest_date,
-  lastBuildDate   => $latest_date,
-  generator       => 'XML::RSS from custom scraped data',
-  managingEditor  => 'edrss@miggy.org (Athanasius)',
-  webMaster       => 'edrss@miggy.org (Athanasius)'
-);
-$rss->image(
-  title => 'Elite: Dangerous - Dev Posts',
-  link  => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
-  url   => 'http://www.miggy.org/games/elite-dangerous/pics/elite-dangerous-favicon.png',
-  description => 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
-);
-
-
-foreach my $p (@{$posts}) {
-  my $err = $date->parse(${$p}{'datestamp'});
-  my $post_date;
-  if ($err) {
-    printf STDERR "rss.pl - Couldn't parse a post's date from DB\n";
-    $post_date = $latest_date;
-  } else {
-    $post_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
-  }
-  my $precis = ${$p}{'precis'};
-  $precis =~ s/\n/<br\/>/g;
-  $rss->add_item(
-    title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'},
-    link  => $base_url . ${$p}{'url'},
-    pubDate => $post_date,
-    permaLink  => $base_url . ${$p}{'url'},
-    description => "<a href=\"" . $base_url . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $precis . "\n</p>",
-    mode => 'append'
-  );
-}
-
-print "Content-Type: application/rss+xml; charset=UTF-8\n\n";
-print $rss->as_string;
