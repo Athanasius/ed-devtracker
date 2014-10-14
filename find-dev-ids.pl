@@ -62,7 +62,8 @@ undef $tree;
 
 select STDOUT;
 $| = 1;
-my $id = 50076;
+my $id = 50158;
+printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";
 	$req = HTTP::Request->new('GET', $url . $id);
