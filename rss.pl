@@ -8,6 +8,7 @@ use XML::RSS;
 use Date::Manip;
 
 use ED::DevTracker::DB;
+use ED::DevTracker::RSS;
 
 my $db = new ED::DevTracker::DB;
 my $posts = $db->get_latest_posts(100);
