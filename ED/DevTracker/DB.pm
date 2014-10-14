@@ -25,12 +25,6 @@ sub new {
   return $self;
 }
 
-sub DESTROY {
-	my $self = {};
-	$dbh->disconnect;
-	undef $dbh;
-}
-
 sub dbh {
   return $dbh;
 }
