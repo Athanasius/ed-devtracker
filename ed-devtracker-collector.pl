@@ -219,13 +219,13 @@ foreach my $whoid (keys(%developers)) {
 	}
 }
 if ($new_posts > 0) {
-  printf "Found %d new posts.\n", $new_posts;
+  #printf "Found %d new posts.\n", $new_posts;
   my $rss = new ED::DevTracker::RSS;
   if (! $rss->generate()) {
     printf STDERR "Something failed in RSS generation.\n";
     exit(1);
   } else {
-    print STDERR "Generation good\n";
+    #print STDERR "Generation good\n";
   }
   my $tmp_name = $rss_filename . ".tmp";
   if (!open(TMP, ">$tmp_name")) {
