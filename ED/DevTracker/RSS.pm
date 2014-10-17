@@ -39,6 +39,7 @@ sub generate {
   my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
   
   $self->{'rss'} = XML::RSS->new(version => '2.0');
+	$self->{'rss'}->add_module(prefix => 'atom', uri => 'http://www.w3.org/2005/Atom');
   $self->{'rss'}->channel(
     title           => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
     link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
@@ -51,7 +52,9 @@ sub generate {
 		# docs
     generator       => 'XML::RSS from custom scraped data',
     managingEditor  => 'edrss@miggy.org (Athanasius)',
-    webMaster       => 'edrss@miggy.org (Athanasius)'
+    webMaster       => 'edrss@miggy.org (Athanasius)',
+		atom						=> { 'link' => { 'href' => 'http://www.miggy.org/games/elite-dangerous/devtracker/ed-dev-posts.rss', 'rel' => 'self', 'type' => 'application/rss+xml' } }
+	#$output =~ s/<language>en<\/language>/<language>en<\/language>\n<atom:link href="http:\/\/www\.miggy\.org\/games\/elite-dangerous\/devtracker\/ed-dev-posts\.rss" rel="self" type="application\/rss+xml" \/>/;
   );
   $self->{'rss'}->image(
     title => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
@@ -89,9 +92,6 @@ sub output {
 	my $self = shift;
 
 	my $output = $self->{'rss'}->as_string;
-
-	$output =~ s/ xmlns:blogChannel="(?<chan>[^"]+)"/ xmlns:blogChannel="$1"\n xmlns:atom="http:\/\/www\.w3\.org\/2005\/Atom"/;
-	$output =~ s/<language>en<\/language>/<language>en<\/language>\n<atom:link href="http:\/\/www\.miggy\.org\/games\/elite-dangerous\/devtracker\/ed-dev-posts\.rss" rel="self" type="application\/rss+xml" \/>/;
 
 	return $output;
 }
