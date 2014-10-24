@@ -9,12 +9,16 @@ use Data::Dumper;
 use XML::RSS;
 use Date::Manip;
 
+use ED::DevTracker::Config;
 use ED::DevTracker::DB;
 
 sub new {
 	my $class = shift;
   my $self = {};
-	$self->{'db'} = new ED::DevTracker::DB;
+
+	my $config = new ED::DevTracker::Config('file' => 'config.txt');
+	print Dumper($config), "\n";
+	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
 	$self->{'base_url'} = "http://forums.frontier.co.uk/";
 	$self->{'rss'} = undef;
   bless($self, $class);

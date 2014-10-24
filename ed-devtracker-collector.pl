@@ -10,10 +10,15 @@ use Digest::MD5 qw(md5_hex);
 use HTML::TreeBuilder;
 use Date::Manip;
 
+use ED::DevTracker::Config;
 use ED::DevTracker::DB;
 use ED::DevTracker::RSS;
 
-my $db = new ED::DevTracker::DB;
+my $config = ED::DevTracker::Config->new(file => "config.txt");
+if (!defined($config)) {
+    die "No config!";
+}
+my $db = new ED::DevTracker::DB('config' => $config);
 
 # Pretend to be Google Chrome on Linux, Version 38.0.2125.104 (64-bit)
 my $ua = LWP::UserAgent->new('agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36');
@@ -232,8 +237,10 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         # Old: showthread.php?p=902218#post902218
         my $p = $post{'url'};
         $p =~ s/t=[0-9]+\&//;
+        my $l = ${$latest_post}{'url'};
+        $l =~ s/t=[0-9]+\&//;
         #if ($post{'url'} eq ${$latest_post}{'url'}) {
-        if (${$latest_post}{'url'} eq $p) {
+        if ($l eq $p) {
           print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
           last;
         }

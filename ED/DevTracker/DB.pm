@@ -7,21 +7,22 @@ use strict;
 use DBI;
 use POSIX qw/strftime/;
 
-my $db_host = 'db.fysh.org';
-my $db_user = 'ed_devtracker_crawl_dev';
-my $db_name = 'ed_devtracker_dev';
-my $db_password = 'uA3EkCEm4iWzKpIb';
-
-my $dsn = "DBI:Pg:database=" . $db_name . ";host=" . $db_host;
-my $dbh = DBI->connect($dsn, $db_user, $db_password);
-if (!defined($dbh)) {
-                die("Couldn't connect to database");
-}
-$dbh->do('SET TIME ZONE \'UTC\'');
+our $dsn;
+our $dbh;
 
 sub new {
-  my $self = {};
-  bless($self);
+  my ($class, %args) = @_;
+	my $self = bless {}, $class;
+	my $config = $args{'config'};
+	
+	$dsn = "DBI:Pg:database=" . $config->getconf('db_name') . ";host=" . $config->getconf('db_host');
+	$dbh = DBI->connect($dsn, $config->getconf('db_user'), $config->getconf('db_password'));
+	if (!defined($dbh)) {
+		print STDERR "Couldn't connect to database\n";
+		return undef;
+	}
+	$dbh->do('SET TIME ZONE \'UTC\'');
+
   return $self;
 }
 
