@@ -55,7 +55,7 @@ my %developers = (
   19388 => 'Andrew Gillett',
 	22712 => 'Mike Evans',
   22717 => 'John Kelly',
-  22790 => 'Igor Terentjev',
+#  22790 => 'Igor Terentjev',
   23261 => 'Raphael Gervaise',
   24195 => 'James Avery',
 	24222 => 'Greg Ryder',
@@ -129,7 +129,7 @@ if (! $res->is_success) {
 my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
-  print STDERR "Scraping id ", $whoid, "\n";
+  #print STDERR "Scraping id ", $whoid, "\n";
 #  if ($whoid > 2) {
 #    print STDERR "Bailing after id 2\n";
 #    last;
@@ -160,7 +160,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	  class => 'activitybit forum_post'
 	);
   if (! @posts) {
-    print STDERR "Failed to find any posts for ", $developers{$whoid}, " (" . $whoid, ")\n";
+    #print STDERR "Failed to find any posts for ", $developers{$whoid}, " (" . $whoid, ")\n";
     next;
   }
   #print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
@@ -241,7 +241,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         $l =~ s/t=[0-9]+\&//;
         #if ($post{'url'} eq ${$latest_post}{'url'}) {
         if ($l eq $p) {
-          print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
+          #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
           last;
         }
       }
@@ -254,8 +254,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	}
 }
 if ($new_posts > 0) {
-  printf "Found %d new posts.\n", $new_posts;
-  exit(0);
+  #printf "Found %d new posts.\n", $new_posts;
   my $rss = new ED::DevTracker::RSS;
   if (! $rss->generate()) {
     printf STDERR "Something failed in RSS generation.\n";
