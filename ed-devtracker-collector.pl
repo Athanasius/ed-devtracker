@@ -27,7 +27,7 @@ if (! -f $rss_filename) {
   exit(4);
 }
 my %developers = (
-  1 => 'fdadmin',
+#  1 => 'fdadmin',
   2 => 'Michael Brookes',
   6 => 'David Walsh',
   7 => 'David Braben',
@@ -108,7 +108,7 @@ $req->content(
   . "&vb_login_md5password=" . $vb_login_md5password
   . "&vb_login_md5password_utf=" . $vb_login_md5password
 );
-print $req->content, "\n";
+#print STDERR $req->content, "\n";
 # [truncated] vb_login_username=AthanRSS&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=1414178470-60c7e8aa19051820a82e27d23d96f584eacc17e3&do=login&vb_login_md5password=d79cdd2e982bcac4944f3d97031c1fa5&vb_login_md5passw
 #exit(0);
 my $res = $ua->request($req);
@@ -118,21 +118,22 @@ if (! $res->is_success) {
 }
 
 #print $res->content, "\n";
-exit(0);
+#exit(0);
 ###########################################################################
 
-
-my $url = 'http://forums.frontier.co.uk/member.php?u=';
+my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts = 0;
-foreach my $whoid (keys(%developers)) {
+foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
+  print STDERR "Scraping id ", $whoid, "\n";
   if ($whoid > 2) {
+    print STDERR "Bailing after id 2\n";
     last;
   }
   my $latest_post = $db->user_latest_known($whoid);
 	if (!defined($latest_post)) {
 	  $latest_post = { 'url' => 'nothing_yet' };
 	}
-	$req = HTTP::Request->new('GET', $url . $whoid);
+	$req = HTTP::Request->new('GET', $member_url . $whoid);
 	$res = $ua->request($req);
 	if (! $res->is_success) {
 	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")\n";
@@ -143,108 +144,99 @@ foreach my $whoid (keys(%developers)) {
 	my $tree = HTML::TreeBuilder->new;
 	$tree->parse($res->decoded_content);
 	$tree->eof();
-	my $inlinemodform = $tree->look_down('id', 'inlinemodform');
-	if (! $inlinemodform) {
-	  #print STDERR "Failed to find the list of posts for ", $developers{$whoid}, " (" . $whoid, ")\n";
+	my $activitylist = $tree->look_down('id', 'activitylist');
+	if (! $activitylist) {
+	  print STDERR "Failed to find the activitylist for ", $developers{$whoid}, " (" . $whoid, ")\n";
 	  next;
 	}
 	
-	my @posts = $inlinemodform->look_down(
-	  _tag => 'table',
-	  class => 'tborder',
-	  sub { if (defined($_[0]->attr('id'))) { $_[0]->attr('id') =~ /^post[0-9]+$/; } else { return undef;} }
+	my @posts = $activitylist->look_down(
+	  _tag => 'li',
+	  class => 'activitybit forum_post'
 	);
+  if (! @posts) {
+    print STDERR "Failed to find any posts for ", $developers{$whoid}, " (" . $whoid, ")\n";
+    next;
+  }
+  #print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
 	foreach my $p (@posts) {
 	  my %post;
 	
-	  #printf "Post: %s\n", $p->attr('id');
-	
-	### tr class="thead" - For forum and datestamp
-	  my $thead = $p->look_down(
-	    _tag => 'td',
-	    class => 'thead'
-	  );
-	  if ($thead) {
-	  # forum
-	    my $forum = $thead->look_down(
-	      '_tag' => 'span'
-	    );
-	    if ($forum) {
-	      #print $forum->as_text, "\n";
-	      if ($forum->as_text =~ /Forum: (?<forum>.*) +$/) {
-	        $post{'forum'} = $+{'forum'};
-	      }
-	    }
-	  # datestamp
-	    my @contents = $thead->content_list;
-	    $post{'datestampstr'} = $contents[3];
+    my $content = $p->look_down(
+      _tag => 'div',
+      class => 'content hasavatar'
+    );
+	  if ($content) {
+    # datetime
+      my $span_date = $content->look_down(
+        _tag => 'span',
+        class => 'date'
+      );
+      my $span_time = $content->look_down(
+        _tag => 'span',
+        class => 'time'
+      );
+      $post{'datestampstr'} = $span_date->as_text;
+      $post{'datestampstr'} =~ s/\xA0/ /g;
+      #print STDERR "Date = '", $post{'datestampstr'}, "'\n";
+      my $timestr = $span_time->as_text;
+      #print STDERR "Time = '", $timestr, "'\n";
 	    my $date = new Date::Manip::Date;
 	    $date->config(
 	      'DateFormat' => 'GB',
-	      'tz' => 'Europe/London'
+	      'tz' => 'UTC'
 	    );
 	    my $err = $date->parse($post{'datestampstr'});
 	    if (!$err) {
 	      $post{'datestamp'} = $date->secs_since_1970_GMT();
-	      #print "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
+	      print STDERR "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
 	    }
 	  }
-	### tr -> td(alt1) -> div, div<thread>
-	  my @tr = $p->look_down(
-	    _tag => 'tr'
-	  );
-	  if (@tr and defined($tr[1])) {
-	    my @div = $tr[1]->look_down(
-	      _tag => 'div'
-	    );
-	    if (@div) {
 	  # thread title and URL
-	      if (defined($div[1])) {
-	        my $a = $div[1]->look_down(_tag => 'a');
-	        if ($a) {
-	          #print $a->dump, "\n";
-	          $post{'threadurl'} = $a->attr('href');
-	          $post{'threadurl'} =~ s/\?s=[^\&]+\&/\?/;
-	          my $strong = $a->look_down(_tag => 'strong');
-	          if ($strong) {
-	            $post{'threadtitle'} = $strong->as_text;
-	          }
-	        }
+	  if (defined($div[1])) {
+	    my $a = $div[1]->look_down(_tag => 'a');
+	    if ($a) {
+	      #print $a->dump, "\n";
+	      $post{'threadurl'} = $a->attr('href');
+	      $post{'threadurl'} =~ s/\?s=[^\&]+\&/\?/;
+	      my $strong = $a->look_down(_tag => 'strong');
+	      if ($strong) {
+	        $post{'threadtitle'} = $strong->as_text;
 	      }
+	    }
+	  }
 	  # who
-	      if (defined($div[3])) {
-	        my $a = $div[3]->look_down(_tag => 'a');
-	        if ($a) {
-	          $post{'who'} = $a->as_text;
-	          $post{'whourl'} = $a->attr('href');
-	          $post{'whourl'} =~ s/\?s=[^\&]+\&/\?/;
-	        }
-	      }
-	      if (defined($div[4])) {
-	      ## precis and link
+	  if (defined($div[3])) {
+	    my $a = $div[3]->look_down(_tag => 'a');
+	    if ($a) {
+	      $post{'who'} = $a->as_text;
+	      $post{'whourl'} = $a->attr('href');
+	      $post{'whourl'} =~ s/\?s=[^\&]+\&/\?/;
+	    }
+	  }
+	  if (defined($div[4])) {
+	  ## precis and link
 	  # url
-	        my $a = $div[4]->look_down(_tag => 'a');
-	        if ($a) {
-	          $post{'url'} = $a->attr('href');
-	          $post{'url'} =~ s/\?s=[^\&]+\&/\?/;
-	          if ($post{'url'} eq ${$latest_post}{'url'}) {
-	            #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
-	            last;
-	          }
-	          $post{'urltext'} = $a->as_text;
-	        }
+	    my $a = $div[4]->look_down(_tag => 'a');
+	    if ($a) {
+	      $post{'url'} = $a->attr('href');
+	      $post{'url'} =~ s/\?s=[^\&]+\&/\?/;
+	      if ($post{'url'} eq ${$latest_post}{'url'}) {
+	        #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
+	        last;
+	      }
+	      $post{'urltext'} = $a->as_text;
+	    }
 	  # precis
-	        my $em = $div[4]->look_down(_tag => 'em');
-	        if ($em) {
-	          my @p = $em->content_list;
-	          foreach my $q (@p) {
-	            #print Dumper($q);
-	            if (!ref($q)) {
-	              $post{'precis'} .= $q;
-	            } elsif ($q->tag eq 'br') {
-	              $post{'precis'} .= "\n";
-	            }
-	          }
+	    my $em = $div[4]->look_down(_tag => 'em');
+	    if ($em) {
+	      my @p = $em->content_list;
+	      foreach my $q (@p) {
+	        #print Dumper($q);
+	        if (!ref($q)) {
+	          $post{'precis'} .= $q;
+	        } elsif ($q->tag eq 'br') {
+	          $post{'precis'} .= "\n";
 	        }
 	      }
 	    }
