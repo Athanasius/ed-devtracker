@@ -87,6 +87,10 @@ my %developers = (
 # Michael Gapper ?
 );
 my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=';
+# New forums, URL appears to be:
+# https://forums.frontier.co.uk/search.php?do=finduser&userid=28846&contenttype=vBForum_Post&showposts=1
+# but currently ALL searches return "Sorry - no matches. Please try some different terms"
+# May have to have this script login and just use the profile pages.
 
 my $new_posts = 0;
 foreach my $whoid (keys(%developers)) {
@@ -219,7 +223,8 @@ foreach my $whoid (keys(%developers)) {
 	}
 }
 if ($new_posts > 0) {
-  #printf "Found %d new posts.\n", $new_posts;
+  printf "Found %d new posts.\n", $new_posts;
+  exit(0);
   my $rss = new ED::DevTracker::RSS;
   if (! $rss->generate()) {
     printf STDERR "Something failed in RSS generation.\n";
