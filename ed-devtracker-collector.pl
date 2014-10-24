@@ -14,6 +14,7 @@ use ED::DevTracker::Config;
 use ED::DevTracker::DB;
 use ED::DevTracker::RSS;
 
+$ENV{'TZ'} = 'UTC';
 my $config = ED::DevTracker::Config->new(file => "config.txt");
 if (!defined($config)) {
     die "No config!";
