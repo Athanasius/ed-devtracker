@@ -4,7 +4,6 @@
 package ED::DevTracker::RSS;
 
 use strict;
-use Data::Dumper;
 
 use XML::RSS;
 use Date::Manip;
@@ -17,7 +16,6 @@ sub new {
   my $self = {};
 
 	my $config = new ED::DevTracker::Config('file' => 'config.txt');
-	print Dumper($config), "\n";
 	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
 	$self->{'base_url'} = "http://forums.frontier.co.uk/";
 	$self->{'rss'} = undef;
