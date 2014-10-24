@@ -3,11 +3,14 @@
 
 package ED::DevTracker::Config;
 
+#use Data::Dumper;
+
 our %config = (
 	db_host => '',
 	db_name => '',
 	db_user => '',
-	db_password => ''
+	db_password => '',
+	self_url => ''
 );
 
 sub new {
@@ -33,11 +36,14 @@ sub new {
 			$config{'db_user'} = $1;
 		} elsif (/^db_password:\s+(.*)$/i) {
 			$config{'db_password'} = $1;
+		} elsif (/^self_url:\s+(.*)$/i) {
+			$config{'self_url'} = $1;
 		} else {
 			printf STDERR "Unknown field in config file '%s', line %d : %s\n", $file, $line, $_;
 		}
 	}
 	close(CF);
+	#print "Config:\n", Dumper(\%config), "\n";
 
 	return $self;
 }

@@ -4,6 +4,7 @@
 package ED::DevTracker::RSS;
 
 use strict;
+#use feature 'unicode_strings';
 
 use XML::RSS;
 use Date::Manip;
@@ -19,6 +20,7 @@ sub new {
 	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
 	$self->{'base_url'} = "http://forums.frontier.co.uk/";
 	$self->{'rss'} = undef;
+	$self->{'self_url'} = $config->getconf('self_url');
   bless($self, $class);
   return $self;
 }
@@ -40,7 +42,7 @@ sub generate {
   }
   my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
   
-  $self->{'rss'} = XML::RSS->new(version => '2.0');
+  $self->{'rss'} = XML::RSS->new(version => '2.0', encoding => 'UTF-8');
 	$self->{'rss'}->add_module(prefix => 'atom', uri => 'http://www.w3.org/2005/Atom');
   $self->{'rss'}->channel(
     title           => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
@@ -55,7 +57,7 @@ sub generate {
     generator       => 'XML::RSS from custom scraped data',
     managingEditor  => 'edrss@miggy.org (Athanasius)',
     webMaster       => 'edrss@miggy.org (Athanasius)',
-		atom						=> { 'link' => { 'href' => 'http://www.miggy.org/games/elite-dangerous/devtracker/ed-dev-posts.rss', 'rel' => 'self', 'type' => 'application/rss+xml' } }
+		atom						=> { 'link' => { 'href' => $self->{'self_url'}, 'rel' => 'self', 'type' => 'application/rss+xml' } }
 	#$output =~ s/<language>en<\/language>/<language>en<\/language>\n<atom:link href="http:\/\/www\.miggy\.org\/games\/elite-dangerous\/devtracker\/ed-dev-posts\.rss" rel="self" type="application\/rss+xml" \/>/;
   );
   $self->{'rss'}->image(
@@ -77,6 +79,10 @@ sub generate {
     }
     my $precis = ${$p}{'precis'};
     $precis =~ s/\n/<br\/>/g;
+		#printf STDERR "Precis = '%s'\n", $precis;
+		# Bloody smart quotes
+		$precis =~ s/\N{U+0091}/\N{U+2018}/sg;
+		#printf STDERR "Precis = '%s'\n", $precis;
     $self->{'rss'}->add_item(
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'},
       link  => $self->{'base_url'} . ${$p}{'url'},
