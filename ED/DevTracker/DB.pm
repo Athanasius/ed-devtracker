@@ -8,9 +8,9 @@ use DBI;
 use POSIX qw/strftime/;
 
 my $db_host = 'db.fysh.org';
-my $db_user = 'ed_devtracker_crawl';
-my $db_name = 'ed_devtracker';
-my $db_password = 'X3NFUI8HB6x0kD1D';
+my $db_user = 'ed_devtracker_crawl_dev';
+my $db_name = 'ed_devtracker_dev';
+my $db_password = 'uA3EkCEm4iWzKpIb';
 
 my $dsn = "DBI:Pg:database=" . $db_name . ";host=" . $db_host;
 my $dbh = DBI->connect($dsn, $db_user, $db_password);

@@ -125,10 +125,10 @@ my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&typ
 my $new_posts = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   print STDERR "Scraping id ", $whoid, "\n";
-  if ($whoid > 2) {
-    print STDERR "Bailing after id 2\n";
-    last;
-  }
+#  if ($whoid > 2) {
+#    print STDERR "Bailing after id 2\n";
+#    last;
+#  }
   my $latest_post = $db->user_latest_known($whoid);
 	if (!defined($latest_post)) {
 	  $latest_post = { 'url' => 'nothing_yet' };
@@ -189,61 +189,59 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	    my $err = $date->parse($post{'datestampstr'});
 	    if (!$err) {
 	      $post{'datestamp'} = $date->secs_since_1970_GMT();
-	      print STDERR "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
+	      #print STDERR "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
 	    }
 	  }
 	  # thread title and URL
-	  if (defined($div[1])) {
-	    my $a = $div[1]->look_down(_tag => 'a');
-	    if ($a) {
-	      #print $a->dump, "\n";
-	      $post{'threadurl'} = $a->attr('href');
-	      $post{'threadurl'} =~ s/\?s=[^\&]+\&/\?/;
-	      my $strong = $a->look_down(_tag => 'strong');
-	      if ($strong) {
-	        $post{'threadtitle'} = $strong->as_text;
-	      }
+	  my $div_title = $content->look_down(
+      _tag => 'div',
+      class => 'title'
+    );
+	  if ($div_title) {
+      my @a = $div_title->look_down(
+        _tag => 'a'
+      );
+      if (@a) {
+        $post{'who'} = $a[0]->as_text;
+        $post{'whourl'} = $a[0]->attr('href');
+	      $post{'threadtitle'} = $a[1]->as_text;
+	      $post{'threadurl'} = $a[1]->attr('href');
+        $post{'forum'} = $a[2]->as_text;
 	    }
 	  }
-	  # who
-	  if (defined($div[3])) {
-	    my $a = $div[3]->look_down(_tag => 'a');
-	    if ($a) {
-	      $post{'who'} = $a->as_text;
-	      $post{'whourl'} = $a->attr('href');
-	      $post{'whourl'} =~ s/\?s=[^\&]+\&/\?/;
-	    }
-	  }
-	  if (defined($div[4])) {
-	  ## precis and link
-	  # url
-	    my $a = $div[4]->look_down(_tag => 'a');
-	    if ($a) {
-	      $post{'url'} = $a->attr('href');
-	      $post{'url'} =~ s/\?s=[^\&]+\&/\?/;
-	      if ($post{'url'} eq ${$latest_post}{'url'}) {
-	        #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
-	        last;
-	      }
-	      $post{'urltext'} = $a->as_text;
-	    }
-	  # precis
-	    my $em = $div[4]->look_down(_tag => 'em');
-	    if ($em) {
-	      my @p = $em->content_list;
-	      foreach my $q (@p) {
-	        #print Dumper($q);
-	        if (!ref($q)) {
-	          $post{'precis'} .= $q;
-	        } elsif ($q->tag eq 'br') {
-	          $post{'precis'} .= "\n";
-	        }
-	      }
-	    }
-	  }
+
+    my $div_excerpt = $content->look_down(
+      _tag => 'div',
+      class => 'excerpt'
+    );
+    if ($div_excerpt) {
+      $post{'precis'} = $div_excerpt->as_text;
+    }
+
+    my $div_fulllink = $content->look_down(
+      _tag => 'div',
+      class => 'fulllink'
+    );
+    if ($div_fulllink) {
+      my $a = $div_fulllink->look_down(_tag => 'a');
+      if ($a) {
+        $post{'url'} = $a->attr('href');
+        $post{'urltext'} = $a->as_text;
+        #printf STDERR "Thread '%s' at '%s' new '%s'\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
+        # New: showthread.php?t=51464&p=902587#post902587
+        # Old: showthread.php?p=902218#post902218
+        my $p = $post{'url'};
+        $p =~ s/t=[0-9]+\&//;
+        #if ($post{'url'} eq ${$latest_post}{'url'}) {
+        if (${$latest_post}{'url'} eq $p) {
+          print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
+          last;
+        }
+      }
+    }
 	
-	  #print Dumper(\%post);
 	  $post{'whoid'} = $whoid;
+	  #print STDERR Dumper(\%post), "\n";
 	  $db->insert_post(\%post);
     $new_posts++;
 	}
