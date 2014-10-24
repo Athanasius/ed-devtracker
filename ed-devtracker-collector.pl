@@ -5,6 +5,8 @@ use strict;
 use Data::Dumper;
 
 use LWP;
+use HTTP::Cookies;
+use Digest::MD5 qw(md5_hex);
 use HTML::TreeBuilder;
 use Date::Manip;
 
@@ -13,7 +15,9 @@ use ED::DevTracker::RSS;
 
 my $db = new ED::DevTracker::DB;
 
-my $ua = LWP::UserAgent->new;
+# Pretend to be Google Chrome on Linux, Version 38.0.2125.104 (64-bit)
+my $ua = LWP::UserAgent->new('agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36');
+$ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
 
 my $rss_filename = 'ed-dev-posts.rss';
 if (! -f $rss_filename) {
@@ -86,20 +90,50 @@ my %developers = (
 	47159 => 'Edward Lewis'
 # Michael Gapper ?
 );
-my $url = 'http://forums.frontier.co.uk/search.php?do=finduser&u=';
-# New forums, URL appears to be:
-# https://forums.frontier.co.uk/search.php?do=finduser&userid=28846&contenttype=vBForum_Post&showposts=1
-# but currently ALL searches return "Sorry - no matches. Please try some different terms"
-# May have to have this script login and just use the profile pages.
 
+###########################################################################
+# First let's make sure we're logged in.
+###########################################################################
+my $login_url = 'http://forums.frontier.co.uk/login.php?do=login';
+my $login_user = 'AthanRSS';
+my $vb_login_password = 'SDq0lnWbcaDnoNKk';
+my $vb_login_md5password = md5_hex($vb_login_password);
+my $req = HTTP::Request->new('POST', $login_url);
+$req->header('Origin' => 'http://forums.frontier.co.uk');
+$req->header('Referer' => 'http://forums.frontier.co.uk/');
+$req->header('Content-Type' => 'application/x-www-form-urlencoded');
+$req->content(
+  "vb_login_username=" . $login_user
+  . "&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=guest&do=login"
+  . "&vb_login_md5password=" . $vb_login_md5password
+  . "&vb_login_md5password_utf=" . $vb_login_md5password
+);
+print $req->content, "\n";
+# [truncated] vb_login_username=AthanRSS&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=1414178470-60c7e8aa19051820a82e27d23d96f584eacc17e3&do=login&vb_login_md5password=d79cdd2e982bcac4944f3d97031c1fa5&vb_login_md5passw
+#exit(0);
+my $res = $ua->request($req);
+if (! $res->is_success) {
+  print STDERR "Failed to login: ", $res->status_line, "\n";
+  exit(1);
+}
+
+#print $res->content, "\n";
+exit(0);
+###########################################################################
+
+
+my $url = 'http://forums.frontier.co.uk/member.php?u=';
 my $new_posts = 0;
 foreach my $whoid (keys(%developers)) {
+  if ($whoid > 2) {
+    last;
+  }
   my $latest_post = $db->user_latest_known($whoid);
 	if (!defined($latest_post)) {
 	  $latest_post = { 'url' => 'nothing_yet' };
 	}
-	my $req = HTTP::Request->new('GET', $url . $whoid);
-	my $res = $ua->request($req);
+	$req = HTTP::Request->new('GET', $url . $whoid);
+	$res = $ua->request($req);
 	if (! $res->is_success) {
 	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")\n";
 	  next;
