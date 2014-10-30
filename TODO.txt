@@ -1,0 +1,5 @@
+*) A file lock for runs of the collector, in case it takes longer than
+the cron interval.
+*) 'Everything' into the config file, no hard coded 'config' values.
+*) ED::DevTracker::Forums.pm to hold all the forum interaction code,
+i.e. login, URL retrieval...
