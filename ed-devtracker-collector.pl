@@ -158,13 +158,14 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	
 	my @posts = $activitylist->look_down(
 	  _tag => 'li',
-	  class => 'activitybit forum_post'
+    sub { $_[0]->attr('class') =~ /forum_(post|thread)/; }
 	);
   if (! @posts) {
     #print STDERR "Failed to find any posts for ", $developers{$whoid}, " (" . $whoid, ")\n";
     next;
   }
   #print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
+  #exit(0);
 	foreach my $p (@posts) {
 	  my %post;
 	
