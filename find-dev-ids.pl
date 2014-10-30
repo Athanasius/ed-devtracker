@@ -5,9 +5,47 @@ use strict;
 use Data::Dumper;
 
 use LWP;
+use HTTP::Cookies;
+use Digest::MD5 qw(md5_hex);
 use HTML::TreeBuilder;
 
-my $ua = LWP::UserAgent->new;
+use ED::DevTracker::Config;
+$ENV{'TZ'} = 'UTC';
+my $config = ED::DevTracker::Config->new(file => "config.txt");
+if (!defined($config)) {
+    die "No config!";
+}
+my $ua = LWP::UserAgent->new('agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36');
+$ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
+###########################################################################
+# First let's make sure we're logged in.
+###########################################################################
+my $login_url = 'http://forums.frontier.co.uk/login.php?do=login';
+my $login_user = 'AthanRSS';
+my $vb_login_password = 'SDq0lnWbcaDnoNKk';
+my $vb_login_md5password = md5_hex($vb_login_password);
+my $req = HTTP::Request->new('POST', $login_url);
+$req->header('Origin' => 'http://forums.frontier.co.uk');
+$req->header('Referer' => 'http://forums.frontier.co.uk/');
+$req->header('Content-Type' => 'application/x-www-form-urlencoded');
+$req->content(
+  "vb_login_username=" . $login_user
+  . "&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=guest&do=login"
+  . "&vb_login_md5password=" . $vb_login_md5password
+  . "&vb_login_md5password_utf=" . $vb_login_md5password
+);
+#print STDERR $req->content, "\n";
+# [truncated] vb_login_username=AthanRSS&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=1414178470-60c7e8aa19051820a82e27d23d96f584eacc17e3&do=login&vb_login_md5password=d79cdd2e982bcac4944f3d97031c1fa5&vb_login_md5passw
+#exit(0);
+my $res = $ua->request($req);
+if (! $res->is_success) {
+  print STDERR "Failed to login: ", $res->status_line, "\n";
+  exit(1);
+}
+
+#print $res->content, "\n";
+#exit(0);
+###########################################################################
 
 my $url = 'http://forums.frontier.co.uk/member.php?u=';
 my %titles;
@@ -21,13 +59,15 @@ my %uninteresting = (
   'Deadly' => 1,
   'Elite' => 1,
   'Banned' => 1,
+  'Suspended / Banned' => 1,
+  'Banned: Annoying Spam Bot' => 1,
   'Moderator' => 1,
   'International Moderator' => 1,
   'Former Frontier Employee' => 1
 );
 
-my $req = HTTP::Request->new('GET', 'http://forums.frontier.co.uk/index.php');
-my $res = $ua->request($req);
+$req = HTTP::Request->new('GET', 'http://forums.frontier.co.uk/index.php');
+$res = $ua->request($req);
 if (! $res->is_success) {
   print STDERR "\nFailed to retrieve forum front page\n";
   exit(1);
@@ -36,33 +76,37 @@ my $tree = HTML::TreeBuilder->new;
 $tree->parse($res->decoded_content);
 $tree->eof();
 $tree->elementify();
-my $stats = $tree->look_down(_tag => 'tbody', id => 'collapseobj_forumhome_stats');
-if (!$stats) {
-  print STDERR "\nCouldn't find the tbody 'collapseobj_forumhome_stats' on front page\n";
+my $wgo = $tree->look_down(_tag => 'div', id => 'wgo');
+if (!$wgo) {
+  print STDERR "\nCouldn't find the div 'wgo' on front page\n";
   exit(2);
 }
-my @divs = $stats->look_down(_tag => 'div');
-if (!defined($divs[2])) {
-  print STDERR "\nCouldn't find the 3rd div uner the stats tbody\n";
+my $wgo_stats = $wgo->look_down(_tag => 'div', id => 'wgo_stats');
+if (!defined($wgo_stats)) {
+  print STDERR "\nCouldn't find the div 'wgo_stats'\n";
   exit(3);
 }
-my $a = $divs[2]->look_down(_tag => 'a');
-if (!$a) {
-  print STDERR "\nCouldn't find the href under the 3rd div\n";
+my @p = $wgo_stats->look_down(_tag => 'p');
+if (!defined($p[0])) {
+  print STDERR "\nCouldn't find the the first 'p' under 'wgo_stats'\n";
   exit(4);
 }
+my $a = $p[0]->look_down(_tag => 'a');
 my $latest_url = $a->attr('href');
-$latest_url =~ s/\?s=[^\&]+\&/\?/;
+$latest_url =~ s/\&s=[0-9a-f]+//;
 if ($latest_url !~ /^member\.php\?u=(?<uid>[0-9]+)$/) {
-  print STDERR "\nCouldn't find ID in latest member URL\n";
+  printf STDERR "\nCouldn't find ID in latest member URL: '%s'\n";
   exit(5);
 }
 my $latest_id = $+{'uid'};
 undef $tree;
 
+#print "Latest member: ", $latest_id, "\n";
+#exit(0);
+
 select STDOUT;
 $| = 1;
-my $id = 50457;
+my $id = 51735;
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";
@@ -77,23 +121,24 @@ while ($id <= $latest_id) {
   $tree->parse($res->decoded_content);
   $tree->eof();
   $tree->elementify();
-  my $username_box = $tree->look_down(_tag => 'td', 'id' => 'username_box');
-  if (!$username_box) {
-    print STDERR "\nFailed to find 'username_box' for: ", $id, "\n";
-    $id++;
-    next;
+  my $userinfo = $tree->look_down(_tag => 'span', id => 'userinfo');
+  if (!$userinfo) {
+    print STDERR "\nCouldn't find the span 'userinfo' on member page\n";
+    #print "\n", $tree->dump, "\n";
+    #$id++; next;
+    exit(4);
   }
-  my $title = $username_box->look_down(_tag => 'h2');
-  if (!$title) {
-    print STDERR "\nFailed to find 'title' H2 for: ", $id, "\n";
-    $id++;
-    next;
+  my $usertitle = $userinfo->look_down(_tag => 'span', class => 'usertitle');
+  if (!$usertitle) {
+    print STDERR "\nCouldn't find the span 'usertitle'\n";
+    print "\n", $tree->dump, "\n";
+    exit(4);
   }
-  if (!defined($uninteresting{$title->as_text})) {
-    if (!defined($titles{$title->as_text})) {
-      $titles{$title->as_text} = $id;
+  if (!defined($uninteresting{$usertitle->as_text})) {
+    if (!defined($titles{$usertitle->as_text})) {
+      $titles{$usertitle->as_text} = $id;
     }
-    print "\n", $id, ": ", $title->as_text, "\n";
+    print "\n", $id, ": ", $usertitle->as_text, "\n";
   }
   $id++;
 }
