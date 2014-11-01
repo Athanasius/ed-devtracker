@@ -100,7 +100,7 @@ my %developers = (
 ###########################################################################
 # First let's make sure we're logged in.
 ###########################################################################
-my $login_url = 'http://forums.frontier.co.uk/login.php?do=login';
+my $login_url = 'https://forums.frontier.co.uk/login.php?do=login';
 my $login_user = 'AthanRSS';
 my $vb_login_password = 'SDq0lnWbcaDnoNKk';
 my $vb_login_md5password = md5_hex($vb_login_password);
