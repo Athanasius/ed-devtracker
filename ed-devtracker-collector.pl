@@ -9,6 +9,7 @@ use HTTP::Cookies;
 use Digest::MD5 qw(md5_hex);
 use HTML::TreeBuilder;
 use Date::Manip;
+use File::Flock;
 
 use ED::DevTracker::Config;
 use ED::DevTracker::DB;
@@ -17,7 +18,11 @@ use ED::DevTracker::RSS;
 $ENV{'TZ'} = 'UTC';
 my $config = ED::DevTracker::Config->new(file => "config.txt");
 if (!defined($config)) {
-    die "No config!";
+    die "No config!\n";
+}
+my $lock = new File::Flock("ed-devtracker-collector.lock", undef, "nonblocking");
+if (! $lock) {
+  die "Couldn't obtain lock\n";
 }
 my $db = new ED::DevTracker::DB('config' => $config);
 

@@ -7,3 +7,4 @@ test.rss
 lwpcookies.txt
 config.txt
 ed_devtracker.psql
+ed-devtracker-collector.lock
