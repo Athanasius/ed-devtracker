@@ -20,13 +20,13 @@ $ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, igno
 ###########################################################################
 # First let's make sure we're logged in.
 ###########################################################################
-my $login_url = 'http://forums.frontier.co.uk/login.php?do=login';
+my $login_url = 'https://forums.frontier.co.uk/login.php?do=login';
 my $login_user = 'AthanRSS';
 my $vb_login_password = 'SDq0lnWbcaDnoNKk';
 my $vb_login_md5password = md5_hex($vb_login_password);
 my $req = HTTP::Request->new('POST', $login_url);
-$req->header('Origin' => 'http://forums.frontier.co.uk');
-$req->header('Referer' => 'http://forums.frontier.co.uk/');
+$req->header('Origin' => 'https://forums.frontier.co.uk');
+$req->header('Referer' => 'https://forums.frontier.co.uk/');
 $req->header('Content-Type' => 'application/x-www-form-urlencoded');
 $req->content(
   "vb_login_username=" . $login_user
@@ -47,7 +47,7 @@ if (! $res->is_success) {
 #exit(0);
 ###########################################################################
 
-my $url = 'http://forums.frontier.co.uk/member.php?u=';
+my $url = 'https://forums.frontier.co.uk/member.php?u=';
 my %titles;
 my %uninteresting = (
   'Harmless' => 1,
@@ -106,7 +106,7 @@ undef $tree;
 
 select STDOUT;
 $| = 1;
-my $id = 51735;
+my $id = 52854; # STARTID
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";
