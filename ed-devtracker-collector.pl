@@ -94,6 +94,7 @@ my %developers = (
   32802 => 'Laurie Cooper',
   32835 => 'Viktor Svensson',
   33100 => 'Bob Richardson',
+  33396 => 'Eddie Symons', # 'Mostly Harmless' but active on Twitter as @bovaflux
 	33683 => 'Mark Brett',
   34587 => 'arfshesaid',
 	34604 => 'Matthew Florianz',
