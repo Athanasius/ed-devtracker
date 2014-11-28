@@ -106,7 +106,7 @@ undef $tree;
 
 select STDOUT;
 $| = 1;
-my $id = 52854; # STARTID
+my $id = 56736; # STARTID
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";
