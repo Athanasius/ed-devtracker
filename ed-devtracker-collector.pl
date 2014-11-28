@@ -136,9 +136,10 @@ if (! $res->is_success) {
 my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
-  #print STDERR "Scraping id ", $whoid, "\n";
-#  if ($whoid > 2) {
-#    print STDERR "Bailing after id 2\n";
+  print STDERR "Scraping id ", $whoid, "\n";
+#  my $bail = 15645;
+#  if ($whoid > $bail) {
+#    print STDERR "Bailing after id ", $bail, "\n";
 #    last;
 #  }
   my $latest_post = $db->user_latest_known($whoid);
