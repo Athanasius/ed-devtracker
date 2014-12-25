@@ -249,6 +249,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         my $l = ${$latest_post}{'url'};
         $l =~ s/t=[0-9]+\&//;
         #if ($post{'url'} eq ${$latest_post}{'url'}) {
+        #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${$latest_post}{'threadurl'}, ${$latest_post}{'url'}, $post{'threadurl'}, $post{'url'};
         if ($l eq $p) {
           #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
           last;
