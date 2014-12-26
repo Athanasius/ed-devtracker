@@ -134,7 +134,7 @@ if (! $res->is_success) {
 ###########################################################################
 
 my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
-my $new_posts = 0;
+my $new_posts_total = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   print STDERR "Scraping id ", $whoid, "\n";
 #  my $bail = 15645;
@@ -173,6 +173,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   }
   #print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
   #exit(0);
+  my @new_posts;
 	foreach my $p (@posts) {
 	  my %post;
 	
@@ -248,7 +249,6 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         $p =~ s/t=[0-9]+\&//;
         my $l = ${$latest_post}{'url'};
         $l =~ s/t=[0-9]+\&//;
-        #if ($post{'url'} eq ${$latest_post}{'url'}) {
         #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${$latest_post}{'threadurl'}, ${$latest_post}{'url'}, $post{'threadurl'}, $post{'url'};
         if ($l eq $p) {
           #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
@@ -259,12 +259,24 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	
 	  $post{'whoid'} = $whoid;
 	  #print STDERR Dumper(\%post), "\n";
-	  $db->insert_post(\%post);
-    $new_posts++;
+    push(@new_posts, \%post);
+    $new_posts_total++;
 	}
+  # We're popping off an array so as to reverse the order we found them
+  # else they'll go in the DB in the wrong order, particularly important
+  # if more than one post by the same user has the same minute-resolution
+  # datestamp.  Wrong order could lead to missing posts (we'll bail too soon).
+  #print STDERR "Adding posts for ", $whoid, " START\n";
+  my $p = pop(@new_posts);
+  while (defined($p)) { 
+	  #print STDERR Dumper($p), "\n";
+	  $db->insert_post($p);
+    $p = pop(@new_posts);
+  } 
+  #print STDERR "Adding posts for ", $whoid, " DONE\n";
 }
-if ($new_posts > 0) {
-  #printf "Found %d new posts.\n", $new_posts;
+if ($new_posts_total > 0) {
+  #printf "Found %d new posts.\n", $new_posts_total;
   my $rss = new ED::DevTracker::RSS;
   if (! $rss->generate()) {
     printf STDERR "Something failed in RSS generation.\n";
