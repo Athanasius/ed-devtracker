@@ -136,16 +136,17 @@ if (! $res->is_success) {
 my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts_total = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
-  print STDERR "Scraping id ", $whoid, "\n";
-#  my $bail = 15645;
+  #print STDERR "Scraping id ", $whoid, "\n";
+#  my $bail = 6;
 #  if ($whoid > $bail) {
 #    print STDERR "Bailing after id ", $bail, "\n";
 #    last;
 #  }
-  my $latest_post = $db->user_latest_known($whoid);
-	if (!defined($latest_post)) {
-	  $latest_post = { 'url' => 'nothing_yet' };
+  my $latest_posts = $db->user_latest_known($whoid);
+	if (!defined($latest_posts)) {
+	  $latest_posts = { 'url' => 'nothing_yet' };
 	}
+  #print Dumper($latest_posts);
 	$req = HTTP::Request->new('GET', $member_url . $whoid);
 	$res = $ua->request($req);
 	if (! $res->is_success) {
@@ -247,12 +248,15 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         # Old: showthread.php?p=902218#post902218
         my $p = $post{'url'};
         $p =~ s/t=[0-9]+\&//;
-        my $l = ${$latest_post}{'url'};
-        $l =~ s/t=[0-9]+\&//;
-        #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${$latest_post}{'threadurl'}, ${$latest_post}{'url'}, $post{'threadurl'}, $post{'url'};
-        if ($l eq $p) {
-          #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
-          last;
+        #printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
+        if (defined(${$latest_posts}{$post{'url'}})) {
+          my $l = ${${$latest_posts}{$post{'url'}}}{'url'};
+          $l =~ s/t=[0-9]+\&//;
+          #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'url'}}}{'threadurl'}, ${${$latest_posts}{$post{'url'}}}{'url'}, $post{'threadurl'}, $post{'url'};
+          if ($l eq $p) {
+            #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
+            last;
+          }
         }
       }
     }
