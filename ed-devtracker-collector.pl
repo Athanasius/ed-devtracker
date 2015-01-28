@@ -38,23 +38,23 @@ if (! -f $rss_filename) {
   exit(4);
 }
 my %developers = (
-#  1 => 'fdadmin',
-  2 => 'Michael Brookes',
-  6 => 'David Walsh',
-  7 => 'David Braben',
-	8 => 'Colin Davis',
-# 13 => 'Natalie Amos',
-# 119 => 'Sam Denney',
-	1110 => 'Stefan Mars',
-# 1388 => 'Kyle Rowley',
-# 1890 => 'Callum Rowley',
-# 2017 => 'Alistair Lindsay',
-	2323 => 'Carlos Massiah',
-# 2724 => 'Carl Russell',
-# 10691 => 'Gary Richards',
-	14349 => 'Adam Woods',
-	14849 => 'Simon Brewer',
-	15645 => 'Ashley Barley',
+### XXX#  1 => 'fdadmin',
+### XXX  2 => 'Michael Brookes',
+### XXX  6 => 'David Walsh',
+### XXX  7 => 'David Braben',
+### XXX	8 => 'Colin Davis',
+### XXX# 13 => 'Natalie Amos',
+### XXX# 119 => 'Sam Denney',
+### XXX	1110 => 'Stefan Mars',
+### XXX# 1388 => 'Kyle Rowley',
+### XXX# 1890 => 'Callum Rowley',
+### XXX# 2017 => 'Alistair Lindsay',
+### XXX	2323 => 'Carlos Massiah',
+### XXX# 2724 => 'Carl Russell',
+### XXX# 10691 => 'Gary Richards',
+### XXX	14349 => 'Adam Woods',
+### XXX	14849 => 'Simon Brewer',
+### XXX	15645 => 'Ashley Barley',
 	15655 => 'Sandro Sammarco',
 	15737 => 'Andrew Barlow',
 	17666 => 'Sarah Jane Avory',
@@ -137,11 +137,11 @@ my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&typ
 my $new_posts_total = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   #print STDERR "Scraping id ", $whoid, "\n";
-#  my $bail = 6;
-#  if ($whoid > $bail) {
-#    print STDERR "Bailing after id ", $bail, "\n";
-#    last;
-#  }
+  my $bail = 15655;
+  if ($whoid > $bail) {
+    print STDERR "Bailing after id ", $bail, "\n";
+    last;
+  }
   my $latest_posts = $db->user_latest_known($whoid);
 	if (!defined($latest_posts)) {
 	  $latest_posts = { 'url' => 'nothing_yet' };
@@ -155,8 +155,9 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	}
 	
 	#print Dumper($res->content);
+	#print Dumper($res->decoded_content('charset' => 'windows-1252'));
 	my $tree = HTML::TreeBuilder->new;
-	$tree->parse($res->decoded_content);
+	$tree->parse($res->decoded_content('charset' => 'windows-1252'));
 	$tree->eof();
 	my $activitylist = $tree->look_down('id', 'activitylist');
 	if (! $activitylist) {
@@ -262,7 +263,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
     }
 	
 	  $post{'whoid'} = $whoid;
-	  #print STDERR Dumper(\%post), "\n";
+	  print STDERR Dumper(\%post), "\n";
     push(@new_posts, \%post);
     $new_posts_total++;
 	}

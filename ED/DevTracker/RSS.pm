@@ -4,6 +4,7 @@
 package ED::DevTracker::RSS;
 
 use strict;
+use Carp;
 #use feature 'unicode_strings';
 
 use XML::RSS;
@@ -11,6 +12,7 @@ use Date::Manip;
 
 use ED::DevTracker::Config;
 use ED::DevTracker::DB;
+use HTML::Entities qw/encode_entities_numeric/;
 
 sub new {
 	my $class = shift;
@@ -23,6 +25,30 @@ sub new {
 	$self->{'self_url'} = $config->getconf('self_url');
   bless($self, $class);
   return $self;
+}
+
+sub ed_rss_encode {
+	my ($self, $text) = @_;
+
+  #return "" unless defined $text;
+  if (!defined($text)) {
+      confess "\$text is undefined in ED::DevTracker::RSS::ed_rss_encode(). We don't know how " . "to handle it!";
+  }
+
+  return $text if (!$self->_main->_encode_output);
+
+  my $encoded_text = '';
+
+  while ($text =~ s/(.*?)(\<\!\[CDATA\[.*?\]\]\>)//s) {
+
+      # we use &named; entities here because it's HTML
+      $encoded_text .= encode_entities($1) . $2;
+  }
+
+  # we use numeric entities here because it's XML
+  $encoded_text .= encode_entities_numeric($text, '<>&');
+
+  return $encoded_text;
 }
 
 sub generate {
@@ -42,7 +68,7 @@ sub generate {
   }
   my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
   
-  $self->{'rss'} = XML::RSS->new(version => '2.0', encoding => 'UTF-8');
+  $self->{'rss'} = XML::RSS->new(version => '2.0', encoding => 'UTF-8', encode_output => 1, encode_cb => \&ed_rss_encode);
 	$self->{'rss'}->add_module(prefix => 'atom', uri => 'http://www.w3.org/2005/Atom');
   $self->{'rss'}->channel(
     title           => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
@@ -83,6 +109,7 @@ sub generate {
 		# Bloody smart quotes
 		$precis =~ s/\N{U+0091}/\N{U+2018}/sg;
 		#printf STDERR "Precis = '%s'\n", $precis;
+		#printf STDERR "Threadtitle = '%s'\n", ${$p}{'threadtitle'};
     $self->{'rss'}->add_item(
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'},
       link  => $self->{'base_url'} . ${$p}{'url'},
