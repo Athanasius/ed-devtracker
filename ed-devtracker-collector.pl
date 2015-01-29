@@ -137,7 +137,7 @@ my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&typ
 my $new_posts_total = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   #print STDERR "Scraping id ", $whoid, "\n";
-#  my $bail = 6;
+#  my $bail = 15655;
 #  if ($whoid > $bail) {
 #    print STDERR "Bailing after id ", $bail, "\n";
 #    last;
@@ -154,9 +154,24 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	  next;
 	}
 	
+  #print STDERR $res->header('Content-Type'), "\n";
+  my $hct = $res->header('Content-Type');
+  if ($hct =~ /charset=(?<ct>[^[:space:]]+)/) {
+    $hct = $+{'ct'};
+  } else {
+    undef $hct;
+  }
+  #print STDERR "HCT: ", $hct, "\n";
 	#print Dumper($res->content);
+	#print Dumper($res->decoded_content('charset' => 'windows-1252'));
 	my $tree = HTML::TreeBuilder->new;
-	$tree->parse($res->decoded_content);
+  if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
+    #printf STDERR "Detected non ISO-8859-1 characters!\n";
+    #exit (1);
+	  $tree->parse($res->decoded_content('charset' => 'windows-1252'));
+  } else {
+	  $tree->parse($res->decoded_content());
+  }
 	$tree->eof();
 	my $activitylist = $tree->look_down('id', 'activitylist');
 	if (! $activitylist) {
