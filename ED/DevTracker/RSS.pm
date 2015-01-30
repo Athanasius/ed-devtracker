@@ -106,9 +106,6 @@ sub generate {
     my $precis = ${$p}{'precis'};
     $precis =~ s/\n/<br\/>/g;
 		#printf STDERR "Precis = '%s'\n", $precis;
-		# Bloody smart quotes
-		$precis =~ s/\N{U+0091}/\N{U+2018}/sg;
-		#printf STDERR "Precis = '%s'\n", $precis;
 		#printf STDERR "Threadtitle = '%s'\n", ${$p}{'threadtitle'};
     $self->{'rss'}->add_item(
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'},
