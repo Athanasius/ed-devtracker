@@ -99,8 +99,9 @@ my %developers = (
   34587 => 'arfshesaid',
 	34604 => 'Matthew Florianz',
   35599 => 'Tom Clapham',
-	47159 => 'Edward Lewis'
+	47159 => 'Edward Lewis',
 # Michael Gapper ?
+  82776 => 'Frontier QA'  
 );
 
 ###########################################################################
