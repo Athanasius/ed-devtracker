@@ -10,7 +10,8 @@ our %config = (
 	db_name => '',
 	db_user => '',
 	db_password => '',
-	self_url => ''
+	self_url => '',
+	sleep_after => 300
 );
 
 sub new {
@@ -38,8 +39,10 @@ sub new {
 			$config{'db_password'} = $1;
 		} elsif (/^self_url:\s+(.*)$/i) {
 			$config{'self_url'} = $1;
+		} elsif (/^sleep_after:\s+([0-9]+)$/i) {
+			$config{'sleep_after'} = $1;
 		} else {
-			printf STDERR "Unknown field in config file '%s', line %d : %s\n", $file, $line, $_;
+			printf STDERR "Unknown (or badly formatted) field in config file '%s', line %d : %s\n", $file, $line, $_;
 		}
 	}
 	close(CF);
