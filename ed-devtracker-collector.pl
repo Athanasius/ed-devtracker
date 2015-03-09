@@ -319,7 +319,7 @@ if ($new_posts_total > 0) {
   chmod(0644, $rss_filename);
 }
 # Sleep to be sure we don't run back to back if the forums are straining
-if (defined($config->getconf('sleep_after')) or $config->getconf('sleep_after') > 0 ) {
+if (defined($config->getconf('sleep_after')) and $config->getconf('sleep_after') > 0 ) {
   #printf STDERR "Sleeping for %d seconds\n", $config->getconf('sleep_after');
   sleep($config->getconf('sleep_after'));
 }
