@@ -40,68 +40,68 @@ if (! -f $rss_filename) {
 my %developers = (
 #  1 => 'fdadmin',
   2 => 'Michael Brookes',
-###  6 => 'David Walsh',
-###  7 => 'David Braben',
-###	8 => 'Colin Davis',
-#### 13 => 'Natalie Amos',
-#### 119 => 'Sam Denney',
-###	1110 => 'Stefan Mars',
-#### 1388 => 'Kyle Rowley',
-#### 1890 => 'Callum Rowley',
-#### 2017 => 'Alistair Lindsay',
-###	2323 => 'Carlos Massiah',
-#### 2724 => 'Carl Russell',
-#### 10691 => 'Gary Richards',
-###	14349 => 'Adam Woods',
-###	14849 => 'Simon Brewer',
-###	15645 => 'Ashley Barley',
-###	15655 => 'Sandro Sammarco',
-###	15737 => 'Andrew Barlow',
-###	17666 => 'Sarah Jane Avory',
-###  19388 => 'Andrew Gillett',
-###	22712 => 'Mike Evans',
-###  22717 => 'John Kelly',
-####  22790 => 'Igor Terentjev',
-###  23261 => 'Raphael Gervaise',
-###  24195 => 'James Avery',
-###	24222 => 'Greg Ryder',
-#### 24659 => 'Josh Atack', # Former Frontier Employee
-###  24701 => 'Xavier Henry',
-###	25094 => 'Dan Davies',
-###	25095 => 'Tom Kewell',
-###	25591 => 'Anthony Ross',
-###	26549 => 'Mark Allen',
-###	26755 => 'Barry Clark',
-###	26966 => 'chris gregory',
-###	27713 => 'Selena Frost-King',
-###	27895 => 'Ben Parry',
-###  29088 => 'John Li',
-###	31252 => 'hchalkley',
-###	31307 => 'Jonathan Bottone',
-###	31348 => 'Kenny Wildman',
-###  31354 => 'Joe Hogan',
-###	31484 => 'Richard Benton',
-###  31810 => 'Ruben Penalva',
-###  31870 => 'Sergei Lewis',
-###  32114 => 'Daniel Varela',
-####	32310 => 'Mark Boss', # Now only 'Competent'
-###	32348 => 'Jon Pace',
-###  32350 => 'Adam Waite',
-###	32352 => 'Aaron Gordon',
-###  32382 => 'Thomas Wiggins',
-###  32385 => 'oscar_sebio_cajaraville',
-###	32574 => 'Matt Dickinson',
-###  32802 => 'Laurie Cooper',
-###  32835 => 'Viktor Svensson',
-###  33100 => 'Bob Richardson',
-###  33396 => 'Eddie Symons', # 'Mostly Harmless' but active on Twitter as @bovaflux
-###	33683 => 'Mark Brett',
-###  34587 => 'arfshesaid',
-###	34604 => 'Matthew Florianz',
-###  35599 => 'Tom Clapham',
-###	47159 => 'Edward Lewis',
-#### Michael Gapper ?
-###  82776 => 'Frontier QA'  
+  6 => 'David Walsh',
+  7 => 'David Braben',
+	8 => 'Colin Davis',
+# 13 => 'Natalie Amos',
+# 119 => 'Sam Denney',
+	1110 => 'Stefan Mars',
+# 1388 => 'Kyle Rowley',
+# 1890 => 'Callum Rowley',
+# 2017 => 'Alistair Lindsay',
+	2323 => 'Carlos Massiah',
+# 2724 => 'Carl Russell',
+# 10691 => 'Gary Richards',
+	14349 => 'Adam Woods',
+	14849 => 'Simon Brewer',
+	15645 => 'Ashley Barley',
+	15655 => 'Sandro Sammarco',
+	15737 => 'Andrew Barlow',
+	17666 => 'Sarah Jane Avory',
+  19388 => 'Andrew Gillett',
+	22712 => 'Mike Evans',
+  22717 => 'John Kelly',
+#  22790 => 'Igor Terentjev',
+  23261 => 'Raphael Gervaise',
+  24195 => 'James Avery',
+	24222 => 'Greg Ryder',
+# 24659 => 'Josh Atack', # Former Frontier Employee
+  24701 => 'Xavier Henry',
+	25094 => 'Dan Davies',
+	25095 => 'Tom Kewell',
+	25591 => 'Anthony Ross',
+	26549 => 'Mark Allen',
+	26755 => 'Barry Clark',
+	26966 => 'chris gregory',
+	27713 => 'Selena Frost-King',
+	27895 => 'Ben Parry',
+  29088 => 'John Li',
+	31252 => 'hchalkley',
+	31307 => 'Jonathan Bottone',
+	31348 => 'Kenny Wildman',
+  31354 => 'Joe Hogan',
+	31484 => 'Richard Benton',
+  31810 => 'Ruben Penalva',
+  31870 => 'Sergei Lewis',
+  32114 => 'Daniel Varela',
+#	32310 => 'Mark Boss', # Now only 'Competent'
+	32348 => 'Jon Pace',
+  32350 => 'Adam Waite',
+	32352 => 'Aaron Gordon',
+  32382 => 'Thomas Wiggins',
+  32385 => 'oscar_sebio_cajaraville',
+	32574 => 'Matt Dickinson',
+  32802 => 'Laurie Cooper',
+  32835 => 'Viktor Svensson',
+  33100 => 'Bob Richardson',
+  33396 => 'Eddie Symons', # 'Mostly Harmless' but active on Twitter as @bovaflux
+	33683 => 'Mark Brett',
+  34587 => 'arfshesaid',
+	34604 => 'Matthew Florianz',
+  35599 => 'Tom Clapham',
+	47159 => 'Edward Lewis',
+# Michael Gapper ?
+  82776 => 'Frontier QA'  
 );
 
 ###########################################################################
@@ -130,7 +130,7 @@ if (! $res->is_success) {
   exit(1);
 }
 
-#print $res->content, "\n";
+#print STDERR Dumper($res->content);
 #exit(0);
 ###########################################################################
 
@@ -151,7 +151,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	$req = HTTP::Request->new('GET', $member_url . $whoid);
 	$res = $ua->request($req);
 	if (! $res->is_success) {
-	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")\n";
+	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")", $res->code, "(", $res->message, ")\n";
 	  next;
 	}
 	
@@ -163,8 +163,8 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
     undef $hct;
   }
   #print STDERR "HCT: ", $hct, "\n";
-	#print Dumper($res->content);
-	#print Dumper($res->decoded_content('charset' => 'windows-1252'));
+	#print STDERR Dumper($res->content);
+	#print STDERR Dumper($res->decoded_content('charset' => 'windows-1252'));
 	my $tree = HTML::TreeBuilder->new;
   if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
     #printf STDERR "Detected non ISO-8859-1 characters!\n";
