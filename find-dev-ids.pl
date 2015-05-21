@@ -106,7 +106,7 @@ undef $tree;
 
 select STDOUT;
 $| = 1;
-my $id = 56736; # STARTID
+my $id = 94103; # STARTID
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";
@@ -126,13 +126,17 @@ while ($id <= $latest_id) {
     print STDERR "\nCouldn't find the span 'userinfo' on member page\n";
     #print "\n", $tree->dump, "\n";
     #$id++; next;
-    exit(4);
+    #exit(4);
+    $id++;
+    next;
   }
   my $usertitle = $userinfo->look_down(_tag => 'span', class => 'usertitle');
   if (!$usertitle) {
     print STDERR "\nCouldn't find the span 'usertitle'\n";
     print "\n", $tree->dump, "\n";
-    exit(4);
+    #exit(4);
+    $id++;
+    next;
   }
   if (!defined($uninteresting{$usertitle->as_text})) {
     if (!defined($titles{$usertitle->as_text})) {

@@ -74,7 +74,7 @@ my %developers = (
 	26755 => 'Barry Clark',
 	26966 => 'chris gregory',
 	27713 => 'Selena Frost-King',
-	27895 => 'Ben Parry',
+	27895 => 'Ben Parry', # No longer at Frontier as of ~2015-05
   29088 => 'John Li',
 	31252 => 'hchalkley',
 	31307 => 'Jonathan Bottone',
@@ -94,14 +94,21 @@ my %developers = (
   32802 => 'Laurie Cooper',
   32835 => 'Viktor Svensson',
   33100 => 'Bob Richardson',
-  33396 => 'Eddie Symons', # 'Mostly Harmless' but active on Twitter as @bovaflux
+  33396 => 'Eddie Symons',
 	33683 => 'Mark Brett',
   34587 => 'arfshesaid',
 	34604 => 'Matthew Florianz',
   35599 => 'Tom Clapham',
 	47159 => 'Edward Lewis',
 # Michael Gapper ?
-  82776 => 'Frontier QA'  
+  65404 => 'Yokai', # Tutorial & Guide Writer
+# 71537 => 'eft_recoil_org', # Friendly Spider/Scraper Bot
+#  74198 => 'GalNet News', # GalNet News Transmissions are sponsored in part by the Bank of Zaonce.  Trust the Bank of Zaonce with your hard-earned credits. 
+  74985 => 'GuyV', #FDEV
+  81888 => 'Daniel G', # Frontier QA Team
+  82776 => 'Frontier QA',
+  84886 => 'Frontier Moderation Team', # Global Moderator
+  93489 => 'SkyCline' # Test Account: Brett C So Dangerous, it's Fluffy.
 );
 
 ###########################################################################
