@@ -74,9 +74,14 @@ sub user_latest_known {
 }
 
 sub get_latest_posts {
-	my ($self, $count) = @_;
-	my $sth = $dbh->prepare('SELECT * FROM posts ORDER BY DATESTAMP DESC LIMIT ?');
-	my $rv = $sth->execute($count);
+	my ($self, $days) = @_;
+	# We're assuming here that $days isn't user-supplied.  Couldn't find a way to make this work with a '?' placeholder and providing the value on ->execute();
+	# But let's make some attempt at sanitisation here.
+	if ($days !~ /^[0-9]+$/) {
+		$days = 1;
+	}
+	my $sth = $dbh->prepare("SELECT * FROM posts WHERE datestamp > (current_timestamp - INTERVAL '$days days') ORDER BY DATESTAMP DESC");
+	my $rv = $sth->execute();
 	if (! $rv) {
 		printf STDERR "ED::DevTracker::DB->get_latest_posts - Failed to get latest known post\n";
 		return undef;
