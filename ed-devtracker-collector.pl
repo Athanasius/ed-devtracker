@@ -141,11 +141,11 @@ if (! $res->is_success) {
 #exit(0);
 ###########################################################################
 
-my $member_url = 'http://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
+my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts_total = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   #print STDERR "Scraping id ", $whoid, "\n";
-#  my $bail = 15655;
+#  my $bail = 2;
 #  if ($whoid > $bail) {
 #    print STDERR "Bailing after id ", $bail, "\n";
 #    last;
@@ -172,7 +172,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   #print STDERR "HCT: ", $hct, "\n";
 	#print STDERR Dumper($res->content);
 	#print STDERR Dumper($res->decoded_content('charset' => 'windows-1252'));
-	my $tree = HTML::TreeBuilder->new;
+	my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
   if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
     #printf STDERR "Detected non ISO-8859-1 characters!\n";
     #exit (1);
@@ -181,6 +181,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	  $tree->parse($res->decoded_content());
   }
 	$tree->eof();
+  #print STDERR Dumper($tree);
 	my $activitylist = $tree->look_down('id', 'activitylist');
 	if (! $activitylist) {
 	  print STDERR "Failed to find the activitylist for ", $developers{$whoid}, " (" . $whoid, ")\n";
