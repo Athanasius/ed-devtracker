@@ -20,7 +20,7 @@ sub new {
 
 	my $config = new ED::DevTracker::Config('file' => 'config.txt');
 	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
-	$self->{'base_url'} = "http://forums.frontier.co.uk/";
+	$self->{'base_url'} = "https://forums.frontier.co.uk/";
 	$self->{'rss'} = undef;
 	$self->{'self_url'} = $config->getconf('self_url');
   bless($self, $class);
