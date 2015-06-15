@@ -32,4 +32,13 @@ EOHTML
 }
 
 my $results = $db->precis_ts_search($cgi->param('search_text'));
-
+if (!defined($results)) {
+  print<<EOHTML
+<html>
+ <body>
+  <p>No results!
+  </p>
+ </body>
+</html>
+EOHTML
+}
