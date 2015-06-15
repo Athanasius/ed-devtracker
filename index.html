@@ -68,7 +68,10 @@ wouldn't want to upset the moderators by causing more of an issue.
     <hr/>
     <div class="blurb">
       <p>
-        Note that the box does accept <b>&amp;</b> (ampersand) for logical AND along with <b>|</b> (pipe) for logical OR and <b>!</b> (exclamation mark) for logical NOT.  So you can construct queries like "anarchy &amp; ! wanted".  In fact you <em><strong>must put an &amp; between each word!</strong></em>. Also note that the text search tries to be clever, it will include plurals of the words you specify and other such slight transformations.
+        Note that the box does accept <b>&amp;</b> (ampersand) for logical AND along with <b>|</b> (pipe) for logical OR and <b>!</b> (exclamation mark) for logical NOT.  So you can construct queries like "anarchy &amp; ! wanted".  If you do not include any of these logical operators then it will assume you want to search only for posts with containing all your words, i.e. it will turn "green tree frog" into "green &amp; tree &amp; frog".  If you wanted an 'OR' search then you'd need to use "green | tree | frog".
+      </p>
+      <p>
+        Also note that the text search tries to be clever, it will include plurals of the words you specify and other such slight transformations.
       </p>
       <p>
         The results are currently sorted on the Rank column, which is supplied by the underlying search engine, weighted towards words being found close together, and then by the Date/time column, most recent towards the top.
