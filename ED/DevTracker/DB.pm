@@ -92,7 +92,7 @@ sub get_latest_posts {
 		push(@posts, $row);
 		$row = $sth->fetchrow_hashref;
 	}
-	if ($#posts == 0) {
+	if ($#posts < 0) {
 		printf STDERR "ED::DevTracker::DB->get_latest_posts - No posts?\n";
 		return undef;
 	}
