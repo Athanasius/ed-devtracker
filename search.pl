@@ -33,7 +33,7 @@ EOHTML
 
 my $results = $db->precis_ts_search($cgi->param('search_text'));
 if (!defined($results)) {
-  print<<EOHTML
+  print<<EOHTML;
 <html>
  <body>
   <p>No results!
@@ -41,4 +41,35 @@ if (!defined($results)) {
  </body>
 </html>
 EOHTML
+  exit(0);
 }
+
+#print Dumper($results);
+print<<EOHTML;
+<html>
+ <body>
+  <table>
+   <tr>
+    <th>Rank</th>
+    <th>Date/time</th>
+    <th>Thread (forum)</th>
+    <th>Poster</th>
+    <th>Precis</th>
+    <th>Matches</th>
+   </tr>
+EOHTML
+foreach my $hit (@{$results}) {
+  print "   <tr>\n";
+  printf "    <td>%8.5f</td>\n", $hit->{'rank'};
+  print  "    <td>", $hit->{'datestamp'}, "</td>\n";
+  print  "    <td><a href=", $hit->{'url'}, ">", $hit->{'threadtitle'}, " (", $hit->{'forum'}, ")</td>\n";
+  print  "    <td>", $hit->{'who'}, "</td>\n";
+  print  "    <td>", $hit->{'precis'}, "</td>\n";
+  print  "    <td>", $hit->{'ts_headline'}, "</td>\n";
+  print "   </tr>\n";
+}
+print<<EOHTML;
+  </table>
+ </body>
+</html>
+EOHTML
