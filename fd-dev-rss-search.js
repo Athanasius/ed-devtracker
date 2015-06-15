@@ -21,8 +21,16 @@ function performSearch(ev) {
     return false;
   }
 
+  // If there are no ampersands or pipes or exclamation marks, assume someone
+  // wants a simple "all these words" search and insert the necessary & characters.
+  var q = $('#search_text').val();
+  if (q.search('[\&\|\!]') == -1) {
+    var terms = q.split(' ');
+    q = terms.join(' & ');
+
+  }
   search_query = {
-    search_text: $('#search_text').val()
+    search_text: q
   };
 
   $.ajax({
