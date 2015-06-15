@@ -102,7 +102,7 @@ sub get_latest_posts {
 sub precis_ts_search {
 	my ($self, $query) = @_;
 	#printf STDERR "ED::DevTracker::DB->precis_ts_search - query is '%s'\n", $query;
-	my $sth = $dbh->prepare("SELECT *,ts_headline(precis, query) FROM (SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query ORDER BY rank DESC) AS foo;");
+	my $sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
 	my $rv = $sth->execute($query);
 	if (! $rv) {
 		printf STDERR "ED::DevTracker::DB->precis_ts_search - Failed DB query\n";

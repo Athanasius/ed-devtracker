@@ -21,7 +21,10 @@ a:visited {
 
 /* END General */
 
-/* Station Info view */
+.blurb {
+  width: 60em;
+}
+
 .result_row#result_X {
   display: none;
 }
@@ -44,11 +47,9 @@ th.results_info_label {
   padding: 0.3em;
 }
 
-/*
-.results_info_label.result_rank, .results_info_label.result_datestamp, .results_info_label.results_jumped_total {
-  width: 5em;
+.results_info_item.result_datestamp {
+  min-width: 10em;
 }
-*/
 
 td.results_info_item {
   color: #eecaee;

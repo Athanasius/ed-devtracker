@@ -27,20 +27,7 @@ if (!defined($results)) {
   failure("No results!");
 }
 
-#my @search_results;
 my %status = ( 'status' => 'ok' );
-#foreach my $hit (@{$results}) {
-#  push(@search_results, {
-#    'rank' => $hit->{'rank'},
-#    'datestamp' => $hit->{'datestamp'},
-#    'url' => $hit->{'url'},
-#    'threadtitle' => $hit->{'threadtitle'},
-#    'forum' => $hit->{'forum'},
-#    'who' => $hit->{'who'},
-#    'precis' => $hit->{'precis'},
-#    'ts_headline' => $hit->{'ts_headline'}
-#  );
-#}
 
 $status{'results'} = $results;
 my $json = to_json(\%status);

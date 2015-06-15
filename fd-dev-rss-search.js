@@ -84,7 +84,6 @@ function displaySearchResults(data) {
     new_r_url.append(' (' + data.results[r].forum + ')');
     new_r.find(".results_info_item.result_who").text(data.results[r].who);
     new_r.find(".results_info_item.result_precis").text(data.results[r].precis);
-    new_r.find(".results_info_item.result_matches").html(data.results[r].ts_headline);
     new_r.insertAfter(after);
     after = new_r;
   }
