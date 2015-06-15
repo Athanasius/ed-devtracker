@@ -1,0 +1,112 @@
+/* vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab
+ */
+
+/* General */
+body {
+  background-color: #111111;
+  color: #e05a01;
+}
+
+.important_text {
+  color: #cccccc;
+}
+
+a {
+  color: #f4b900;
+}
+
+a:visited {
+  color: #5B2904;
+}
+
+/* END General */
+
+/* Station Info view */
+.result_row#result_X {
+  display: none;
+}
+
+table.results {
+  margin-left: 20px;
+  margin-right: auto;
+  width: auto;
+  background-color: #2d1408;
+  border: 3px solid #180704;
+  border-collapse: collapse;
+  border-spacing: 2px;
+}
+
+th.results_info_label {
+  color: #e55b00;
+  border: 2px solid #180704;
+  border-bottom-color: #5B2904;
+  border-collapse: collapse;
+  padding: 0.3em;
+}
+
+/*
+.results_info_label.result_rank, .results_info_label.result_datestamp, .results_info_label.results_jumped_total {
+  width: 5em;
+}
+*/
+
+td.results_info_item {
+  color: #eecaee;
+  border: 2px solid #180704;
+  border-collapse: collapse;
+  border-right-color: #5B2904;
+  border-bottom-color: #5B2904;
+  padding: 0.3em;
+}
+
+.results_info_item.results_system {
+  text-align: left;
+}
+
+.results_info_item.results_number, .results_info_item.results_distance, .results_info_item.results_total, .results_info_item.results_jumped_total {
+  text-align: right;
+}
+
+th.header_textwrap {
+  width: 5em;
+}
+
+table.ed_form_table {
+  margin-left: 10px;
+  background-color: #2d1408;
+  border: 3px solid #180704 !important;
+  border-collapse: collapse;
+  margin-bottom: 5px;
+}
+
+input.ed_text_entry {
+  background-color: #2d1408;
+  color: #eecaee;
+  border-color: #180704;
+  padding: 0px 0.3em 0px 0.3em;
+}
+input.ed_text_entry:focus {
+  border-color: #5b2904;
+  background-color: #6d3103;
+}
+
+td.form_submit {
+  text-align: center;
+}
+
+input.form_submit {
+  background-color: #2d1408;
+  color: #eecaee;
+}
+
+select.ed_select {
+  background-color: #2d1408;
+  color: #eecaee;
+  border-color: #180704;
+}
+
+select.ed_select:focus {
+  background-color: #6d3103;
+  color: #eecaee;
+}
+

@@ -1,89 +1,113 @@
 <!DOCTYPE html>
+<!-- vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
+ -->
 <html lang="en">
- <head>
-  <title>Elite: Dangerous - Unofficial Dev Forum Posts Search, by Athanasius</title>
-  <link rel="alternate" type="application/rss+xml" title="Elite: Dangerous Dev Posts" href="http://www.miggy.org/games/elite-dangerous/devtracker/ed-dev-posts.rss" />
- </head>
- <body>
-  <h2>
-   What is this?
-  </h2>
-  <p>
+  <head>
+    <title>Elite: Dangerous - Unofficial Dev Forum Posts Search, by Athanasius</title>
+    <link rel="alternate" type="application/rss+xml" title="Elite: Dangerous Dev Posts" href="http://www.miggy.org/games/elite-dangerous/devtracker/ed-dev-posts.rss" />
 
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h2>
+      What is this?
+    </h2>
+    <p>
   If you're a fan of <a href="http://www.elitedangerous.com/">Elite:
-  Dangerous</a> then you may also follow the <a
-  href="http://frontier.co.uk/">Frontier Developments</a> <a
-  href="http://forums.frontier.co.uk/">forums</a>.  If you do that
-  then you may be frustrated at the lack of an easy way to see just the
-  developer posts.
-  </p>
-  <p>
-   Your response then might be to write a scraper to form an <a
-   href="../devposts.html">RSS feed</a> of the posts.
-  </p>
-  <p>
-   You might then eventually decide that rather than doing direct SQL
-   queries on the database perhaps you should write a small web page to
-   allow anyone to search the 'precis' text of each post.  That would be
-   what this page is for.
-  </p>
-  <p>
+Dangerous</a> then you may also follow the <a
+href="http://frontier.co.uk/">Frontier Developments</a> <a
+href="http://forums.frontier.co.uk/">forums</a>.  If you do that
+then you may be frustrated at the lack of an easy way to see just the
+developer posts.
+    </p>
+    <p>
+  Your response then might be to write a scraper to form an <a
+href="../devposts.html">RSS feed</a> of the posts.
+    </p>
+    <p>
+  You might then eventually decide that rather than doing direct SQL
+queries on the database perhaps you should write a small web page to
+allow anyone to search the 'precis' text of each post.  That would be
+what this page is for.
+    </p>
+    <p>
   NB: The feed is updated at most every 5 minutes, more slowly if the
-  forums are especially busy.  Thus there's no point polling this feed
-  more often than every 5 minutes.  Also the output contains the last 7 days
-  worth of posts, so if you check the feed any less frequently than that
-  you will miss posts.
-  </p>
-  <p>
-   <b>Caveat 1</b> - This feed will only contain the fully public
-  posts from the forums, i.e. nothing from the Private Backers Forum or
-  the Alpha Backers Forum.  Also you'll see <i>all Frontier Developments
-  forum posts, not just those relating to Elite: Dangerous.</i>
-   <br/>
-   <br/>
-   <b>Caveat 2</b> - Each post in this feed will be as it is seen on the
-   appropriate member profile page's "Activity List".  That means you'll
-   only ever see the new text (only a portion of it for longer posts),
-   and never any quoted text.  To gather the quoted text and/or full
-   posts would take an extra page load per item which would add to the
-   load that the scraper causes on the forum.  I already go to some
-   lengths to lighten the impact the scraper has on the forums,
-   especially during those times the forums are under high load, and
-   wouldn't want to upset the moderators by causing more of an issue.
-  </p>
-  <hr/>
-  <h2>The Search Box</h2>
-   <form id="form_precis_search" method="post" enctype="multipart/form-data" action="search.pl">
-    <table>
-     <tr>
-      <td>Search Text</td>
-      <td><input type="text" class="ed_input" id="search_text" name="search_text" size="60"/></td>
-     </tr>
-     <tr>
-      <td colspan="2">
-       <input type="submit" id="submit_search" name="Search" value="Search" />
-      </td>
-     </tr>
-    </table>
-   </form>
-  <hr/>
-  <h2>
-   Who are you?
-  </h2>
-  <p>
-  I go by the name 'Athanasius' online, and indeed I'm 'Cmdr Athanasius'
-  in Elite: Dangerous.  You'll also find me as 'Athan' on <a
-  href="https://www.quakenet.org/">QuakeNet</a>'s
-  <a href="http://webchat.quakenet.org/?channels=elite-dangerous&uio=d4">#elite-dangerous</a>
-  and on the <a
-  href="http://forums.frontier.co.uk/member.php?u=28846">Frontier
-  Forums</a>.
-  </p>
- <hr/>
-  <h1>
-   News
-  </h1>
-  <p><u>2015-06-12 16:04 BST</u></br>
-  </p>
- </body>
+forums are especially busy.  Thus there's no point polling this feed
+more often than every 5 minutes.  Also the output contains the last 7 days
+worth of posts, so if you check the feed any less frequently than that
+you will miss posts.
+    </p>
+    <p>
+      <b>Caveat 1</b> - This feed will only contain the fully public
+posts from the forums, i.e. nothing from the Private Backers Forum or
+the Alpha Backers Forum.  Also you'll see <i>all Frontier Developments
+forum posts, not just those relating to Elite: Dangerous.</i>
+      <br/>
+      <br/>
+      <b>Caveat 2</b> - Each post in this feed will be as it is seen on the
+appropriate member profile page's "Activity List".  That means you'll
+only ever see the new text (only a portion of it for longer posts),
+and never any quoted text.  To gather the quoted text and/or full
+posts would take an extra page load per item which would add to the
+load that the scraper causes on the forum.  I already go to some
+lengths to lighten the impact the scraper has on the forums,
+especially during those times the forums are under high load, and
+wouldn't want to upset the moderators by causing more of an issue.
+    </p>
+    <hr/>
+    <h2>The Search Box</h2>
+    <form id="form_precis_search" method="post" enctype="multipart/form-data" action="search.pl">
+      <table class="ed_form_table">
+        <tr>
+          <td>Search Text</td>
+          <td><input type="text" class="ed_text_entry" id="search_text" name="search_text" size="60"/></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="submit" class="form_submit" id="submit_search" name="Search" value="Search" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    <div id="results">
+      <table class="results">
+        <tbody id="results_output">
+          <tr>
+            <th class="results_info_label result_rank" width="5%">Rank</th>
+            <th class="results_info_label result_datestamp" width="10%">Date/time</th>
+            <th class="results_info_label result_thread" width="15%">Thread (forum)</th>
+            <th class="results_info_label result_who" width="10%">Poster</th>
+            <th class="results_info_label result_precis" width="35"%>Precis</th>
+            <th class="results_info_label result_matches" width="25%">Matches</th>
+          </tr>
+          <tr class="result_row" id="result_X">
+            <td class="result_rank"></td>
+            <td class="result_datestamp"></td>
+            <td class="result_thread"></td>
+            <td class="result_who"></td>
+            <td class="result_precis"></td>
+            <td class="result_matches"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr/>
+    <h2>
+      Who are you?
+    </h2>
+    <p>
+      I go by the name 'Athanasius' online, and indeed I'm 'Cmdr Athanasius'
+in Elite: Dangerous.  You'll also find me as 'Athan' on <a
+href="https://www.quakenet.org/">QuakeNet</a>'s
+<a href="http://webchat.quakenet.org/?channels=elite-dangerous&uio=d4">#elite-dangerous</a>
+and on the <a href="http://forums.frontier.co.uk/member.php?u=28846">Frontier
+Forums</a>.
+    </p>
+    <hr/>
+    <h1>
+      News
+    </h1>
+    <p><u>2015-06-12 16:04 BST</u></br>
+    </p>
+  </body>
 </html>
