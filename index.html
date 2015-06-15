@@ -3,10 +3,19 @@
  -->
 <html lang="en">
   <head>
-    <title>Elite: Dangerous - Unofficial Dev Forum Posts Search, by Athanasius</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="fd-dev-rss-search.js"></script>
+
     <link rel="alternate" type="application/rss+xml" title="Elite: Dangerous Dev Posts" href="http://www.miggy.org/games/elite-dangerous/devtracker/ed-dev-posts.rss" />
 
     <link href="style.css" rel="stylesheet" type="text/css"/>
+    <title>Elite: Dangerous - Unofficial Dev Forum Posts Search, by Athanasius</title>
+
   </head>
   <body>
     <h2>
@@ -56,7 +65,7 @@ wouldn't want to upset the moderators by causing more of an issue.
     </p>
     <hr/>
     <h2>The Search Box</h2>
-    <form id="form_precis_search" method="post" enctype="multipart/form-data" action="search.pl">
+    <form id="form_precis_search" action="">
       <table class="ed_form_table">
         <tr>
           <td>Search Text</td>
@@ -81,15 +90,17 @@ wouldn't want to upset the moderators by causing more of an issue.
             <th class="results_info_label result_matches" width="25%">Matches</th>
           </tr>
           <tr class="result_row" id="result_X">
-            <td class="result_rank"></td>
-            <td class="result_datestamp"></td>
-            <td class="result_thread"></td>
-            <td class="result_who"></td>
-            <td class="result_precis"></td>
-            <td class="result_matches"></td>
+            <td class="results_info_item result_rank"></td>
+            <td class="results_info_item result_datestamp"></td>
+            <td class="results_info_item result_thread"></td>
+            <td class="results_info_item result_who"></td>
+            <td class="results_info_item result_precis"></td>
+            <td class="results_info_item result_matches"></td>
           </tr>
         </tbody>
       </table>
+      <div class="results" id="status">
+      </div>
     </div>
     <hr/>
     <h2>
