@@ -108,7 +108,13 @@ my %developers = (
   81888 => 'Daniel G', # Frontier QA Team
   82776 => 'Frontier QA',
   84886 => 'Frontier Moderation Team', # Global Moderator
-  93489 => 'SkyCline' # Test Account: Brett C So Dangerous, it's Fluffy.
+  93489 => 'SkyCline', # Test Account: Brett C So Dangerous, it's Fluffy.
+  94839 => 'QA-Donny', # Frontier QA Team
+  94841 => 'QA-Jonny', # Frontier QA Team
+  94842 => 'QA-Kae', # Frontier QA Team
+  95307 => 'juanpablosans', # Localisation
+  95888 => 'CMDR Vanguard', # Customer Support
+  96285 => 'NotMatt' # Figment of your imagination
 );
 
 ###########################################################################
