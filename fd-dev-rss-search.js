@@ -57,7 +57,7 @@ function onSearchError(jqXHR, textStatus, errorThrown) {
 }
 
 function onSearchResults(data) {
-  console.log('onSearchResults: data = %o', data);
+  //console.log('onSearchResults: data = %o', data);
   performSearch_inprogress = false;
   $(".results#status").text("");
 
@@ -70,13 +70,13 @@ function onSearchResults(data) {
 }
 
 function displaySearchResults(data) {
-  console.log('displaySearchResults: For array %o', data.results);
+  //console.log('displaySearchResults: For array %o', data.results);
   var after;
 
   for (r = 0; r < data.results.length ; r++) {
     var new_r = $("#result_X.result_row").clone();
     new_r.attr("id", 'result_' + r);
-    console.log('displaySearchResults: cloned search result %o', new_r);
+    //console.log('displaySearchResults: cloned search result %o', new_r);
     if (r == 0) {
       after = $("#results_output").find("#result_X");
     }
@@ -91,7 +91,8 @@ function displaySearchResults(data) {
     );
     new_r_url.append(' (' + data.results[r].forum + ')');
     new_r.find(".results_info_item.result_who").text(data.results[r].who);
-    new_r.find(".results_info_item.result_precis").text(data.results[r].precis);
+    var precis = data.results[r].precis.replace(new RegExp('\n', 'g'), '<br/>');
+    new_r.find(".results_info_item.result_precis").html(precis);
     new_r.insertAfter(after);
     after = new_r;
   }
