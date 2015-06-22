@@ -114,7 +114,8 @@ my %developers = (
   94842 => 'QA-Kae', # Frontier QA Team
   95307 => 'juanpablosans', # Localisation
   95888 => 'CMDR Vanguard', # Customer Support
-  96285 => 'NotMatt' # Figment of your imagination
+  96285 => 'NotMatt', # Figment of your imagination
+  97768 => 'Zac Antonaci' # Head of Community Management
 );
 
 ###########################################################################
