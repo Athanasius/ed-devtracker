@@ -44,6 +44,7 @@ my %developers = (
   7 => 'David Braben',
 	8 => 'Colin Davis',
 # 13 => 'Natalie Amos',
+  52 => 'BrettC', # Community Assistant
 # 119 => 'Sam Denney',
 	1110 => 'Stefan Mars',
 # 1388 => 'Kyle Rowley',
