@@ -117,6 +117,21 @@ my %developers = (
   95888 => 'CMDR Vanguard', # Customer Support
   96285 => 'NotMatt', # Figment of your imagination
   97768 => 'Zac Antonaci' # Head of Community Management
+#  97918 => 'Support-Black Arrow', # Customer Support Manager
+#  97972 => 'Support-Sticks', # Customer Support
+#  97973 => 'Support-Falcon', # Customer Support
+#  97974 => 'Support-Taurus', # Customer Support
+#  97975 => 'Support-Proton', # Customer Support
+#  97976 => 'Support-Kosmos', # Customer Support
+#  97977 => 'Support-Vanguard', # Customer Support
+#  97978 => 'Support-Saturn', # Customer Support
+#  97979 => 'Support-Delta', # Customer Support
+#  97980 => 'Support-Atom', # Customer Support
+#  97981 => 'Support-Titan', # Customer Support
+#  97982 => 'Support-Ares', # Customer Support
+#  97983 => 'Support-Vega', # Customer Support
+#  97984 => 'Support-Miu', # Customer Support
+#  98489 => 'FDTest1', # Administrator
 );
 
 ###########################################################################
