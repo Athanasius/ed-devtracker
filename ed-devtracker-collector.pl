@@ -116,7 +116,7 @@ my %developers = (
   95307 => 'juanpablosans', # Localisation
   95888 => 'CMDR Vanguard', # Customer Support
   96285 => 'NotMatt', # Figment of your imagination
-  97768 => 'Zac Antonaci' # Head of Community Management
+  97768 => 'Zac Antonaci', # Head of Community Management
 #  97918 => 'Support-Black Arrow', # Customer Support Manager
 #  97972 => 'Support-Sticks', # Customer Support
 #  97973 => 'Support-Falcon', # Customer Support
@@ -132,6 +132,7 @@ my %developers = (
 #  97983 => 'Support-Vega', # Customer Support
 #  97984 => 'Support-Miu', # Customer Support
 #  98489 => 'FDTest1', # Administrator
+  102125 => 'Dav Stott' # 'Mostly Harmless' (Server Dev)
 );
 
 ###########################################################################
