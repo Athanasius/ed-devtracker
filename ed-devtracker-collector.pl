@@ -106,6 +106,7 @@ my %developers = (
 # 71537 => 'eft_recoil_org', # Friendly Spider/Scraper Bot
 #  74198 => 'GalNet News', # GalNet News Transmissions are sponsored in part by the Bank of Zaonce.  Trust the Bank of Zaonce with your hard-earned credits. 
   74985 => 'GuyV', #FDEV
+  78894 => 'Laura Massey', # 'Mostly Harmless' QA Tester <https://forums.frontier.co.uk/showthread.php?t=176323>
   81888 => 'Daniel G', # Frontier QA Team
   82776 => 'Frontier QA',
   84886 => 'Frontier Moderation Team', # Global Moderator
