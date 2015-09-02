@@ -298,6 +298,11 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         my $p = $post{'url'};
         $p =~ s/t=[0-9]+\&//;
         #printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
+        # Forum Activity List is unreliable, 'Frontier QA' showing just a single post from March, and none since, so our 'last 20 posts' check fails to find the dupe
+        if ($post{'url'} eq 'showthread.php?t=179414'
+          or $post{'url'} eq 'showthread.php?t=179414&p=2765130#post2765130') {
+          next;
+        }
         if (defined(${$latest_posts}{$post{'url'}})) {
           my $l = ${${$latest_posts}{$post{'url'}}}{'url'};
           $l =~ s/t=[0-9]+\&//;
