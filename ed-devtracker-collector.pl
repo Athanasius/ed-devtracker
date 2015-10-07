@@ -133,7 +133,8 @@ my %developers = (
 #  97983 => 'Support-Vega', # Customer Support
 #  97984 => 'Support-Miu', # Customer Support
 #  98489 => 'FDTest1', # Administrator
-  102125 => 'Dav Stott' # 'Mostly Harmless' (Server Dev)
+  102125 => 'Dav Stott', # 'Mostly Harmless' (Server Dev)
+  106358 => 'Dale Emasiri' # Social Media Manager
 );
 
 ###########################################################################
