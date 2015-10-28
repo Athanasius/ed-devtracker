@@ -137,7 +137,8 @@ my %developers = (
   100780 => 'Ian Dingwall', # Senior Designer
   101652 => 'James Stimpson', # Senior Designer Elite: Dangerous
   102125 => 'Dav Stott', # Senior Server Developer
-  106358 => 'Dale Emasiri' # Social Media Manager
+  106358 => 'Dale Emasiri', # Social Media Manager
+  108846 => 'Steve Kirby' # Lead Games Designer
 );
 
 ###########################################################################
