@@ -155,3 +155,5 @@ if (keys(%titles) > 0) {
     print $titles{$t}, ": ", $t, "\n";
   }
 }
+
+print "Now go post on the following to let people know you're not dead - https://forums.frontier.co.uk/showthread.php?t=52253\n";
