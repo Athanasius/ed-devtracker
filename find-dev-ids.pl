@@ -21,8 +21,8 @@ $ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, igno
 # First let's make sure we're logged in.
 ###########################################################################
 my $login_url = 'https://forums.frontier.co.uk/login.php?do=login';
-my $login_user = 'AthanRSS';
-my $vb_login_password = 'SDq0lnWbcaDnoNKk';
+my $login_user = $config->getconf('forum_user');
+my $vb_login_password = $config->getconf('forum_password');
 my $vb_login_md5password = md5_hex($vb_login_password);
 my $req = HTTP::Request->new('POST', $login_url);
 $req->header('Origin' => 'https://forums.frontier.co.uk');
@@ -35,7 +35,6 @@ $req->content(
   . "&vb_login_md5password_utf=" . $vb_login_md5password
 );
 #print STDERR $req->content, "\n";
-# [truncated] vb_login_username=AthanRSS&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=1414178470-60c7e8aa19051820a82e27d23d96f584eacc17e3&do=login&vb_login_md5password=d79cdd2e982bcac4944f3d97031c1fa5&vb_login_md5passw
 #exit(0);
 my $res = $ua->request($req);
 if (! $res->is_success) {

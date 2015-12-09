@@ -159,7 +159,6 @@ $req->content(
   . "&vb_login_md5password_utf=" . $vb_login_md5password
 );
 #print STDERR $req->content, "\n";
-# [truncated] vb_login_username=AthanRSS&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=1414178470-60c7e8aa19051820a82e27d23d96f584eacc17e3&do=login&vb_login_md5password=d79cdd2e982bcac4944f3d97031c1fa5&vb_login_md5passw
 #exit(0);
 my $res = $ua->request($req);
 if (! $res->is_success) {
