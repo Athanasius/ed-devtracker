@@ -145,8 +145,8 @@ my %developers = (
 # First let's make sure we're logged in.
 ###########################################################################
 my $login_url = 'https://forums.frontier.co.uk/login.php?do=login';
-my $login_user = 'AthanRSS';
-my $vb_login_password = 'SDq0lnWbcaDnoNKk';
+my $login_user = $config->getconf('forum_user');
+my $vb_login_password = $config->getconf('forum_password');
 my $vb_login_md5password = md5_hex($vb_login_password);
 my $req = HTTP::Request->new('POST', $login_url);
 $req->header('Origin' => 'http://forums.frontier.co.uk');

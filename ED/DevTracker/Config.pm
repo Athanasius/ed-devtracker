@@ -11,7 +11,9 @@ our %config = (
 	db_user => '',
 	db_password => '',
 	self_url => '',
-	sleep_after => 300
+	sleep_after => 300,
+	forum_user => '',
+	forum_password => ''
 );
 
 sub new {
@@ -41,6 +43,10 @@ sub new {
 			$config{'self_url'} = $1;
 		} elsif (/^sleep_after:\s+([0-9]+)$/i) {
 			$config{'sleep_after'} = $1;
+		} elsif (/^forum_user:\s+(\w+)$/i) {
+			$config{'forum_user'} = $1;
+		} elsif (/^forum_password:\s+(.+)$/i) {
+			$config{'forum_password'} = $1;
 		} else {
 			printf STDERR "Unknown (or badly formatted) field in config file '%s', line %d : %s\n", $file, $line, $_;
 		}
