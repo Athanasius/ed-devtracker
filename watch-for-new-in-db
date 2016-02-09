@@ -1,0 +1,17 @@
+#!/bin/bash
+# vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
+
+LASTID=0
+
+while :;
+do
+  DATA=`psql -h db.fysh.org -U ed_devtracker_crawl -A -q -t -c 'SELECT id,datestamp,who,threadtitle,threadurl FROM posts ORDER BY id DESC LIMIT 1;' ed_devtracker`
+  NEWID=`echo "${DATA}" | awk -F\| '{print $1;}'`
+  if [ "${NEWID}" -ne "${LASTID}" ];
+  then
+    date
+    echo "${DATA}"
+    LASTID=${NEWID}
+  fi
+  sleep 300
+done
