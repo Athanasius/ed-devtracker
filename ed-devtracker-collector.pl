@@ -352,6 +352,11 @@ if ($new_posts_total > 0) {
     print STDERR "Couldn't open temporary file '", $tmp_name, "': ", $!, "\n";
     exit(2);
   }
+  # Turn on auto-flush, to be SURE those changes are on disk by the time
+  # anything else reads them.
+  my $old_fh = select(TMP);
+  $| = 1;
+  select($old_fh);
   if (!print TMP $rss->output) {
     print STDERR "Error writing to tmp RSS file '", $tmp_name, "': ", $!, "\n";#
     exit(3);
