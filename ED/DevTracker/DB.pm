@@ -50,6 +50,7 @@ sub insert_post {
 #	          'whourl' => 'member.php?u=2'
 #	        };
 	my $sth = $dbh->prepare('INSERT INTO posts VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)');
+	#printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'};
 	my $rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'});
 	if (! $rv) {
 		printf STDERR "Error inserting a post\n";

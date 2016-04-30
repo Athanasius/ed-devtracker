@@ -348,7 +348,7 @@ if ($new_posts_total > 0) {
     #print STDERR "Generation good\n";
   }
   my $tmp_name = $rss_filename . ".tmp";
-  if (!open(TMP, ">$tmp_name")) {
+  if (!open(TMP, ">:encoding(utf-8)", "$tmp_name")) {
     print STDERR "Couldn't open temporary file '", $tmp_name, "': ", $!, "\n";
     exit(2);
   }
