@@ -18,11 +18,11 @@ if (!defined($config)) {
 my $db = new ED::DevTracker::DB('config' => $config);
 my $cgi = CGI->new;
 print $cgi->header(-type => "application/json", -charset => "utf-8");
-if (!defined($cgi->param('search_text'))) {
+if (!defined($cgi->multi_param('search_text'))) {
   failure("No search text supplied");
 }
 
-my $results = $db->precis_ts_search($cgi->param('search_text'));
+my $results = $db->precis_ts_search($cgi->multi_param('search_text'));
 if (!defined($results)) {
   failure("No results!");
 }
