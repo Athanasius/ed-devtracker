@@ -2,6 +2,7 @@
 # vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
 
 use strict;
+use Encode;
 use Data::Dumper;
 
 use LWP;
@@ -206,9 +207,9 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
     #printf STDERR "Detected non ISO-8859-1 characters!\n";
     #exit (1);
-	  $tree->parse($res->decoded_content('charset' => 'windows-1252'));
+	  $tree->parse(decode("utf8", encode("utf8", $res->decoded_content('charset' => 'windows-1252'))));
   } else {
-	  $tree->parse($res->decoded_content());
+	  $tree->parse(decode("utf8", encode("utf8", $res->decoded_content())));
   }
 	$tree->eof();
   #print STDERR Dumper($tree);
