@@ -111,7 +111,7 @@ sub generate {
 		#printf STDERR "Precis = '%s'\n", $precis;
 		#printf STDERR "Threadtitle = '%s'\n", ${$p}{'threadtitle'};
     $self->{'rss'}->add_item(
-      title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'},
+      title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'} . " (" . ${$p}{'forum'} . ")",
       link  => $self->{'base_url'} . ${$p}{'url'},
       pubDate => $post_date,
       permaLink  => $self->{'base_url'} . ${$p}{'url'},
