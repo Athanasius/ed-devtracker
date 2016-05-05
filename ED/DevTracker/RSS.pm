@@ -140,6 +140,7 @@ sub header {
 sub print {
 	my $self = shift;
 
+	binmode STDOUT, ":encoding(UTF-8)";	
 	print $self->header;
 	print $self->output;
 }
