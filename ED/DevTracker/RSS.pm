@@ -75,7 +75,7 @@ sub generate {
 	$self->{'rss'}->add_module(prefix => 'atom', uri => 'http://www.w3.org/2005/Atom');
   $self->{'rss'}->channel(
     title           => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
-    link            => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
+    link            => 'https://miggy.org/games/elite-dangerous/devposts.html',
     description     => 'Elite: Dangerous Dev Posts (Unofficial Tracker)',
     language        => 'en',
 		# rating
@@ -87,12 +87,12 @@ sub generate {
     managingEditor  => 'edrss@miggy.org (Athanasius)',
     webMaster       => 'edrss@miggy.org (Athanasius)',
 		atom						=> { 'link' => { 'href' => $self->{'self_url'}, 'rel' => 'self', 'type' => 'application/rss+xml' } }
-	#$output =~ s/<language>en<\/language>/<language>en<\/language>\n<atom:link href="http:\/\/www\.miggy\.org\/games\/elite-dangerous\/devtracker\/ed-dev-posts\.rss" rel="self" type="application\/rss+xml" \/>/;
+	#$output =~ s/<language>en<\/language>/<language>en<\/language>\n<atom:link href="https:\/\/miggy\.org\/games\/elite-dangerous\/devtracker\/ed-dev-posts\.rss" rel="self" type="application\/rss+xml" \/>/;
   );
   $self->{'rss'}->image(
     title => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
-    link  => 'http://www.miggy.org/games/elite-dangerous/devposts.html',
-    url   => 'http://www.miggy.org/games/elite-dangerous/pics/elite-dangerous-favicon.png',
+    link  => 'https://miggy.org/games/elite-dangerous/devposts.html',
+    url   => 'https://miggy.org/games/elite-dangerous/pics/elite-dangerous-favicon.png',
     description => 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
   );
   
