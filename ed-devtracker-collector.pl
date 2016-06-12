@@ -175,6 +175,7 @@ if (! $res->is_success) {
 my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts_total = 0;
 foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
+  my $err;
   #print STDERR "Scraping id ", $whoid, "\n";
 #  my $bail = 2;
 #  if ($whoid > $bail) {
@@ -247,8 +248,10 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         _tag => 'span',
         class => 'time'
       );
+      # <span class="date">Today,&nbsp;<span class="time">2:00 PM</span> · 4 replies and 284 views.</span>
       $post{'datestampstr'} = $span_date->as_text;
       $post{'datestampstr'} =~ s/\xA0/ /g;
+      $post{'datestampstr'} =~ s/ . [0-9]+ replies and [0-9]+ views\.//;
       #print STDERR "Date = '", $post{'datestampstr'}, "'\n";
       my $timestr = $span_time->as_text;
       #print STDERR "Time = '", $timestr, "'\n";
@@ -257,11 +260,13 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	      'DateFormat' => 'GB',
 	      'tz' => 'UTC'
 	    );
-	    my $err = $date->parse($post{'datestampstr'});
+	    $err = $date->parse($post{'datestampstr'});
 	    if (!$err) {
 	      $post{'datestamp'} = $date->secs_since_1970_GMT();
 	      #print STDERR "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
-	    }
+	    } else {
+        printf(STDERR "Problem parsing $post{'datestampstr'}, from $whoid\n");
+      }
 	  }
 	  # thread title and URL
 	  my $div_title = $content->look_down(
@@ -325,6 +330,9 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	  #print STDERR Dumper(\%post), "\n";
     push(@new_posts, \%post);
     $new_posts_total++;
+#    if ($err) {
+#      die("Failed post: $post{'url'}\n");
+#    }
 	}
   # We're popping off an array so as to reverse the order we found them
   # else they'll go in the DB in the wrong order, particularly important
