@@ -342,7 +342,9 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   my $p = pop(@new_posts);
   while (defined($p)) { 
 	  #print STDERR Dumper($p), "\n";
-	  $db->insert_post($p);
+    if (${$p}{'datestamp'}) {
+	    $db->insert_post($p);
+    }
     $p = pop(@new_posts);
   } 
   #print STDERR "Adding posts for ", $whoid, " DONE\n";
