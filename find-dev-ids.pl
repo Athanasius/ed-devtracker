@@ -63,50 +63,54 @@ my %uninteresting = (
   'Moderator' => 1,
   'International Moderator' => 1,
   'Former Frontier Employee' => 1,
-  'Banned.User broke the forum rules in a bad way...' => 1
+  'Banned.User broke the forum rules in a bad way...' => 1,
+  'Banned.' => 1,
+  'Customer Support' => 1
 );
 
-$req = HTTP::Request->new('GET', 'http://forums.frontier.co.uk/index.php');
-$res = $ua->request($req);
-if (! $res->is_success) {
-  print STDERR "\nFailed to retrieve forum front page\n";
-  exit(1);
-}
-my $tree = HTML::TreeBuilder->new;
-$tree->parse($res->decoded_content);
-$tree->eof();
-$tree->elementify();
-my $wgo = $tree->look_down(_tag => 'div', id => 'wgo');
-if (!$wgo) {
-  print STDERR "\nCouldn't find the div 'wgo' on front page\n";
-  exit(2);
-}
-my $wgo_stats = $wgo->look_down(_tag => 'div', id => 'wgo_stats');
-if (!defined($wgo_stats)) {
-  print STDERR "\nCouldn't find the div 'wgo_stats'\n";
-  exit(3);
-}
-my @p = $wgo_stats->look_down(_tag => 'p');
-if (!defined($p[0])) {
-  print STDERR "\nCouldn't find the the first 'p' under 'wgo_stats'\n";
-  exit(4);
-}
-my $a = $p[0]->look_down(_tag => 'a');
-my $latest_url = $a->attr('href');
-$latest_url =~ s/\&s=[0-9a-f]+//;
-if ($latest_url !~ /^member\.php\?u=(?<uid>[0-9]+)$/) {
-  printf STDERR "\nCouldn't find ID in latest member URL: '%s'\n";
-  exit(5);
-}
-my $latest_id = $+{'uid'};
-undef $tree;
+### XXX $req = HTTP::Request->new('GET', 'http://forums.frontier.co.uk/index.php');
+### XXX $res = $ua->request($req);
+### XXX if (! $res->is_success) {
+### XXX   print STDERR "\nFailed to retrieve forum front page\n";
+### XXX   exit(1);
+### XXX }
+### XXX my $tree = HTML::TreeBuilder->new;
+### XXX $tree->parse($res->decoded_content);
+### XXX $tree->eof();
+### XXX $tree->elementify();
+### XXX my $wgo = $tree->look_down(_tag => 'div', id => 'wgo');
+### XXX if (!$wgo) {
+### XXX   print STDERR "\nCouldn't find the div 'wgo' on front page\n";
+### XXX   exit(2);
+### XXX }
+### XXX my $wgo_stats = $wgo->look_down(_tag => 'div', id => 'wgo_stats');
+### XXX if (!defined($wgo_stats)) {
+### XXX   print STDERR "\nCouldn't find the div 'wgo_stats'\n";
+### XXX   exit(3);
+### XXX }
+### XXX my @p = $wgo_stats->look_down(_tag => 'p');
+### XXX if (!defined($p[0])) {
+### XXX   print STDERR "\nCouldn't find the the first 'p' under 'wgo_stats'\n";
+### XXX   exit(4);
+### XXX }
+### XXX my $a = $p[0]->look_down(_tag => 'a');
+### XXX my $latest_url = $a->attr('href');
+### XXX $latest_url =~ s/\&s=[0-9a-f]+//;
+### XXX if ($latest_url !~ /^member\.php\?u=(?<uid>[0-9]+)$/) {
+### XXX   printf STDERR "\nCouldn't find ID in latest member URL: '%s'\n";
+### XXX   exit(5);
+### XXX }
+### XXX my $latest_id = $+{'uid'};
+### XXX undef $tree;
+my $latest_id = 137770;
+my $tree;
 
 #print "Latest member: ", $latest_id, "\n";
 #exit(0);
 
 select STDOUT;
 $| = 1;
-my $id = 123013; # STARTID LASTID FIRSTID (No, I can never remember what to search on to get to this line).
+my $id = 137770; # STARTID LASTID FIRSTID (No, I can never remember what to search on to get to this line).
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";
