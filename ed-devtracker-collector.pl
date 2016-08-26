@@ -304,11 +304,14 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         $post{'url'} = $a->attr('href');
         $post{'urltext'} = $a->as_text;
         #printf STDERR "Thread '%s' at '%s' new '%s'\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
+        # Newer: showthread.php/283153-The-Galaxy-Is-its-size-now-considered-to-be-a-barrier-to-gameplay-by-the-Developers?p=4414769#post4414769
         # New: showthread.php?t=51464&p=902587#post902587
         # Old: showthread.php?p=902218#post902218
         my $p = $post{'url'};
         $p =~ s/t=[0-9]+\&//;
-        #printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
+        # Strip the embedded topic title
+        $p =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
+        #printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'threadurl'}, $p;
         # Forum Activity List is unreliable, 'Frontier QA' showing just a single post from March, and none since, so our 'last 20 posts' check fails to find the dupe
         if ($post{'url'} eq 'showthread.php?t=179414'
           or $post{'url'} eq 'showthread.php?t=179414&p=2765130#post2765130') {
@@ -317,9 +320,10 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         if (defined(${$latest_posts}{$post{'url'}})) {
           my $l = ${${$latest_posts}{$post{'url'}}}{'url'};
           $l =~ s/t=[0-9]+\&//;
-          #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'url'}}}{'threadurl'}, ${${$latest_posts}{$post{'url'}}}{'url'}, $post{'threadurl'}, $post{'url'};
+          $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
+          #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'url'}}}{'threadurl'}, $l, $post{'threadurl'}, $p;
           if ($l eq $p) {
-            #print STDERR "We already knew this post, bailing on: ", $post{'url'}, "\n";
+            #print STDERR "We already knew this post, bailing on: ", $p, "\n";
             last;
           }
         }
