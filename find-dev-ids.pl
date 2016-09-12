@@ -68,57 +68,37 @@ my %uninteresting = (
   'Customer Support' => 1
 );
 
-### XXX $req = HTTP::Request->new('GET', 'http://forums.frontier.co.uk/index.php');
-### XXX $res = $ua->request($req);
-### XXX if (! $res->is_success) {
-### XXX   print STDERR "\nFailed to retrieve forum front page\n";
-### XXX   exit(1);
-### XXX }
-### XXX my $tree = HTML::TreeBuilder->new;
-### XXX $tree->parse($res->decoded_content);
-### XXX $tree->eof();
-### XXX $tree->elementify();
-### XXX my $wgo = $tree->look_down(_tag => 'div', id => 'wgo');
-### XXX if (!$wgo) {
-### XXX   print STDERR "\nCouldn't find the div 'wgo' on front page\n";
-### XXX   exit(2);
-### XXX }
-### XXX my $wgo_stats = $wgo->look_down(_tag => 'div', id => 'wgo_stats');
-### XXX if (!defined($wgo_stats)) {
-### XXX   print STDERR "\nCouldn't find the div 'wgo_stats'\n";
-### XXX   exit(3);
-### XXX }
-### XXX my @p = $wgo_stats->look_down(_tag => 'p');
-### XXX if (!defined($p[0])) {
-### XXX   print STDERR "\nCouldn't find the the first 'p' under 'wgo_stats'\n";
-### XXX   exit(4);
-### XXX }
-### XXX my $a = $p[0]->look_down(_tag => 'a');
-### XXX my $latest_url = $a->attr('href');
-### XXX $latest_url =~ s/\&s=[0-9a-f]+//;
-### XXX if ($latest_url !~ /^member\.php\?u=(?<uid>[0-9]+)$/) {
-### XXX   printf STDERR "\nCouldn't find ID in latest member URL: '%s'\n";
-### XXX   exit(5);
-### XXX }
-### XXX my $latest_id = $+{'uid'};
-### XXX undef $tree;
-## https://forums.frontier.co.uk/memberlist.php?order=desc&sort=joindate&pp=1
-## <table id="memberlist_table" width="100%">
-##        <tbody><tr class="columnsort">
-##            <th><a class="blocksubhead" href="memberlist.php?order=asc&amp;sort=username&amp;pp=1">User Name </a></th>
-##            <th><a class="blocksubhead" href="memberlist.php?order=asc&amp;sort=joindate&amp;pp=1">Join Date <img class="sortarrow" src="https://forums-cdn.frontier.co.uk/images/frontier/buttons/sortarrow-asc.png" alt="Reverse Sort Order" border="0" title="Reverse Sort Order"></a></th>
-##            <th><a class="blocksubhead" href="memberlist.php?order=asc&amp;sort=posts&amp;pp=1">Posts </a></th>
-##        </tr>
-##      <tr>
-##        <td class="alt1 username"><a href="member.php/141829-Arkanon" class="username">Arkanon</a> <span class="usertitle">Mostly Harmless</span></td>
-##                                                                             ^^^^^^^^
-##        <td class="joindate">Today</td>
-##        <td class="postcount">2</td>
-##      </tr>
-##        </tbody></table>
-my $latest_id = 141829;
-my $tree;
+$req = HTTP::Request->new('GET', 'https://forums.frontier.co.uk/memberlist.php?order=desc&sort=joindate&pp=1');
+$res = $ua->request($req);
+if (! $res->is_success) {
+  print STDERR "\nFailed to retrieve memberlist\n";
+  exit(1);
+}
+my $tree = HTML::TreeBuilder->new;
+$tree->parse($res->decoded_content);
+$tree->eof();
+$tree->elementify();
+my $memberlist_table = $tree->look_down(_tag => 'table', id => 'memberlist_table');
+if (!$memberlist_table) {
+  print STDERR "\nCouldn't find the table 'memberlist_table' on memberlist\n";
+  exit(2);
+}
+my $member_a = $memberlist_table->look_down(_tag => 'a', class => 'username');
+if (!defined($member_a)) {
+  print STDERR "\nCouldn't find the a href class='username'\n";
+  exit(3);
+}
+# <a href="member.php/141829-Arkanon" class="username">Arkanon</a>
+my $latest_url = $member_a->attr('href');
+if ($latest_url !~ /member\.php\/(?<uid>[0-9]+)-/) {
+  printf STDERR "\nCouldn't find ID in latest member URL: '%s'\n";
+  exit(5);
+}
+my $latest_id = $+{'uid'};
+undef $tree;
 
+#my $latest_id = 141829;
+#my $tree;
 #print "Latest member: ", $latest_id, "\n";
 #exit(0);
 
