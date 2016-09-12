@@ -102,7 +102,21 @@ my %uninteresting = (
 ### XXX }
 ### XXX my $latest_id = $+{'uid'};
 ### XXX undef $tree;
-my $latest_id = 137770;
+## https://forums.frontier.co.uk/memberlist.php?order=desc&sort=joindate&pp=1
+## <table id="memberlist_table" width="100%">
+##        <tbody><tr class="columnsort">
+##            <th><a class="blocksubhead" href="memberlist.php?order=asc&amp;sort=username&amp;pp=1">User Name </a></th>
+##            <th><a class="blocksubhead" href="memberlist.php?order=asc&amp;sort=joindate&amp;pp=1">Join Date <img class="sortarrow" src="https://forums-cdn.frontier.co.uk/images/frontier/buttons/sortarrow-asc.png" alt="Reverse Sort Order" border="0" title="Reverse Sort Order"></a></th>
+##            <th><a class="blocksubhead" href="memberlist.php?order=asc&amp;sort=posts&amp;pp=1">Posts </a></th>
+##        </tr>
+##      <tr>
+##        <td class="alt1 username"><a href="member.php/141829-Arkanon" class="username">Arkanon</a> <span class="usertitle">Mostly Harmless</span></td>
+##                                                                             ^^^^^^^^
+##        <td class="joindate">Today</td>
+##        <td class="postcount">2</td>
+##      </tr>
+##        </tbody></table>
+my $latest_id = 141829;
 my $tree;
 
 #print "Latest member: ", $latest_id, "\n";
