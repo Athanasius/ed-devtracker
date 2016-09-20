@@ -310,16 +310,21 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
         my $p = $post{'url'};
         $p =~ s/t=[0-9]+\&//;
         # Strip the embedded topic title
+        $p =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
         $p =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
         #printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'threadurl'}, $p;
         # Forum Activity List is unreliable, 'Frontier QA' showing just a single post from March, and none since, so our 'last 20 posts' check fails to find the dupe
-        if ($post{'url'} eq 'showthread.php?t=179414'
-          or $post{'url'} eq 'showthread.php?t=179414&p=2765130#post2765130') {
+        if ($p eq 'showthread.php?t=179414'
+          or $p eq 'showthread.php?t=179414&p=2765130#post2765130'
+          or $p eq 'showthread.php/290119'
+          or $p eq 'showthread.php/290119?p=4525010#post4525010'
+          ) {
           next;
         }
         if (defined(${$latest_posts}{$post{'url'}})) {
           my $l = ${${$latest_posts}{$post{'url'}}}{'url'};
           $l =~ s/t=[0-9]+\&//;
+          $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
           $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
           #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'url'}}}{'threadurl'}, $l, $post{'threadurl'}, $p;
           if ($l eq $p) {
