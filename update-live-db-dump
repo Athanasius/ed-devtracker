@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pg_dump --file=live-db.dmp --format=custom --host=db.fysh.org --username=ed_devtracker_crawl --dbname=ed_devtracker

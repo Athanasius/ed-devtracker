@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pg_restore --clean --if-exists --host=db.fysh.org --username=ed_devtracker_crawl_dev --dbname=ed_devtracker_dev live-db.dmp

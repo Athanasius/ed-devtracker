@@ -50,6 +50,7 @@ my %developers = (
 	1110 => 'Stefan Mars',
 # 1388 => 'Kyle Rowley',
 # 1890 => 'Callum Rowley',
+  2000 => 'Drew Wagar', # Book author, and driver of the 'Formidine Rift' mystery
 # 2017 => 'Alistair Lindsay',
 	2323 => 'Carlos Massiah',
 # 2724 => 'Carl Russell',
