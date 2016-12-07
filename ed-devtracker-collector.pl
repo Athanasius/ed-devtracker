@@ -268,7 +268,9 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	    } else {
         printf(STDERR "Problem parsing $post{'datestampstr'}, from $whoid\n");
       }
-	  }
+	  } else {
+      print STDERR "No content (didn't find div->content/hasavatar)\n";
+    }
 	  # thread title and URL
 	  my $div_title = $content->look_down(
       _tag => 'div',
@@ -284,8 +286,12 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	      $post{'threadtitle'} = $a[1]->as_text;
 	      $post{'threadurl'} = $a[1]->attr('href');
         $post{'forum'} = $a[2]->as_text;
-	    }
-	  }
+	    } else {
+        print STDERR "No 'a' under div->title\n";
+      }
+	  } else {
+      print STDERR "No div->title\n";
+    }
 
     my $div_excerpt = $content->look_down(
       _tag => 'div',
@@ -293,6 +299,8 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
     );
     if ($div_excerpt) {
       $post{'precis'} = $div_excerpt->as_text;
+    } else {
+      print STDERR "No precis\n";
     }
 
     my $div_fulllink = $content->look_down(
@@ -330,10 +338,12 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
           #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'url'}}}{'threadurl'}, $l, $post{'threadurl'}, $p;
           if ($l eq $p) {
             #print STDERR "We already knew this post, bailing on: ", $p, "\n";
-            last;
+            next;
           }
         }
       }
+    } else {
+      print STDERR "No div_fulllink\n";
     }
 	
 	  $post{'whoid'} = $whoid;
