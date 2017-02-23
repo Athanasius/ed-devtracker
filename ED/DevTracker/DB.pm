@@ -49,12 +49,33 @@ sub insert_post {
 #	          'url' => 'showthread.php?p=805408#post805408',
 #	          'whourl' => 'member.php?u=2'
 #	        };
-	my $sth = $dbh->prepare('INSERT INTO posts VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)');
-	#printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'};
-	my $rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'});
-	if (! $rv) {
-		printf STDERR "Error inserting a post\n";
+  # Just going to have to do a SELECT first and hope nothing changes in
+  # meantime.  XXX When we're on Postgresql 9.5+ we can use
+  #      INSERT ... ON CONFLICT UPDATE (or ON CONFLICT DO NOTHING)
+	my $sth = $dbh->prepare('SELECT id FROM posts WHERE url = ?');
+	my $rv = $sth->execute(${$post}{'url'});
+	if (!defined($rv)) {
+	# Error, but zero rows would be success
+		printf STDERR "Error checking if a URL already exists in posts table\n";
 		return undef;
+	} elsif ($rv > 0) {
+  # (At least, huh?) one row already exists
+		$sth = $dbh->prepare('UPDATE posts SET datestamp=?,urltext=?,threadurl=?,threadtitle=?,forum=?,whoid=?,who=?,whourl=?,precis=? WHERE url = ?');
+		#printf STDERR "UPDATE posts SET datestamp='%s',urltext='%s',threadurl='%s',threadtitle='%s',forum='%s',whoid='%s',who='%s',whourl='%s',precis='%s' WHERE url = '%s'", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, '<post precis elided>', ${$post}{'url'};
+		$rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'}, ${$post}{'url'});
+		if (! $rv) {
+			printf STDERR "Error updating a post\n";
+			return undef;
+		}
+	} else {
+		$sth = $dbh->prepare('INSERT INTO posts VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?)');
+		printf STDERR "INSERT INTO posts VALUES(DEFAULT,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'};
+		#printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'};
+		$rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'});
+		if (! $rv) {
+			printf STDERR "Error inserting a post\n";
+			return undef;
+		}
 	}
 }
 
