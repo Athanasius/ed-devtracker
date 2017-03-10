@@ -114,7 +114,7 @@ sub generate {
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'} . " (" . ${$p}{'forum'} . ")",
       link  => $self->{'base_url'} . ${$p}{'url'},
       pubDate => $post_date,
-      permaLink  => $self->{'base_url'} . ${$p}{'url'},
+      permaLink  => $self->{'base_url'} . ${$p}{'guid_url'},
       description => "<a href=\"" . $self->{'base_url'} . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $precis . "\n</p>",
       mode => 'append'
     );
