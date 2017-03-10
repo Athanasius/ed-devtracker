@@ -132,7 +132,8 @@ my $row;
 while ($row = $sth->fetchrow_hashref()) {
   my $guid_url = ${$row}{'url'};
   # Strip the embedded topic title
-  $guid_url =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#row[0-9]+)?$/$+{'start'}$+{'end'}/;
+  $guid_url =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
+  $guid_url =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
   printf STDERR "UPDATE posts SET guid_url = '%s' WHERE id = %d'\n", $guid_url, ${$row}{'id'};
   $rv = $usth->execute($guid_url, ${$row}{'id'});
   if (! $rv) {
