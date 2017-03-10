@@ -330,8 +330,8 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
           ) {
           next;
         }
-        if (defined(${$latest_posts}{$post{'url'}})) {
-          my $l = ${${$latest_posts}{$post{'url'}}}{'url'};
+        if (defined(${$latest_posts}{$post{'guid_url'}})) {
+          my $l = ${${$latest_posts}{$post{'guid_url'}}}{'guid_url'};
           $l =~ s/t=[0-9]+\&//;
           $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
           $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
@@ -339,6 +339,8 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
           if ($l eq $post{'guid_url'}) {
             #print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
             next;
+          } else {
+            #print STDERR "Post is new: ", $post{'guid_url'}, "\n";
           }
         }
       }
@@ -350,6 +352,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	  #print STDERR Dumper(\%post), "\n";
     push(@new_posts, \%post);
     $new_posts_total++;
+#    printf STDERR "new_posts_total now: %d\n", $new_posts_total;
 #    if ($err) {
 #      die("Failed post: $post{'url'}\n");
 #    }

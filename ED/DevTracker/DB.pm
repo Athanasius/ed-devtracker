@@ -87,7 +87,7 @@ sub user_latest_known {
 		printf "ED::DevTracker::DB->user_latest_known - Failed to get latest known posts by id", $id, "\n";
 		return undef;
 	}
-	my $rows = $sth->fetchall_hashref('url');
+	my $rows = $sth->fetchall_hashref('guid_url');
 	if (!defined($rows)) {
 		#printf STDERR "ED::DevTracker::DB->user_latest_known - No data from query\n";
 		return undef;
