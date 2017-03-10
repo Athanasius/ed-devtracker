@@ -335,7 +335,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
           $l =~ s/t=[0-9]+\&//;
           $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
           $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
-          #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'url'}}}{'threadurl'}, $l, $post{'threadurl'}, $p;
+          #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'threadurl'}, $l, $post{'threadurl'}, $post{'guid_url'};
           if ($l eq $post{'guid_url'}) {
             #print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
             next;
