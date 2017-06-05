@@ -67,7 +67,8 @@ my %uninteresting = (
   'Banned.' => 1,
   'Customer Support' => 1,
   'Banned / Suspended' => 1,
-  'Guest' => 1
+  'Guest' => 1,
+  'This user was unable to follow the forum rules and ended up banned or suspended! :(' => 1,
 );
 
 $req = HTTP::Request->new('GET', 'https://forums.frontier.co.uk/memberlist.php?order=desc&sort=joindate&pp=1');
@@ -106,7 +107,7 @@ undef $tree;
 
 select STDOUT;
 $| = 1;
-my $id = 154047; # STARTID LASTID FIRSTID (No, I can never remember what to search on to get to this line).
+my $id = 157505; # STARTID LASTID FIRSTID (No, I can never remember what to search on to get to this line).
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
   print STDERR "$id, ";

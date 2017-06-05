@@ -142,7 +142,8 @@ my %developers = (
   106358 => 'Dale Emasiri', # Social Media Manager
   108846 => 'Steve Kirby', # Lead Games Designer
 # 120185 => 'QA-Kit',
-  148080 => 'Dominic Corner' # Programmer (Missions Team)
+  148080 => 'Dominic Corner', # Programmer (Missions Team)
+  157490 => 'Lloyd Morgan-Moore', # Assistant Producer
 );
 
 ###########################################################################
