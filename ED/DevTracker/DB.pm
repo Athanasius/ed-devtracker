@@ -61,7 +61,7 @@ sub insert_post {
 	} elsif ($rv > 0) {
   # (At least, huh?) one row already exists
 		$sth = $dbh->prepare('UPDATE posts SET datestamp=?,urltext=?,threadurl=?,threadtitle=?,forum=?,whoid=?,who=?,whourl=?,precis=? WHERE guid_url = ?');
-		printf STDERR "UPDATE posts SET datestamp='%s',urltext='%s',threadurl='%s',threadtitle='%s',forum='%s',whoid='%s',who='%s',whourl='%s',precis='%s' WHERE guid_url = '%s'", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, '<post precis elided>', ${$post}{'guid_url'};
+		#printf STDERR "UPDATE posts SET datestamp='%s',urltext='%s',threadurl='%s',threadtitle='%s',forum='%s',whoid='%s',who='%s',whourl='%s',precis='%s' WHERE guid_url = '%s'\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, '<post precis elided>', ${$post}{'guid_url'};
 		$rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'}, ${$post}{'guid_url'});
 		if (! $rv) {
 			printf STDERR "Error updating a post\n";
