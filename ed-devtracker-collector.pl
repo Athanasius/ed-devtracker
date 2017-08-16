@@ -29,6 +29,7 @@ my $db = new ED::DevTracker::DB('config' => $config);
 
 # Pretend to be Google Chrome on Linux, Version 38.0.2125.104 (64-bit)
 my $ua = LWP::UserAgent->new('agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36');
+$ua->timeout(10);
 $ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
 
 my $rss_filename = 'ed-dev-posts.rss';
@@ -146,6 +147,7 @@ my %developers = (
   138417 => 'Bo Marit', # Community Manage
   148080 => 'Dominic Corner', # Programmer (Missions Team)
   157490 => 'Lloyd Morgan-Moore', # Assistant Producer
+#  159848 => 'Planet Coaster Moderator',
 );
 
 ###########################################################################
@@ -155,7 +157,7 @@ my $login_url = 'https://forums.frontier.co.uk/login.php?do=login';
 my $login_user = $config->getconf('forum_user');
 my $vb_login_password = $config->getconf('forum_password');
 my $vb_login_md5password = md5_hex($vb_login_password);
-my $req = HTTP::Request->new('POST', $login_url);
+my $req = HTTP::Request->new('POST', $login_url, ['Connection' => 'close']);
 $req->header('Origin' => 'http://forums.frontier.co.uk');
 $req->header('Referer' => 'http://forums.frontier.co.uk/');
 $req->header('Content-Type' => 'application/x-www-form-urlencoded');
@@ -192,7 +194,7 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	  $latest_posts = { 'url' => 'nothing_yet' };
 	}
   #print Dumper($latest_posts);
-	$req = HTTP::Request->new('GET', $member_url . $whoid);
+	$req = HTTP::Request->new('GET', $member_url . $whoid, ['Connection' => 'close']);
 	$res = $ua->request($req);
 	if (! $res->is_success) {
 	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")", $res->code, "(", $res->message, ")\n";
