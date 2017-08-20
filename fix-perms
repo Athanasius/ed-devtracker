@@ -1,0 +1,4 @@
+#!/bin/sh
+
+chmod og+rX .
+chmod -R og+rX *
