@@ -1,3 +1,28 @@
+1) Once we have access use
+https://forums.frontier.co.uk/memberlist.php?order=asc&sort=joindate&pp=100&usergroupid=9
+to spot new dev accounts.
+
+*) 'Click Through' to full post content.
+	Want to do this by viewing literally just the single post if
+	possible.  This may no longer be supported however.
+	Not working:
+		https://forums.frontier.co.uk/showthread.php?action=showpost&postid=5820343
+		showpost.php seems to just be a redirect to showthread.php
+
+So full thread scraping it is:
+	https://forums.frontier.co.uk/showthread.php/372917-Speculation-Open-Beta?p=5854315#post5854315
+	<a name="post5854315" href="showthread.php/372917-Speculation-Open-Beta?p=5854315&amp;viewfull=1#post5854315" class="postcounter">#12</a>
+which is contained fully in:
+	<li class="postbitlegacy postbitim postcontainer old" id="post_5854315" data-post-type="employee">
+
+ALSO, consider trying this, instead of activity lists:
+
+https://aw.my.com/en/forum/search.php?do=finduser&adm=6,21&contenttype=vBForum_Post&showposts=1&forumchoice%5B%5D=23&childforums=1
+
+Note the multiple IDs passed as adm=6,21
+
+https://forums.frontier.co.uk/search.php?do=showspecialz
+
 *) A file lock for runs of the collector, in case it takes longer than
 the cron interval.
 *) 'Everything' into the config file, no hard coded 'config' values.
