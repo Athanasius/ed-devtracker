@@ -91,8 +91,8 @@ my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&ty
 my $new_posts_total = 0;
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
-  print STDERR "Scraping id ", $whoid, "\n";
-  my $bail = 10;
+#  print STDERR "Scraping id ", $whoid, "\n";
+  my $bail = 9999999;
   if ($whoid > $bail) {
     print STDERR "Bailing after id ", $bail, "\n";
     last;
