@@ -47,6 +47,8 @@ sub new {
 			$config{'forum_user'} = $1;
 		} elsif (/^forum_password:\s+(.+)$/i) {
 			$config{'forum_password'} = $1;
+		} elsif (/^memberid_file:\s+(.+)$/i) {
+			$config{'memberid_file'} = $1;
 		} else {
 			printf STDERR "Unknown (or badly formatted) field in config file '%s', line %d : %s\n", $file, $line, $_;
 		}

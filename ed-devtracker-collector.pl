@@ -5,6 +5,7 @@ use strict;
 use Encode;
 use Data::Dumper;
 
+use JSON::PP;
 use LWP;
 use HTTP::Cookies;
 use Digest::MD5 qw(md5_hex);
@@ -39,116 +40,23 @@ if (! -f $rss_filename) {
   printf STDERR "RSS file %s doesn't exist at %s, did you forget to cd before running this script?\n", $rss_filename, $cwd;
   exit(4);
 }
-my %developers = (
-#  1 => 'fdadmin',
-  2 => 'Michael Brookes',
-  6 => 'David Walsh',
-  7 => 'David Braben',
-	8 => 'Colin Davis',
-# 13 => 'Natalie Amos',
-  52 => 'BrettC', # Community Assistant
-# 119 => 'Sam Denney',
-	1110 => 'Stefan Mars',
-# 1388 => 'Kyle Rowley',
-# 1890 => 'Callum Rowley',
-  2000 => 'Drew Wagar', # Book author, and driver of the 'Formidine Rift' mystery
-# 2017 => 'Alistair Lindsay',
-	2323 => 'Carlos Massiah',
-# 2724 => 'Carl Russell',
-  10691 => 'Gary Richards',
-	14349 => 'Adam Woods',
-	14849 => 'Simon Brewer',
-	15645 => 'Ashley Barley',
-	15655 => 'Sandro Sammarco',
-	15737 => 'Andrew Barlow',
-	17666 => 'Sarah Jane Avory',
-  19388 => 'Andrew Gillett',
-  21435 => 'davstott', # 'Mostly Harmless' 2017-04-13
-	22712 => 'Mike Evans',
-  22717 => 'John Kelly',
-#  22790 => 'Igor Terentjev',
-  23261 => 'Raphael Gervaise',
-  24195 => 'James Avery',
-#	24222 => 'Greg Ryder', # Former employee
-# 24659 => 'Josh Atack', # Former Frontier Employee
-  24701 => 'Xavier Henry',
-	25094 => 'Dan Davies',
-	25095 => 'Tom Kewell',
-	25591 => 'Anthony Ross',
-	26549 => 'Mark Allen',
-	26755 => 'Barry Clark',
-	26966 => 'chris gregory',
-	27713 => 'Selena Frost-King',
-#	27895 => 'Ben Parry', # No longer at Frontier as of ~2015-05
-  29088 => 'John Li',
-	31252 => 'hchalkley',
-	31307 => 'Jonathan Bottone',
-	31348 => 'Kenny Wildman',
-  31354 => 'Joe Hogan',
-	31484 => 'Richard Benton',
-  31810 => 'Ruben Penalva',
-  31870 => 'Sergei Lewis',
-  32114 => 'Daniel Varela',
-#	32310 => 'Mark Boss', # Now only 'Competent'
-	32348 => 'Jon Pace',
-  32350 => 'Adam Waite',
-	32352 => 'Aaron Gordon',
-  32382 => 'Thomas Wiggins',
-  32385 => 'oscar_sebio_cajaraville',
-	32574 => 'Matt Dickinson',
-  32802 => 'Laurie Cooper',
-  32835 => 'Viktor Svensson',
-  33100 => 'Bob Richardson',
-  33396 => 'Eddie Symons',
-#	33683 => 'QA-', # Mark Brett
-  34587 => 'arfshesaid',
-	34604 => 'Matthew Florianz',
-  35599 => 'Tom Clapham',
-	47159 => 'Edward Lewis',
-# Michael Gapper ?
-  65404 => 'Yokai', # Tutorial & Guide Writer
-# 71537 => 'eft_recoil_org', # Friendly Spider/Scraper Bot
-#  74198 => 'GalNet News', # GalNet News Transmissions are sponsored in part by the Bank of Zaonce.  Trust the Bank of Zaonce with your hard-earned credits. 
-  74985 => 'GuyV', #FDEV
-  78894 => 'Laura Massey', # 'Mostly Harmless' QA Tester <https://forums.frontier.co.uk/showthread.php?t=176323>
-  81888 => 'Daniel G', # Frontier QA Team
-  82776 => 'Frontier QA',
-  84886 => 'Frontier Moderation Team', # Global Moderator
-  93489 => 'SkyCline', # Test Account: Brett C So Dangerous, it's Fluffy.
-#  94839 => 'QA-Donny', # Frontier QA Team
-#  94841 => 'QA-Jonny', # Frontier QA Team
-#  94842 => 'QA-Kae', # Frontier QA Team
-  95307 => 'juanpablosans', # Localisation
-#  95888 => 'CMDR Vanguard', # Customer Support, user no longer present as of 2017-03-18 16:08 UTC
-  96285 => 'NotMatt', # Figment of your imagination
-  97768 => 'Zac Antonaci', # Head of Community Management
-#  97918 => 'Support-Black Arrow', # Customer Support Manager
-#  97972 => 'Support-Sticks', # Customer Support
-#  97973 => 'Support-Falcon', # Customer Support
-#  97974 => 'Support-Taurus', # Customer Support
-#  97975 => 'Support-Proton', # Customer Support
-#  97976 => 'Support-Kosmos', # Customer Support
-#  97977 => 'Support-Vanguard', # Customer Support
-#  97978 => 'Support-Saturn', # Customer Support
-#  97979 => 'Support-Delta', # Customer Support
-#  97980 => 'Support-Atom', # Customer Support
-#  97981 => 'Support-Titan', # Customer Support
-#  97982 => 'Support-Ares', # Customer Support
-#  97983 => 'Support-Vega', # Customer Support
-#  97984 => 'Support-Miu', # Customer Support
-#  98489 => 'FDTest1', # Administrator
-  100780 => 'Ian Dingwall', # Senior Designer
-  101652 => 'James Stimpson', # Senior Designer Elite: Dangerous
-  102125 => 'Dav Stott', # Senior Server Developer
-  106358 => 'Dale Emasiri', # Social Media Manager
-  108846 => 'Steve Kirby', # Lead Games Designer
-# 120185 => 'QA-Kit',
-  130893 => 'Paige-Harvey', #Ex-Support, now Community Team 2017-06-12
-  138417 => 'Bo Marit', # Community Manage
-  148080 => 'Dominic Corner', # Programmer (Missions Team)
-  157490 => 'Lloyd Morgan-Moore', # Assistant Producer
-#  159848 => 'Planet Coaster Moderator',
-);
+
+my $developers;
+{
+  local $/ = undef;
+  if (!open(MEMBERIDS, $config->getconf('memberid_file'))) {
+    printf STDERR "Failed to open memberid file '%s'\n", $config->getconf('memberid_file');
+    exit(-1);
+  }
+  binmode MEMBERIDS;
+  my $member_ids = <MEMBERIDS>;
+  close(MEMBERIDS);
+  #print STDERR $member_ids, "\n";
+  $developers = decode_json($member_ids);
+  #print STDERR Dumper($developers);
+#  print STDERR Dumper( map { if ($_->{'active'}) { $_->{'memberid'}; } } @{$developers->{'members'}});
+  #exit(0);
+}
 
 ###########################################################################
 # First let's make sure we're logged in.
@@ -181,14 +89,14 @@ if (! $res->is_success) {
 
 my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts_total = 0;
-foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
+foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
-  #print STDERR "Scraping id ", $whoid, "\n";
-#  my $bail = 2;
-#  if ($whoid > $bail) {
-#    print STDERR "Bailing after id ", $bail, "\n";
-#    last;
-#  }
+  print STDERR "Scraping id ", $whoid, "\n";
+  my $bail = 10;
+  if ($whoid > $bail) {
+    print STDERR "Bailing after id ", $bail, "\n";
+    last;
+  }
   my $latest_posts = $db->user_latest_known($whoid);
 	if (!defined($latest_posts)) {
 	  $latest_posts = { 'url' => 'nothing_yet' };
@@ -197,7 +105,8 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
 	$req = HTTP::Request->new('GET', $member_url . $whoid, ['Connection' => 'close']);
 	$res = $ua->request($req);
 	if (! $res->is_success) {
-	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $developers{$whoid}, ")", $res->code, "(", $res->message, ")\n";
+    my $membername = sprintf("%s", map {$_->{'membername'}} grep { $_->{'memberid'} eq $whoid } @{$developers->{'members'}});
+	  print STDERR "Failed to retrieve profile page: ", $whoid, " (", $membername, ")", $res->code, "(", $res->message, ")\n";
 	  next;
 	}
 	
@@ -223,7 +132,8 @@ foreach my $whoid (sort({$a <=> $b} keys(%developers))) {
   #print STDERR Dumper($tree);
 	my $activitylist = $tree->look_down('id', 'activitylist');
 	if (! $activitylist) {
-	  print STDERR "Failed to find the activitylist for ", $developers{$whoid}, " (" . $whoid, ")\n";
+    my $membername = sprintf("%s", map {$_->{'membername'}} grep { $_->{'memberid'} eq $whoid } @{$developers->{'members'}});
+	  print STDERR "Failed to find the activitylist for ", $membername, " (" . $whoid, ")\n";
 	  next;
 	}
 	
