@@ -22,7 +22,7 @@ if (!defined($cgi->multi_param('search_text'))) {
   failure("No search text supplied");
 }
 
-my $results = $db->precis_ts_search($cgi->multi_param('search_text'));
+my $results = $db->ts_search($cgi->multi_param('search_text'), $cgi->multi_param('search_in_title'), $cgi->multi_param('search_in_precis'));
 if (!defined($results)) {
   failure("No results!");
 }

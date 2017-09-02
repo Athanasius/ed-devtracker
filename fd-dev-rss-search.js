@@ -30,8 +30,16 @@ function performSearch(ev) {
 
   }
   search_query = {
-    search_text: q
+    search_text: q,
+    search_in_title: $('#search_in_title').prop('checked') ? 'true' : 'false',
+    search_in_precis: $('#search_in_precis').prop('checked') ? 'true' : 'false'
   };
+  if (search_query['search_in_title'] != 'true' && search_query['search_in_precis'] != 'true') {
+    $(".results#status").text("");
+    $(".results#status").append("<p>At least one of 'In Title' or 'In Precis' must be selected.</p>");
+    return false;
+  }
+  //console.log('performSearch: search_query = %o', search_query);
 
   $.ajax({
     url: "search.pl",
@@ -104,5 +112,5 @@ function clearResultsOutput() {
 }
 
 $(function() {
-  $("#form_precis_search").submit(performSearch);
+  $("#form_search").submit(performSearch);
 });

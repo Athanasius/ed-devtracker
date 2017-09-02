@@ -120,13 +120,26 @@ sub get_latest_posts {
 	return \@posts;
 }
 
-sub precis_ts_search {
-	my ($self, $query) = @_;
-	#printf STDERR "ED::DevTracker::DB->precis_ts_search - query is '%s'\n", $query;
-	my $sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
+sub ts_search {
+	my ($self, $query, $in_title, $in_precis) = @_;
+	#printf STDERR "ED::DevTracker::DB->precis_ts_search - query is '%s' with in_title '%s' and in_precis '%s'\n", $query, $in_title, $in_precis;
+
+	my $sth;
+	if ($in_title eq 'true' and $in_precis eq 'true') {
+		$sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query OR threadtitle_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
+	} elsif ($in_title eq 'true') {
+		$sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE threadtitle_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
+	} elsif ($in_precis eq 'true') {
+		$sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
+	} else {
+		# XXX - Error, at least one of in_title or in_precis should have been specified
+		printf STDERR "ED::DevTracker::DB->ts_search - None of in_title or in_precis was specified\n";
+		return undef;
+	}
 	my $rv = $sth->execute($query);
+
 	if (! $rv) {
-		printf STDERR "ED::DevTracker::DB->precis_ts_search - Failed DB query\n";
+		printf STDERR "ED::DevTracker::DB->ts_search - Failed DB query\n";
 		return undef;
 	}
 	my @posts;
@@ -136,7 +149,7 @@ sub precis_ts_search {
 		$row = $sth->fetchrow_hashref;
 	}
 	if ($#posts < 0) {
-		printf STDERR "ED::DevTracker::DB->precis_ts_search - No posts?\n";
+		printf STDERR "ED::DevTracker::DB->ts_search - No posts?\n";
 		return undef;
 	}
 	return \@posts;

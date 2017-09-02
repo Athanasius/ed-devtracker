@@ -81,11 +81,23 @@ wouldn't want to upset the moderators by causing more of an issue.
       </p>
     </div>
     <h2>The Search Box</h2>
-    <form id="form_precis_search" action="">
+    <form id="form_search" action="">
       <table class="ed_form_table">
         <tr>
           <td>Search Text</td>
           <td><input type="text" class="ed_text_entry" id="search_text" name="search_text" size="60"/></td>
+        </tr>
+        <tr>
+         <td>In Titles</td>
+         <td>
+          <input type="checkbox" class="form_submit" id="search_in_title" name="search_in_title" value="titles" checked="true"/>
+         </td>
+        </tr>
+        <tr>
+         <td>In Precis</td>
+         <td>
+          <input type="checkbox" class="form_submit" id="search_in_precis" name="search_in_precis" value="precis" checked="true"/>
+         </td>
         </tr>
         <tr>
           <td colspan="2">
