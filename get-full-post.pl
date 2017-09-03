@@ -127,9 +127,11 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Retu
   }
   my $text = $post_div_stripped->as_trimmed_text;
   printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
-  # XXX - line breaks are collapsed to nothing, merging words together, not good for full-text search.
+# XXX - line breaks are collapsed to nothing, merging words together, not good for full-text search.
   #$text =~ s/[[:space:]]{2,}//g;
   printf STDERR "Stripped content (text):\n'%s'\n", $text;
+# XXX - This probably works for full-text search.  May have to strip ' * ' (used in lists) from it.
+  printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
 
   my $new_content = $post_div->look_down(_tag => 'blockquote');
   if (! $new_content) {
