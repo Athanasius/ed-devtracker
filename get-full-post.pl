@@ -57,13 +57,23 @@ if (! $res->is_success) {
 ###########################################################################
 
 # Two quotes: https://forums.frontier.co.uk/showthread.php/374251-2-4-The-Return-Open-Beta-Update-3?p=5872557#post5872557
-my $page_url = 'https://forums.frontier.co.uk/showthread.php/374251-2-4-The-Return-Open-Beta-Update-3?p=5872557#post5872557';
+# 1st post in thread: https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Return-Open-Beta-Update-4
+my $page_url = 'https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Return-Open-Beta-Update-4';
 {
-  if ($page_url !~ /\#post(?<postid>[0-9]+)$/) {
-    printf STDERR "Couldn't find #postNNNNN in page URL: %s\n", $page_url;
+  my $postid;
+  my $is_first_post;
+  $is_first_post = undef;
+  if ($page_url =~ /\#post(?<postid>[0-9]+)$/) {
+    printf STDERR "Found #postNNNNN in page URL: %s\n", $page_url;
+    $postid = $+{'postid'};
+  } elsif ($page_url =~ /showthread.php\/(?<postid>[0-9]+)-/) {
+    printf STDERR "Found 1st post in page URL: %s\n", $page_url;
+    $postid = $+{'postid'};
+    $is_first_post = 1;
+  } else {
+    printf STDERR "Couldn't find any postid in page URL: %s\n", $page_url;
     exit(-1);
-  } # XXX - Also handle if it's the first post in thread
-  my $postid = $+{'postid'};
+  }
 
   $req = HTTP::Request->new('GET', $page_url);
   $res = $ua->request($req);
@@ -93,23 +103,33 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php/374251-2-4-The-Retu
 	$tree->eof();
   #print STDERR Dumper($tree);
 
-	my $post_div = $tree->look_down('id', "post_message_" . $postid);
-	if (! $post_div) {
-	  printf STDERR "Failed to find the post div element for post %d\n", $postid;
-	  exit(-3);
-	}
+  my $post_div;
+  if ($is_first_post) {
+    $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
+    if (! $post_div) {
+	    printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
+      exit(-3);
+    }
+  } else {
+	  $post_div = $tree->look_down('id', "post_message_" . $postid);
+	  if (! $post_div) {
+	    printf STDERR "Failed to find the post div element for post %d\n", $postid;
+	    exit(-3);
+	  }
+  }
 	#print STDERR Dumper($post_div);
-  printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
+  #printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
 
   my $post_div_stripped = $post_div;
   my @bbcode_quote = $post_div_stripped->look_down(_tag => 'div', class => 'bbcode_quote');
   foreach my $bbq (@bbcode_quote) {
     $bbq->delete_content;
   }
-  my $text = $post_div_stripped->as_text;
-  $text =~ s/[[:space:]]{2,}//g;
-  printf STDERR "Stripped content (text):\n'%s'\n", $text;
+  my $text = $post_div_stripped->as_trimmed_text;
   printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
+  # XXX - line breaks are collapsed to nothing, merging words together, not good for full-text search.
+  #$text =~ s/[[:space:]]{2,}//g;
+  printf STDERR "Stripped content (text):\n'%s'\n", $text;
 
   my $new_content = $post_div->look_down(_tag => 'blockquote');
   if (! $new_content) {
