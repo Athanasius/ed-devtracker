@@ -58,7 +58,9 @@ if (! $res->is_success) {
 
 # Two quotes: https://forums.frontier.co.uk/showthread.php/374251-2-4-The-Return-Open-Beta-Update-3?p=5872557#post5872557
 # 1st post in thread: https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Return-Open-Beta-Update-4
-my $page_url = 'https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Return-Open-Beta-Update-4';
+# Very first stored post: https://forums.frontier.co.uk/showthread.php?p=2799#post2799
+# Old style 1st post: https://forums.frontier.co.uk/showthread.php?t=53169
+my $page_url = 'https://forums.frontier.co.uk/showthread.php?t=53169';
 {
   my $postid;
   my $is_first_post;
@@ -68,6 +70,10 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Retu
     $postid = $+{'postid'};
   } elsif ($page_url =~ /showthread.php\/(?<postid>[0-9]+)-/) {
     printf STDERR "Found 1st post in page URL: %s\n", $page_url;
+    $postid = $+{'postid'};
+    $is_first_post = 1;
+  } elsif ($page_url =~ /showthread.php\?t=(?<postid>[0-9]+)$/) {
+    printf STDERR "Found old-style 1st post in page URL: %s\n", $page_url;
     $postid = $+{'postid'};
     $is_first_post = 1;
   } else {
@@ -130,7 +136,7 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Retu
 # XXX - line breaks are collapsed to nothing, merging words together, not good for full-text search.
   #$text =~ s/[[:space:]]{2,}//g;
   printf STDERR "Stripped content (text):\n'%s'\n", $text;
-# XXX - This probably works for full-text search.  May have to strip ' * ' (used in lists) from it.
+# XXX - This probably works for full-text search.  May have to strip ' * ' and ' - ' (used in lists) from it.
   printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
 
   my $new_content = $post_div->look_down(_tag => 'blockquote');
