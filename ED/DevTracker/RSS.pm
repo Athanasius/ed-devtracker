@@ -13,6 +13,7 @@ use Date::Manip;
 use ED::DevTracker::Config;
 use ED::DevTracker::DB;
 use HTML::Entities qw/encode_entities_numeric/;
+use HTML::TreeBuilder;
 
 sub new {
 	my $class = shift;
@@ -23,6 +24,7 @@ sub new {
 	$self->{'base_url'} = "https://forums.frontier.co.uk/";
 	$self->{'rss'} = undef;
 	$self->{'self_url'} = $config->getconf('self_url');
+	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
   bless($self, $class);
   return $self;
 }
@@ -106,16 +108,55 @@ sub generate {
     } else {
       $post_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
     }
-    my $precis = ${$p}{'precis'};
-    $precis =~ s/\n/<br\/>/g;
-		#printf STDERR "Precis = '%s'\n", $precis;
+		my $description;
+		if (defined(${$p}{'fulltext'})) {
+			$description = ${$p}{'fulltext'};
+			my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
+			$tree->parse($description);
+			$tree->eof();
+			# This is far from simple.  We need to:
+			# 0) Change the <blockquote class="postcontent restore"> into a div
+			my @blockquotes = $tree->look_down(_tag => 'blockquote');
+			foreach my $bq (@blockquotes) {
+				$bq->tag('div');
+			}
+			# 1) Change the class="bbcode_quote" <div> elements into <blockquote> elements, all of them.
+			my @bbcode_quotes = $tree->look_down(_tag => 'div', class => 'bbcode_quote');
+			foreach my $bbq (@bbcode_quotes) {
+				$bbq->tag('blockquote');
+			}
+			# 2) Remove the <img class="inlineimg" ... /> elements
+			my @img_vp = $tree->look_down(_tag => 'img', class => 'inlineimg');
+			foreach my $i (@img_vp) {
+				$i->delete;
+			}
+			# 3) Remove the whole <i class="fa fa-quote-left"> element (or just the aria-hidden="true" attribute on it, but the element is moot anyway).
+			my @i_quotes = $tree->look_down(_tag => 'i', class => 'fa fa-quote-left');
+			foreach my $i (@i_quotes) {
+				$i->delete;
+			}
+			# 4) Ensure the <a class="quotelink"...> element's href is fully qualified
+			my @quotelinks = $tree->look_down(_tag => 'a', class => 'quotelink');
+			foreach my $ql (@quotelinks) {
+				my $href = $ql->attr('href');
+				$href =~ s/^(showthread\.php.+)$/$self->{'forum_base_url'}$1/;
+				$ql->attr('href', $href);
+			}
+
+			$description = $tree->look_down(_tag => 'div')->as_HTML;
+		} else {
+    	$description = ${$p}{'precis'};
+    	$description =~ s/\n/<br\/>/g;
+			#printf STDERR "Precis = '%s'\n", $description;
+      $description = "<a href=\"" . $self->{'base_url'} . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $description . "\n</p>",
+		}
 		#printf STDERR "Threadtitle = '%s'\n", ${$p}{'threadtitle'};
     $self->{'rss'}->add_item(
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'} . " (" . ${$p}{'forum'} . ")",
       link  => $self->{'base_url'} . ${$p}{'url'},
       pubDate => $post_date,
       permaLink  => $self->{'base_url'} . ${$p}{'guid_url'},
-      description => "<a href=\"" . $self->{'base_url'} . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $precis . "\n</p>",
+      description => $description,
       mode => 'append'
     );
   }
