@@ -23,6 +23,25 @@ Note the multiple IDs passed as adm=6,21
 
 https://forums.frontier.co.uk/search.php?do=showspecialz
 
+	1) 'Source' on full-text quotes needs to be made an absolute
+	URL, else they'll point to e.g.
+		https://miggy.org/games/elite-dangerous/devtracker-dev/showthread.php?p=5892514&viewfull=1#post5892514
+	OR is this only an issue with testing in a .html file ?
+
+	2) May need to put some in-line style="" in to get things
+	formatted properly.
+		<div class="bbcode_quote" style="margin: 0 10px; margin-bottom: 10px; border-radius: 2px; border: 1px solid #999;">
+	NOPE, readers strip this. Instead I need to change the
+		<div class="bbcode_quote ...>...</div>
+	into
+		<blockquote>...</blockquote>
+
+	3) Remove 'aria-hidden' attribute on <i/> element:
+		<i aria-hidden="true" class="fa fa-quote-left"></i>
+
+	4) Remove
+		<img alt="View Post" class="inlineimg" src="https://forums-cdn.frontier.co.uk/images/elite/buttons/viewpost-right.png" />
+
 *) A file lock for runs of the collector, in case it takes longer than
 the cron interval.
 *) 'Everything' into the config file, no hard coded 'config' values.
