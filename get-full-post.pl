@@ -57,10 +57,11 @@ if (! $res->is_success) {
 ###########################################################################
 
 # Two quotes: https://forums.frontier.co.uk/showthread.php/374251-2-4-The-Return-Open-Beta-Update-3?p=5872557#post5872557
+# Larger two quotes: https://forums.frontier.co.uk/showthread.php/375215-Exquisite-Focus-Crystals?p=5889160#post5889160
 # 1st post in thread: https://forums.frontier.co.uk/showthread.php/374489-2-4-The-Return-Open-Beta-Update-4
 # Very first stored post: https://forums.frontier.co.uk/showthread.php?p=2799#post2799
 # Old style 1st post: https://forums.frontier.co.uk/showthread.php?t=53169
-my $page_url = 'https://forums.frontier.co.uk/showthread.php?t=53169';
+my $page_url = 'https://forums.frontier.co.uk/showthread.php/375215-Exquisite-Focus-Crystals?p=5889160#post5889160';
 {
   my $postid;
   my $is_first_post;
@@ -124,7 +125,7 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php?t=53169';
 	  }
   }
 	#print STDERR Dumper($post_div);
-  #printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
+  printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
 
   my $post_div_stripped = $post_div;
 # Post with multiple 'code' segments: https://forums.frontier.co.uk/showthread.php/275151-Commanders-log-manual-and-data-sample?p=5885045&viewfull=1#post5885045
@@ -137,9 +138,9 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php?t=53169';
   printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
 # XXX - line breaks are collapsed to nothing, merging words together, not good for full-text search.
   #$text =~ s/[[:space:]]{2,}//g;
-  printf STDERR "Stripped content (text):\n'%s'\n", $text;
+  #printf STDERR "Stripped content (text):\n'%s'\n", $text;
 # XXX - This probably works for full-text search.  May have to strip ' * ' and ' - ' (used in lists) from it.
-  printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
+  #printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
 
   my $new_content = $post_div->look_down(_tag => 'blockquote');
   if (! $new_content) {
