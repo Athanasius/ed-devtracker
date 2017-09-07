@@ -13,7 +13,8 @@ our %config = (
 	self_url => '',
 	sleep_after => 300,
 	forum_user => '',
-	forum_password => ''
+	forum_password => '',
+	forum_base_url => 'https://forums.frontier.co.uk/'
 );
 
 sub new {
@@ -47,6 +48,8 @@ sub new {
 			$config{'forum_user'} = $1;
 		} elsif (/^forum_password:\s+(.+)$/i) {
 			$config{'forum_password'} = $1;
+		} elsif (/^forum_base_url:\s+(.+)$/i) {
+			$config{'forum_base_url'} = $1;
 		} elsif (/^memberid_file:\s+(.+)$/i) {
 			$config{'memberid_file'} = $1;
 		} else {
