@@ -127,6 +127,8 @@ my $page_url = 'https://forums.frontier.co.uk/showthread.php?t=53169';
   #printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
 
   my $post_div_stripped = $post_div;
+# Post with multiple 'code' segments: https://forums.frontier.co.uk/showthread.php/275151-Commanders-log-manual-and-data-sample?p=5885045&viewfull=1#post5885045
+# thankfully they use class="bbcode_container", not "bbcode_quote"
   my @bbcode_quote = $post_div_stripped->look_down(_tag => 'div', class => 'bbcode_quote');
   foreach my $bbq (@bbcode_quote) {
     $bbq->delete_content;
