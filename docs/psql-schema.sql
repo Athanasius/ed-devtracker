@@ -47,7 +47,13 @@ CREATE TABLE posts (
     precis text,
     precis_ts_indexed tsvector,
     guid_url character varying(512),
-    threadtitle_ts_indexed tsvector
+    threadtitle_ts_indexed tsvector,
+    fulltext text,
+    fulltext_stripped text,
+    fulltext_noquotes text,
+    fulltext_noquotes_stripped text,
+    fulltext_ts_indexed tsvector,
+    fulltext_noquotes_ts_indexed tsvector
 );
 
 
@@ -123,6 +129,20 @@ CREATE INDEX posts_precis_index ON posts USING gin (precis_ts_indexed);
 --
 
 CREATE INDEX posts_threadtitle_index ON posts USING gin (threadtitle_ts_indexed);
+
+
+--
+-- Name: ts_fulltext_noquotes_vectorupdate; Type: TRIGGER; Schema: public; Owner: ed_devtracker_crawl_dev
+--
+
+CREATE TRIGGER ts_fulltext_noquotes_vectorupdate BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('fulltext_noquotes_ts_indexed', 'pg_catalog.english', 'fulltext_noquotes_stripped');
+
+
+--
+-- Name: ts_fulltext_vectorupdate; Type: TRIGGER; Schema: public; Owner: ed_devtracker_crawl_dev
+--
+
+CREATE TRIGGER ts_fulltext_vectorupdate BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('fulltext_ts_indexed', 'pg_catalog.english', 'fulltext_stripped');
 
 
 --
