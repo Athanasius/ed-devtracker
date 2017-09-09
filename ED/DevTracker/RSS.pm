@@ -25,6 +25,7 @@ sub new {
 	$self->{'rss'} = undef;
 	$self->{'self_url'} = $config->getconf('self_url');
 	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
+	$self->{'rss_fulltext'} = $config->getconf('rss_fulltext');
   bless($self, $class);
   return $self;
 }
@@ -109,7 +110,7 @@ sub generate {
       $post_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
     }
 		my $description;
-		if (defined(${$p}{'fulltext'})) {
+		if ($self->{'rss_fulltext'} =~ /^true$/i and defined(${$p}{'fulltext'})) {
 			$description = ${$p}{'fulltext'};
 			my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
 			$tree->parse($description);

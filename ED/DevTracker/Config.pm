@@ -14,7 +14,8 @@ our %config = (
 	sleep_after => 300,
 	forum_user => '',
 	forum_password => '',
-	forum_base_url => 'https://forums.frontier.co.uk/'
+	forum_base_url => 'https://forums.frontier.co.uk/',
+	rss_fulltext => 'false'
 );
 
 sub new {
@@ -50,6 +51,8 @@ sub new {
 			$config{'forum_password'} = $1;
 		} elsif (/^forum_base_url:\s+(.+)$/i) {
 			$config{'forum_base_url'} = $1;
+		} elsif (/^rss_fulltext:\s+(.+)$/i) {
+			$config{'rss_fulltext'} = $1;
 		} elsif (/^memberid_file:\s+(.+)$/i) {
 			$config{'memberid_file'} = $1;
 		} else {
