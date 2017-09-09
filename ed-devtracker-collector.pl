@@ -91,7 +91,7 @@ my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&ty
 my $new_posts_total = 0;
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
-  print STDERR "Scraping id ", $whoid, "\n";
+#  print STDERR "Scraping id ", $whoid, "\n";
   my $bail = 9999999;
   if ($whoid > $bail) {
     print STDERR "Bailing after id ", $bail, "\n";
@@ -143,7 +143,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
 	);
   if (! @posts) {
     my $membername = sprintf("%s", map {$_->{'membername'}} grep { $_->{'memberid'} eq $whoid } @{$developers->{'members'}});
-    print STDERR "Failed to find any posts for ", $membername, " (" . $whoid, ")\n";
+#    print STDERR "Failed to find any posts for ", $membername, " (" . $whoid, ")\n";
     next;
   }
 #  print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
@@ -256,7 +256,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
           $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
           #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'threadurl'}, $l, $post{'threadurl'}, $post{'guid_url'};
           if ($l eq $post{'guid_url'}) {
-            print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
+#            print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
             next;
           } else {
 #            print STDERR "Post is new despite guid_url in latest_posts: ", $post{'guid_url'}, "\n";
@@ -279,7 +279,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
     if ($page_url =~ /\#post(?<postid>[0-9]+)$/) {
 #      printf STDERR "Found #postNNNNN in page URL: %s\n", $page_url;
       $postid = $+{'postid'};
-    } elsif ($page_url =~ /showthread.php\/(?<postid>[0-9]+)-/) {
+    } elsif ($page_url =~ /showthread.php\/(?<postid>[0-9]+)/) {
 #      printf STDERR "Found 1st post in page URL: %s\n", $page_url;
       $postid = $+{'postid'};
       $is_first_post = 1;
@@ -314,14 +314,14 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
 
     my $post_div;
     if ($is_first_post) {
-      print STDERR "Is a first post\n";
+#      print STDERR "Is a first post\n";
 		  $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
 	    if (! $post_div) {
 			  printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
 		    next;
 		  }
 		} else {
-      print STDERR "Is NOT a first post\n";
+#      print STDERR "Is NOT a first post\n";
 			$post_div = $tree->look_down('id', "post_message_" . $postid);
 			if (! $post_div) {
 			  printf STDERR "Failed to find the post div element for post %d\n", $postid;
@@ -333,7 +333,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
 		  printf STDERR "Couldn't find main blockquote of post\n";
 		  next;
 		}
-		printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
+#		printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
     $post{'fulltext'} = $post_div->as_HTML;
     $post{'fulltext_stripped'} = $post_div->format;
 					
@@ -345,9 +345,9 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
 		  $bbq->delete_content;
 		}
 		my $text = $post_div_stripped->as_trimmed_text;
-    printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
+#    printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
     # This probably works for full-text search.  May have to strip ' * ' and ' - ' (used in lists) from it.
-    printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
+#    printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
     $post{'fulltext_noquotes'} = $post_div_stripped->as_HTML;
     $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
 ###########################################################################
