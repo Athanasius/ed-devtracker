@@ -289,14 +289,14 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
       $is_first_post = 1;
     } else {
       printf STDERR "Couldn't find any postid in page URL: %s\n", $page_url;
-      next;
+      goto STOREPOST;
     }
 
     $req = HTTP::Request->new('GET', $page_url);
     $res = $ua->request($req);
     if (! $res->is_success) {
       printf STDERR "Failed to retrieve post page for '%s': (%d) %s\n", $page_url, $res->code, $res->message;
-      next;
+      goto STOREPOST;
     }
 
     $hct = $res->header('Content-Type');
@@ -318,20 +318,20 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
 		  $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
 	    if (! $post_div) {
 			  printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
-		    next;
+        goto STOREPOST;
 		  }
 		} else {
 #      print STDERR "Is NOT a first post\n";
 			$post_div = $tree->look_down('id', "post_message_" . $postid);
 			if (! $post_div) {
 			  printf STDERR "Failed to find the post div element for post %d\n", $postid;
-			  next;
+        goto STOREPOST;
 			}
 		}
 		my $new_content = $post_div->look_down(_tag => 'blockquote');
 		if (! $new_content) {
 		  printf STDERR "Couldn't find main blockquote of post\n";
-		  next;
+      goto STOREPOST;
 		}
 #		printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
     $post{'fulltext'} = $post_div->as_HTML;
@@ -352,6 +352,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
     $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
 ###########################################################################
 
+STOREPOST:
 	  $post{'whoid'} = $whoid;
 	  #print STDERR Dumper(\%post), "\n";
     push(@new_posts, \%post);
