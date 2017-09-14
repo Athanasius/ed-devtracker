@@ -42,6 +42,15 @@ https://forums.frontier.co.uk/search.php?do=showspecialz
 	4) Remove
 		<img alt="View Post" class="inlineimg" src="https://forums-cdn.frontier.co.uk/images/elite/buttons/viewpost-right.png" />
 
+*) Check any feed changes against:
+
+	1) Tiny Tiny RSS (remember same-guid's in different feed get the
+	same read/new state).
+	2) miggy IRC bot
+	3) Feedly
+	4) EDCD feedbot -> "show_sample_entry.py" script with the URL:
+	https://github.com/freiheit/discord_feedbot
+
 *) A file lock for runs of the collector, in case it takes longer than
 the cron interval.
 *) 'Everything' into the config file, no hard coded 'config' values.
