@@ -27,14 +27,11 @@ if (! $lock) {
 }
 my $db = new ED::DevTracker::DB('config' => $config);
 
-# XXX - Should be in config. Pretend to be Google Chrome on Linux, Version 60.0.3112.113 (Official Build) (64-bit)
-my $ua = LWP::UserAgent->new('agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
-# XXX - Should be in config.
-$ua->timeout(10);
+my $ua = LWP::UserAgent->new('agent' => $config->getconf('user_agent'));
+$ua->timeout($config->getconf('ua_timeout'));
 $ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
 
-# XXX - Should be in config.
-my $rss_filename = 'ed-dev-posts.rss';
+my $rss_filename = $config->getconf('rss_output_filename');
 if (! -f $rss_filename) {
   my $cwd = `pwd`;
   chomp($cwd);
@@ -94,9 +91,8 @@ my $scrape = new ED::DevTracker::Scrape;
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
 
-  if ($whoid < 157490 ) { next; }
-  print STDERR "Scraping id ", $whoid, "\n";
-# XXX - Should be in config, or simply set to highest known ?
+#  if ($whoid < 106358) { next; }
+#  print STDERR "Scraping id ", $whoid, "\n";
   my $bail = 99999999;
   if ($whoid > $bail) {
     print STDERR "Bailing after id ", $bail, "\n";
@@ -111,9 +107,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
 # }
 
   # We're popping off an array so as to reverse the order we found them
-  # else they'll go in the DB in the wrong order, particularly important
-  # if more than one post by the same user has the same minute-resolution
-  # datestamp.  Wrong order could lead to missing posts (we'll bail too soon).
+  # else they'll go in the DB in the wrong order.
   #print STDERR "Adding posts for ", $whoid, " START\n";
   my $p = pop(@{$new_posts});
   while (defined($p)) { 
@@ -124,7 +118,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
     $new_posts_total++;
     $p = pop(@{$new_posts});
   } 
-# printf STDERR "new_posts_total now: %d\n", $new_posts_total;
+#  printf STDERR "new_posts_total now: %d\n", $new_posts_total;
 }
 if ($new_posts_total > 0) {
   #printf "Found %d new posts.\n", $new_posts_total;

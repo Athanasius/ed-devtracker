@@ -24,10 +24,9 @@ sub new {
 
 	my $config = new ED::DevTracker::Config('file' => 'config.txt');
 	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
-#
-# XXX - Should be in config. Pretend to be Google Chrome on Linux, Version 60.0.3112.113 (Official Build) (64-bit)
-	$self->{'ua'} = LWP::UserAgent->new('agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
-	$self->{'ua'}->timeout(10);
+
+	$self->{'ua'} = LWP::UserAgent->new('agent' => $config->getconf('user_agent'));
+	$self->{'ua'}->timeout($config->getconf('ua_timeout'));
 	$self->{'ua'}->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
 
 	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
@@ -52,16 +51,16 @@ sub get_member_new_posts {
 		return undef;
 	}
 
-#	print STDERR $res->header('Content-Type'), "\n";
+#	 print STDERR $res->header('Content-Type'), "\n";
 	my $hct = $res->header('Content-Type');
 	if ($hct =~ /charset=(?<ct>[^[:space:]]+)/) {
 		$hct = $+{'ct'};
 	} else {
 		undef $hct;
 	}
-#	print STDERR "HCT: ", $hct, "\n";
-#	print STDERR Dumper($res->content);
-#	print STDERR Dumper($res->decoded_content('charset' => 'windows-1252'));
+#	 print STDERR "HCT: ", $hct, "\n";
+#	 print STDERR Dumper($res->content);
+#	 print STDERR Dumper($res->decoded_content('charset' => 'windows-1252'));
 	my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
 	if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
 #		printf STDERR "Detected non ISO-8859-1 characters!\n";
@@ -117,9 +116,11 @@ sub get_member_new_posts {
 #				print STDERR "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
 			} else {
 				printf(STDERR "Problem parsing $post{'datestampstr'}, from $whoid\n");
+				next;
 			}
 		} else {
 			print STDERR "No content (didn't find div->content/hasavatar)\n";
+			next;
 		}
 		# thread title and URL
 		my $div_title = $content->look_down(_tag => 'div', class => 'title');
@@ -133,9 +134,11 @@ sub get_member_new_posts {
 				$post{'forum'} = $a[2]->as_text;
 			} else {
 				print STDERR "No 'a' under div->title\n";
+				next;
 			}
 		} else {
 			print STDERR "No div->title\n";
+			next;
 		}
 
 		my $div_excerpt = $content->look_down(_tag => 'div', class => 'excerpt');
@@ -143,6 +146,7 @@ sub get_member_new_posts {
 			$post{'precis'} = $div_excerpt->as_text;
 		} else {
 			print STDERR "No precis\n";
+			next;
 		}
 
     my $div_fulllink = $content->look_down(_tag => 'div', class => 'fulllink');
@@ -190,6 +194,7 @@ sub get_member_new_posts {
       }
     } else {
       print STDERR "No div_fulllink\n";
+			next;
     }
 		my $fulltext_post = $self->get_fulltext($post{'guid_url'});
 		if (defined($fulltext_post)) {
@@ -200,7 +205,7 @@ sub get_member_new_posts {
 		}
 
 		$post{'whoid'} = $whoid;
-		print STDERR Dumper(\%post), "\n";
+#		print STDERR Dumper(\%post), "\n";
 		push(@new_posts, \%post);
 		last;
 	}
