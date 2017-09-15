@@ -120,6 +120,42 @@ sub get_latest_posts {
 	return \@posts;
 }
 
+###########################################################################
+# Fulltext back-filling
+###########################################################################
+sub newest_without_fulltext {
+	my ($self) = @_;
+
+	my $sth = $dbh->prepare("SELECT id,guid_url FROM posts WHERE fulltext IS NULL ORDER BY id DESC LIMIT 1");
+	my $rv = $sth->execute();
+	if (! $rv) {
+		printf STDERR "ED::DevTracker::DB->newest_without_fulltext - DB query failed\n";
+		return undef;
+	}
+	my $row = $sth->fetchrow_hashref;
+	if (!defined($row)) {
+		printf STDERR "ED::DevTracker::DB->newest_without_fulltext - DB query returned no rows?\n";
+		return undef;
+	}
+
+	return $row;
+}
+
+sub update_old_with_fulltext {
+	my ($self, $id, $fulltext, $fulltext_stripped, $fulltext_noquotes, $fulltext_noquotes_stripped) = @_;
+
+	my $sth = $dbh->prepare("UPDATE posts SET fulltext=?,fulltext_stripped=?,fulltext_noquotes=?,fulltext_noquotes_stripped=? WHERE id = ?");
+	my $rv = $sth->execute($fulltext, $fulltext_stripped, $fulltext_noquotes, $fulltext_noquotes_stripped, $id);
+	if (! $rv) {
+		print STDERR "ED::DevTracker::DB->update_old_with_fulltext - DB UPDATE failed!\n";
+		return undef;
+	}
+
+	return 1;
+}
+
+###########################################################################
+
 sub ts_search {
 	my ($self, $query, $in_title, $in_precis) = @_;
 	#printf STDERR "ED::DevTracker::DB->precis_ts_search - query is '%s' with in_title '%s' and in_precis '%s'\n", $query, $in_title, $in_precis;

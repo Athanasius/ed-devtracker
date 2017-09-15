@@ -1,10 +1,11 @@
 .*.swp
 .htaccess
 SC-dev-tracker-rss.html
-ed-dev-posts.rss
+*.rss
 found-devs
-test.rss
 lwpcookies.txt
 config.txt
 ed_devtracker.psql
 ed-devtracker-collector.lock
+collector.log
+live-db.dmp
