@@ -268,6 +268,8 @@ sub get_fulltext {
     $post_div = $tree->look_down('id', "post_message_" . $postid);
     if (! $post_div) {
       printf STDERR "Failed to find the post div element for post %d\n", $postid;
+#			printf STDERR $tree->as_HTML, "\n";
+#			printf STDERR Dumper($tree), "\n";
       return undef;
     }
   }

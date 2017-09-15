@@ -124,10 +124,10 @@ sub get_latest_posts {
 # Fulltext back-filling
 ###########################################################################
 sub newest_without_fulltext {
-	my ($self) = @_;
+	my ($self, $underid) = @_;
 
-	my $sth = $dbh->prepare("SELECT id,guid_url FROM posts WHERE fulltext IS NULL ORDER BY id DESC LIMIT 1");
-	my $rv = $sth->execute();
+	my $sth = $dbh->prepare("SELECT id,guid_url FROM posts WHERE id < ? AND fulltext IS NULL ORDER BY id DESC LIMIT 1");
+	my $rv = $sth->execute($underid);
 	if (! $rv) {
 		printf STDERR "ED::DevTracker::DB->newest_without_fulltext - DB query failed\n";
 		return undef;

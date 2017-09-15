@@ -57,9 +57,11 @@ if (! $res->is_success) {
 # Start the backfill
 ###########################################################################
 my $scrape = new ED::DevTracker::Scrape;
-my $fillpost = $db->newest_without_fulltext();
+my $lastid = 2 ** 31 - 1;
+my $fillpost = $db->newest_without_fulltext($lastid);
 while (defined($fillpost)) {
-  printf STDERR "Newest without fulltext: %s\n", $fillpost->{'guid_url'};
+  $lastid = $fillpost->{'id'};
+  printf STDERR "Newest without fulltext: %d %s\n", $fillpost->{'id'}, $fillpost->{'guid_url'};
 
   my $fulltext = $scrape->get_fulltext($fillpost->{'guid_url'});
   if (defined($fulltext)) {
@@ -69,12 +71,13 @@ while (defined($fillpost)) {
       last;
     }
   } else {
-    printf STDERR "Failed to get fulltext, so bailing: %s\n", $fillpost->{'guid_url'};
+    printf STDERR "Failed to get fulltext: %s\n", $fillpost->{'guid_url'};
+    #last;
   }
 
 #  print STDERR "Testing, so bailing after first\n"; last;
   sleep(1);
-  $fillpost= $db->newest_without_fulltext();
+  $fillpost= $db->newest_without_fulltext($lastid);
 }
 ###########################################################################
 
