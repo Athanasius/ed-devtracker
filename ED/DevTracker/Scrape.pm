@@ -226,6 +226,9 @@ sub get_fulltext {
 #    printf STDERR "Found 1st post in page URL: %s\n", $page_url;
     $postid = $+{'postid'};
     $is_first_post = 1;
+  } elsif ($page_url =~ /showthread.php\?t=[0-9]+\&p=(?<postid>[0-9]+)\#/) {
+#    printf STDERR "Found old-style not-1st post in page URL: %s\n", $page_url;
+    $postid = $+{'postid'};
   } elsif ($page_url =~ /showthread.php\?t=(?<postid>[0-9]+)$/) {
 #    printf STDERR "Found old-style 1st post in page URL: %s\n", $page_url;
     $postid = $+{'postid'};
