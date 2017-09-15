@@ -149,7 +149,7 @@ sub generate {
     	$description = ${$p}{'precis'};
     	$description =~ s/\n/<br\/>/g;
 			#printf STDERR "Precis = '%s'\n", $description;
-      $description = "<a href=\"" . $self->{'base_url'} . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $description . "\n</p>",
+      $description = "<a href=\"" . $self->{'base_url'} . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $description . "\n</p>";
 		}
 		#printf STDERR "Threadtitle = '%s'\n", ${$p}{'threadtitle'};
     $self->{'rss'}->add_item(
