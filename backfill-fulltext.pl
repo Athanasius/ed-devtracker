@@ -64,16 +64,28 @@ while ($lastid > 0 and defined($fillpost)) {
   printf STDERR "Newest without fulltext: %d %s\n", $fillpost->{'id'}, $fillpost->{'guid_url'};
 
   my $fulltext = $scrape->get_fulltext($fillpost->{'guid_url'});
-  if (defined($fulltext)) {
+  if (!defined($fulltext->{'error'})) {
 #    print STDERR Dumper($fulltext), "\n";
-    if (! $db->update_old_with_fulltext($fillpost->{'id'}, $fulltext->{'fulltext'}, $fulltext->{'fulltext_stripped'},  $fulltext->{'fulltext_noquotes'},  $fulltext->{'fulltext_noquotes_stripped'}) ) {
+    if (! $db->update_old_with_fulltext($fillpost->{'id'}, $fulltext->{'fulltext'}, $fulltext->{'fulltext_stripped'}, $fulltext->{'fulltext_noquotes'}, $fulltext->{'fulltext_noquotes_stripped'}) ) {
       print STDERR "Failed to insert into DB so bailing\n";
       last;
     }
   } else {
-    printf STDERR "Failed to get fulltext: %s\n", $fillpost->{'guid_url'};
-    sleep(5);
-    #last;
+  # Error
+    if (defined($fulltext->{'error'}{'http_code'})) {
+      exit(0);
+    } else {
+      printf STDERR "Failed to get fulltext for %s\n", $fillpost->{'guid_url'};
+      if (defined($fulltext->{'error'}{'thread_invalid'})
+          or defined($fulltext->{'error'}{'post_invalid'})) {
+        printf STDERR "Setting post as unavailable: %d\n", $fillpost->{'id'};
+        $db->set_post_unavailable($fillpost->{'id'});
+      } else {
+        exit(0);
+      }
+      #sleep(5);
+      #last;
+    }
   }
 
 #  print STDERR "Testing, so bailing after first\n"; last;

@@ -126,7 +126,7 @@ sub get_latest_posts {
 sub newest_without_fulltext {
 	my ($self, $underid) = @_;
 
-	my $sth = $dbh->prepare("SELECT id,guid_url FROM posts WHERE id < ? AND fulltext IS NULL ORDER BY id DESC LIMIT 1");
+	my $sth = $dbh->prepare("SELECT id,guid_url FROM posts WHERE id < ? AND fulltext IS NULL AND available ORDER BY id DESC LIMIT 1");
 	my $rv = $sth->execute($underid);
 	if (! $rv) {
 		printf STDERR "ED::DevTracker::DB->newest_without_fulltext - DB query failed\n";
@@ -154,6 +154,18 @@ sub update_old_with_fulltext {
 	return 1;
 }
 
+sub set_post_unavailable {
+	my ($self, $id) = @_;
+
+	my $sth = $dbh->prepare("UPDATE posts SET available=FALSE WHERE id=?");
+	my $rv = $sth->execute($id);
+	if (! $rv) {
+		print STDERR "ED::DevTracker::DB->set_post_unavailable - DB UPDATE failed!\n";
+		return undef;
+	}
+
+	return 1;
+}
 ###########################################################################
 
 sub ts_search {

@@ -197,7 +197,7 @@ sub get_member_new_posts {
 			next;
     }
 		my $fulltext_post = $self->get_fulltext($post{'guid_url'});
-		if (defined($fulltext_post)) {
+		if (!defined($fulltext_post->{'error'})) {
 			$post{'fulltext'} = $fulltext_post->{'fulltext'};
 			$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
 			$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
@@ -215,6 +215,7 @@ sub get_member_new_posts {
 
 sub get_fulltext {
 	my ($self, $guid_url) = @_;
+	my %post;
 
   my $page_url = $self->{'forum_base_url'} . $guid_url;
   my ($postid, $is_first_post);
@@ -235,14 +236,16 @@ sub get_fulltext {
     $is_first_post = 1;
   } else {
     printf STDERR "Couldn't find any postid in page URL: %s\n", $page_url;
-    return undef;
+		$post{'error'} = {'message' => "Couldn't find any postid in page URL"};
+    return \%post;
   }
 
   my $req = HTTP::Request->new('GET', $page_url);
   my $res = $self->{'ua'}->request($req);
   if (! $res->is_success) {
     printf STDERR "Failed to retrieve post page for '%s': (%d) %s\n", $page_url, $res->code, $res->message;
-    return undef;
+		$post{'error'} = {'http_code' => $res->code, 'http_message' => $res->message};
+    return \%post;
   }
 
   my $hct = $res->header('Content-Type');
@@ -264,7 +267,13 @@ sub get_fulltext {
     $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
     if (! $post_div) {
       printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
-      return undef;
+			my $error = $self->check_forum_error($tree);
+			if (defined($error)) {
+				$post{'error'} = $error;
+			} else {
+				$post{'error'} = {'message' => 'Failed to find the post div element for first post in thread', 'no_post_message' => 1};
+			}
+     	return \%post;
     }
   } else {
 #    print STDERR "Is NOT a first post\n";
@@ -273,16 +282,23 @@ sub get_fulltext {
       printf STDERR "Failed to find the post div element for post %d\n", $postid;
 #			printf STDERR $tree->as_HTML, "\n";
 #			printf STDERR Dumper($tree), "\n";
-      return undef;
+			my $error = $self->check_forum_error($tree);
+#			printf STDERR Dumper($error), "\n"; # XXX why does this sometimes give no output, despite other checks showing $error is defined ?
+			if (defined($error)) {
+				$post{'error'} = $error;
+			} else {
+				$post{'error'} = {'message' => 'Failed to find the post div element for post', 'no_post_message' => 1};
+			}
+      return \%post;
     }
   }
   my $new_content = $post_div->look_down(_tag => 'blockquote');
   if (! $new_content) {
     printf STDERR "Couldn't find main blockquote of post\n";
-    return undef;
+		$post{'error'} = {'message' => "Couldn't find main blockquote of post", 'no_blockquote' => 1};
+    return \%post;
   }
 #  printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
-	my %post;
   $post{'fulltext'} = $post_div->as_HTML;
   $post{'fulltext_stripped'} = $post_div->format;
 
@@ -301,6 +317,27 @@ sub get_fulltext {
   $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
 
 	return \%post;
+}
+
+sub check_forum_error {
+	my ($self, $tree) = @_;
+#	print STDERR $tree->as_HTML, "\n";
+	my $error = $tree->look_down(_tag => 'div', class => 'standard_error');
+	if ($error) {
+#		printf STDERR "Found standard_error\n";
+		return {'thread_invalid' => 1};
+	}
+
+	$error = $tree->look_down(_tag => 'ol', id => 'posts');
+	if ($error) {
+#		printf STDERR "Thread exists, but post doesn't\n";
+		return {'post_invalid' => 1};
+	}
+
+	printf STDERR "Unknown post retrieval error\n";
+	print STDERR $tree->as_HTML, "\n";
+
+	return undef;
 }
 
 1;
