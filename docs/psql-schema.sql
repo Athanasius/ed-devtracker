@@ -53,7 +53,8 @@ CREATE TABLE posts (
     fulltext_noquotes text,
     fulltext_noquotes_stripped text,
     fulltext_ts_indexed tsvector,
-    fulltext_noquotes_ts_indexed tsvector
+    fulltext_noquotes_ts_indexed tsvector,
+    available boolean DEFAULT true
 );
 
 
