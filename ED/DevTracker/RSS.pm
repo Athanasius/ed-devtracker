@@ -16,16 +16,16 @@ use HTML::Entities qw/encode_entities_numeric/;
 use HTML::TreeBuilder;
 
 sub new {
-	my $class = shift;
+	my ($class, $fulltext, $self_url) = @_;
   my $self = {};
 
 	my $config = new ED::DevTracker::Config('file' => 'config.txt');
 	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
 	$self->{'base_url'} = "https://forums.frontier.co.uk/";
 	$self->{'rss'} = undef;
-	$self->{'self_url'} = $config->getconf('self_url');
+	$self->{'self_url'} = $self_url;
 	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
-	$self->{'rss_fulltext'} = $config->getconf('rss_fulltext');
+	$self->{'rss_fulltext'} = $fulltext;
   bless($self, $class);
   return $self;
 }
@@ -55,7 +55,7 @@ sub ed_rss_encode {
 }
 
 sub generate {
-	my $self = shift;
+	my ($self) = @_;
 
 	# NB: the argument to get_latest_posts() is assumed to NOT be user-supplied.
   #     If It becomes user-supplied then it needs sanitising/checking before
@@ -111,6 +111,7 @@ sub generate {
     }
 		my $description;
 		if ($self->{'rss_fulltext'} =~ /^true$/i and defined(${$p}{'fulltext'})) {
+#			printf STDERR "ED::DevTracker::RSS->generate: Using fulltext\n";
 			$description = ${$p}{'fulltext'};
 			my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
 			$tree->parse($description);

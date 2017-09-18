@@ -31,7 +31,8 @@ my $ua = LWP::UserAgent->new('agent' => $config->getconf('user_agent'));
 $ua->timeout($config->getconf('ua_timeout'));
 $ua->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
 
-my $rss_filename = $config->getconf('rss_output_filename');
+my $rss_filename = $config->getconf('self_url');
+$rss_filename =~ s/^(.+)\/([^\/]+)/$2/;
 if (! -f $rss_filename) {
   my $cwd = `pwd`;
   chomp($cwd);
@@ -86,7 +87,8 @@ if (! $res->is_success) {
 ###########################################################################
 
 my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
-my $new_posts_total = 0;
+my $new_posts_total = 1; #0;
+goto RSS_OUTPUT;
 my $scrape = new ED::DevTracker::Scrape;
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
@@ -120,15 +122,35 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
   } 
 #  printf STDERR "new_posts_total now: %d\n", $new_posts_total;
 }
+RSS_OUTPUT:
 if ($new_posts_total > 0) {
   #printf "Found %d new posts.\n", $new_posts_total;
-  my $rss = new ED::DevTracker::RSS;
+
+  generate_rss_file('false', $config->getconf('self_url'));
+  generate_rss_file('true', $config->getconf('self_fulltext_url'));
+}
+# Sleep to be sure we don't run back to back if the forums are straining
+if (defined($config->getconf('sleep_after')) and $config->getconf('sleep_after') > 0 ) {
+#  printf STDERR "Sleeping for %d seconds\n", $config->getconf('sleep_after');
+  sleep($config->getconf('sleep_after'));
+}
+exit(0);
+
+###########################################################################
+# Generate an RSS file, either with or without fulltext
+###########################################################################
+sub generate_rss_file {
+  my ($fulltext, $self_url) = @_;
+
+  my $rss = new ED::DevTracker::RSS($fulltext, $self_url);
   if (! $rss->generate()) {
     printf STDERR "Something failed in RSS generation.\n";
     exit(1);
   } else {
-    #print STDERR "Generation good\n";
+#    print STDERR "Generation good\n";
   }
+  $rss_filename = $self_url;
+  $rss_filename =~ s/^(.+)\/([^\/]+)/$2/;
   my $tmp_name = $rss_filename . ".tmp";
   if (!open(TMP, ">:encoding(utf-8)", "$tmp_name")) {
     print STDERR "Couldn't open temporary file '", $tmp_name, "': ", $!, "\n";
@@ -148,9 +170,4 @@ if ($new_posts_total > 0) {
   rename($tmp_name, $rss_filename);
   chmod(0644, $rss_filename);
 }
-# Sleep to be sure we don't run back to back if the forums are straining
-if (defined($config->getconf('sleep_after')) and $config->getconf('sleep_after') > 0 ) {
-#  printf STDERR "Sleeping for %d seconds\n", $config->getconf('sleep_after');
-  sleep($config->getconf('sleep_after'));
-}
-exit(0);
+###########################################################################

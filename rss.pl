@@ -6,7 +6,7 @@ use Data::Dumper;
 
 use ED::DevTracker::RSS;
 
-my $rss = new ED::DevTracker::RSS;
+my $rss = new ED::DevTracker::RSS('true', 'https://miggy.org/games/elite-dangerous/devtracker-dev/ed-dev-posts.rss');
 my $r = $rss->generate;
 if (!$r) {
   exit(1);

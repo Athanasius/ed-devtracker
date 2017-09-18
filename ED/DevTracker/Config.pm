@@ -11,14 +11,13 @@ our %config = (
 	db_user => '',
 	db_password => '',
 	self_url => '',
+	self_fulltext_url => '',
 	sleep_after => 300,
 	user_agent => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
 	ua_timeout => 10,
 	forum_user => '',
 	forum_password => '',
-	forum_base_url => 'https://forums.frontier.co.uk/',
-	rss_output_filename => 'ed-dev-posts.rss',
-	rss_fulltext => 'false'
+	forum_base_url => 'https://forums.frontier.co.uk/'
 );
 
 sub new {
@@ -46,6 +45,8 @@ sub new {
 			$config{'db_password'} = $1;
 		} elsif (/^self_url:\s+(.*)$/i) {
 			$config{'self_url'} = $1;
+		} elsif (/^self_fulltext_url:\s+(.*)$/i) {
+			$config{'self_fulltext_url'} = $1;
 		} elsif (/^sleep_after:\s+([0-9]+)$/i) {
 			$config{'sleep_after'} = $1;
 		} elsif (/^user_agent:\s+(\w+)$/i) {
@@ -58,10 +59,6 @@ sub new {
 			$config{'forum_password'} = $1;
 		} elsif (/^forum_base_url:\s+(.+)$/i) {
 			$config{'forum_base_url'} = $1;
-		} elsif (/^rss_output_filename\s+(.+)$/i) {
-			$config{'rss_output_filename'} = $1;
-		} elsif (/^rss_fulltext:\s+(.+)$/i) {
-			$config{'rss_fulltext'} = $1;
 		} elsif (/^memberid_file:\s+(.+)$/i) {
 			$config{'memberid_file'} = $1;
 		} else {
