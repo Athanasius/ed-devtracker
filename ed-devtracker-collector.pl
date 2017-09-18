@@ -87,8 +87,8 @@ if (! $res->is_success) {
 ###########################################################################
 
 my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
-my $new_posts_total = 1; #0;
-goto RSS_OUTPUT;
+my $new_posts_total = 0;
+# $new_posts_total = 1; goto RSS_OUTPUT;
 my $scrape = new ED::DevTracker::Scrape;
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
