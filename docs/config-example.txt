@@ -1,0 +1,22 @@
+# The obvious database configuration
+db_host: YOUR_DB_HOST
+db_name: YOUR_DB_NAME
+db_user: YOUR_DB_USER
+db_password: YOUR_DB_PASSWORD
+# URLs of the generated .rss files.  These go in an atom:link element of
+# the feed channel, and the last /-delimited part is used as the
+# filename for output.
+self_url: URL OF YOUR GENERATED RSS FILE (precis text only)
+self_fulltext_url: URL OF YOUR GENERATED RSS FILE (fulltext in items)
+# Time to sleep after a collector run.  This is intended to ensure the
+# forums are given a rest after each run.  Normally a run will take much
+# less than 3 minutes, and be run every 5 minutes, so this will have no
+# impact unless the forums are struggling.
+sleep_after: 120
+# the obvious forum login details
+forum_user: YOUR FRONTIER FORUM USER
+forum_password: YOUR FRONTIER FORUM PASSWORD
+# Base forum URL to be pre-pended when generating fully qualified URLs
+forum_base_url: https://forums.frontier.co.uk/
+# File containing the forum members to check for activity.
+memberid_file: ed-devtracker-memberids.json
