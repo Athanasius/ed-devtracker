@@ -65,16 +65,18 @@ my $login_user = $config->getconf('forum_user');
 my $vb_login_password = $config->getconf('forum_password');
 my $vb_login_md5password = md5_hex($vb_login_password);
 my $req = HTTP::Request->new('POST', $login_url, ['Connection' => 'close']);
-$req->header('Origin' => 'http://forums.frontier.co.uk');
-$req->header('Referer' => 'http://forums.frontier.co.uk/');
+$req->header('Origin' => 'https://forums.frontier.co.uk');
+$req->header('Referer' => 'https://forums.frontier.co.uk/');
 $req->header('Content-Type' => 'application/x-www-form-urlencoded');
 $req->content(
   "vb_login_username=" . $login_user
-  . "&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=guest&do=login"
+  . "&do=login"
   . "&vb_login_md5password=" . $vb_login_md5password
   . "&vb_login_md5password_utf=" . $vb_login_md5password
 );
-#print STDERR $req->content, "\n";
+#  . "&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=guest&do=login"
+#print STDERR Dumper($req), "\n";
+#print STDERR $req->as_string, "\n";
 #exit(0);
 my $res = $ua->request($req);
 if (! $res->is_success) {
@@ -82,14 +84,21 @@ if (! $res->is_success) {
   exit(1);
 }
 
+#print STDERR $res->as_string;
 #print STDERR Dumper($res->content);
 #exit(0);
+# Now 'follow the redirect' to the front page
+$req = HTTP::Request->new('GET', 'https://forums.frontier.co.uk/', ['Connection' => 'close']);
+$res = $ua->request($req);
+if (! $res->is_success) {
+  printf STDERR "Failed post-logn get / : %s\n", $res->status_line, "\n";
+  exit(2);
+}
 ###########################################################################
 
-my $member_url = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
 my $new_posts_total = 0;
 # $new_posts_total = 1; goto RSS_OUTPUT;
-my $scrape = new ED::DevTracker::Scrape;
+my $scrape = new ED::DevTracker::Scrape($ua);
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
 

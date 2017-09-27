@@ -6,6 +6,7 @@ package ED::DevTracker::Scrape;
 use strict;
 use Carp;
 #use feature 'unicode_strings';
+use POSIX qw/strftime/;
 
 use ED::DevTracker::Config;
 use ED::DevTracker::DB;
@@ -19,18 +20,16 @@ use Data::Dumper;
 use Date::Manip;
 
 sub new {
-	my $class = shift;
+	my ($class, $ua) = @_;
   my $self = {};
 
 	my $config = new ED::DevTracker::Config('file' => 'config.txt');
 	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
 
-	$self->{'ua'} = LWP::UserAgent->new('agent' => $config->getconf('user_agent'));
-	$self->{'ua'}->timeout($config->getconf('ua_timeout'));
-	$self->{'ua'}->cookie_jar(HTTP::Cookies->new(file => "lwpcookies.txt", autosave => 1, ignore_discard => 1));
+	$self->{'ua'} = $ua;
 
 	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
-	$self->{'forum_member_base_url'} = 'https://forums.frontier.co.uk/member.php?tab=activitystream&type=user&u=';
+	$self->{'forum_member_base_url'} = 'https://forums.frontier.co.uk/member.php/%s?tab=activitystream&type=user';
   bless($self, $class);
   return $self;
 }
@@ -44,7 +43,10 @@ sub get_member_new_posts {
 	}
 #	 print Dumper($latest_posts);
 
-	my $req = HTTP::Request->new('GET', $self->{'forum_member_base_url'} . $whoid, ['Connection' => 'close']);
+	my $req = HTTP::Request->new('GET', sprintf($self->{'forum_member_base_url'}, $whoid), ['Connection' => 'close']);
+#	printf STDERR "Script time is: %s\n", strftime("%Y-%m-%d %H:%M:%S %Z", localtime());
+#	printf STDERR "Request:\n%s\n", Dumper($req);
+#	printf STDERR "Cookies:\n%s\n", $self->{'ua'}->cookie_jar->as_string();
 	my $res = $self->{'ua'}->request($req);
 	if (! $res->is_success) {
 		print STDERR "Failed to retrieve profile page: ", $whoid, " (", $membername, ")", $res->code, "(", $res->message, ")\n";
@@ -94,6 +96,7 @@ sub get_member_new_posts {
 		my %post;
 
 		my $content = $p->look_down(_tag => 'div', class => 'content hasavatar');
+#		printf STDERR "Post text:\n%s\n", $p->as_text;
 		if ($content) {
 		# datetime
 			my $span_date = $content->look_down(_tag => 'span', class => 'date');
