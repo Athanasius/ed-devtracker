@@ -56,7 +56,7 @@ if (! $res->is_success) {
 ###########################################################################
 # Start the backfill
 ###########################################################################
-my $scrape = new ED::DevTracker::Scrape;
+my $scrape = new ED::DevTracker::Scrape($ua);
 my $lastid = 2 ** 31 - 1;
 my $fillpost = $db->newest_without_fulltext($lastid);
 while ($lastid > 0 and defined($fillpost)) {
