@@ -78,7 +78,7 @@ sub generate {
 	$self->{'rss'}->add_module(prefix => 'atom', uri => 'http://www.w3.org/2005/Atom');
   $self->{'rss'}->channel(
     title           => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
-    link            => 'https://miggy.org/games/elite-dangerous/devposts.html',
+    link            => 'https://ed.miggy.org/devposts.html',
     description     => 'Elite: Dangerous Dev Posts (Unofficial Tracker)',
     language        => 'en',
 		# rating
@@ -94,8 +94,8 @@ sub generate {
   );
   $self->{'rss'}->image(
     title => 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
-    link  => 'https://miggy.org/games/elite-dangerous/devposts.html',
-    url   => 'https://miggy.org/games/elite-dangerous/pics/elite-dangerous-favicon.png',
+    link  => 'https://ed.miggy.org/devposts.html',
+    url   => 'https://ed.miggy.org/pics/elite-dangerous-favicon.png',
     description => 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
   );
   
