@@ -11,7 +11,7 @@
     {"memberid":1110,"membername":"Stefan Mars","active":1},
     {"memberid":1388,"membername":"Kyle Rowley","active":0},
     {"memberid":1890,"membername":"Callum Rowley","active":0},
-    {"memberid":2000,"membername":"Drew Wagar","active":1,"comment":"Book author, and driver of the 'Formidine Rift' mystery"},
+    {"memberid":2000,"membername":"Drew Wagar","active":0,"comment":"Book author, and driver of the 'Formidine Rift' mystery"},
     {"memberid":2017,"membername":"Alistair Lindsay","active":0},
     {"memberid":2323,"membername":"Carlos Massiah","active":1},
     {"memberid":2724,"membername":"Carl Russell","active":0},
