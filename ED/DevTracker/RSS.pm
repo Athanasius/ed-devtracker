@@ -64,8 +64,8 @@ sub generate {
   $ENV{'TZ'} = 'UTC';
   my $date = new Date::Manip::Date;
   $date->config(
-   'DateFormat' => 'GB',
-   'tz' => 'UTC'
+    'DateFormat' => 'GB',
+	  'SetDate' => 'now,UTC'
   );
   my $err = $date->parse(${${$posts}[0]}{'datestamp'});
   if ($err) {

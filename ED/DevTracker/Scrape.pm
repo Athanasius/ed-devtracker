@@ -111,7 +111,7 @@ sub get_member_new_posts {
 			my $date = new Date::Manip::Date;
 			$date->config(
 				'DateFormat' => 'GB',
-				'tz' => 'UTC'
+				'SetDate' => 'now,UTC'
 			);
 			my $err = $date->parse($post{'datestampstr'});
 			if (!$err) {
