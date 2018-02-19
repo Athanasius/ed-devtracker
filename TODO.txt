@@ -56,3 +56,13 @@ the cron interval.
 *) 'Everything' into the config file, no hard coded 'config' values.
 *) ED::DevTracker::Forums.pm to hold all the forum interaction code,
 i.e. login, URL retrieval...
+*) Forum blacklisting, base this on the URL, i.e.
+   https://forums.frontier.co.uk/forumdisplay.php/30-Dangerous-Discussion
+   the "30-Dangerous-Discussion" part.  Using both numerical ID and text
+   name means hopefully at worst letting something through we didn't want
+   to, if forum layout/numbering changes.  Except what if some
+   "15-General-Discussion" turns in to "20-General-Discussion" and vice
+   versa, with us wanting to ignore only one ?
+
+   Perhaps do this in the 'click-through' utilising the forum
+   breadcrumbs ?
