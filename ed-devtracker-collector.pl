@@ -61,7 +61,7 @@ my $forums_ignored;
 {
   local $/ = undef;
   if (!open(FORUMIGNORES, $config->getconf('forum_ignore_file'))) {
-    printf STDERR "Failed to open forum ignore file '%s'\n", $config->getconf('memberid_file');
+    printf STDERR "Failed to open forum ignore file '%s'\n", $config->getconf('forum_ignore_file');
     exit(-1);
   }
   binmode FORUMIGNORES;
