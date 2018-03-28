@@ -20,7 +20,7 @@ use Data::Dumper;
 use Date::Manip;
 
 sub new {
-	my ($class, $ua) = @_;
+	my ($class, $ua, $forums_ignored) = @_;
   my $self = {};
 
 	my $config = new ED::DevTracker::Config('file' => 'config.txt');
@@ -30,6 +30,7 @@ sub new {
 
 	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
 	$self->{'forum_member_base_url'} = 'https://forums.frontier.co.uk/member.php/%s?tab=activitystream&type=user';
+	$self->{'forums_ignored'} = $forums_ignored;
   bless($self, $class);
   return $self;
 }
@@ -209,7 +210,10 @@ sub get_member_new_posts {
 
 		$post{'whoid'} = $whoid;
 #		print STDERR Dumper(\%post), "\n";
-		push(@new_posts, \%post);
+		if (!defined($fulltext_post->{'error'}) or $fulltext_post->{'error'}->{'no_post_message'} != 1) {
+			printf STDERR "Adding post...\n";
+			push(@new_posts, \%post);
+		}
 		last;
 	}
 
@@ -264,6 +268,39 @@ sub get_fulltext {
     $tree->parse(decode("utf8", encode("utf8", $res->decoded_content())));
   }
 
+	### BEGIN: Check for if this is an ignored forum
+	my $breadcrumb = $tree->look_down(_tag => 'div', id => 'breadcrumb');
+	if (! $breadcrumb ) {
+		printf STDERR "Failed to find forum breadcrumb: %s\n", $page_url
+	} else {
+#		printf STDERR "Parsing breadcrumbs for post: %s\n", $page_url;
+		my @navbits = $breadcrumb->look_down(_tag => 'li', class => 'navbit');
+		#printf STDERR "navbits:\n%s\n", Dumper(@navbits);
+		my $nb = $navbits[-1];
+#		printf STDERR "Navbit: %s\n", $nb->as_text;
+		foreach my $fi (keys(%{$self->{'forums_ignored'}})) {
+			my $fi_numberonly = ${$self->{'forums_ignored'}}{$fi};
+			$fi_numberonly =~ s/-[^0-9]+$//;
+			my $nb_a = $nb->look_down(_tag => 'a'); 
+			if ($nb_a) {
+				my @scraped_forum_url = $nb_a->extract_links;
+				if ($scraped_forum_url[0]) {
+#					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, ${$scraped_forum_url[0]}[0][0];
+					my $scraped_forum_url = 'https://forums.frontier.co.uk/' . ${$scraped_forum_url[0]}[0][0];
+					$scraped_forum_url =~ s/-[^0-9]+$//;
+#					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
+					if ($fi_numberonly eq $scraped_forum_url) {
+					# XXX: We don't want to just return...
+						$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
+						printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
+						return \%post;
+					}
+				}
+			}
+		}
+	}
+	### END:   Check for if this is an ignored forum
+	
   my $post_div;
   if ($is_first_post) {
 #    print STDERR "Is a first post\n";

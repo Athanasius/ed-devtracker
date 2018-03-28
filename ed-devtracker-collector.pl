@@ -57,6 +57,23 @@ my $developers;
   #exit(0);
 }
 
+my $forums_ignored;
+{
+  local $/ = undef;
+  if (!open(FORUMIGNORES, $config->getconf('forum_ignore_file'))) {
+    printf STDERR "Failed to open forum ignore file '%s'\n", $config->getconf('memberid_file');
+    exit(-1);
+  }
+  binmode FORUMIGNORES;
+  my $forums_ignored_urls = <FORUMIGNORES>;
+  close(FORUMIGNORES);
+#  print STDERR $forums_ignored_urls, "\n";
+  $forums_ignored= decode_json($forums_ignored_urls);
+#  print STDERR Dumper($forums_ignored);
+#  print STDERR Dumper( map { if ($_->{'active'}) { $_->{'memberid'}; } } @{$developers->{'members'}});
+#  exit(0);
+}
+
 ###########################################################################
 # First let's make sure we're logged in.
 ###########################################################################
@@ -98,7 +115,7 @@ if (! $res->is_success) {
 
 my $new_posts_total = 0;
 # $new_posts_total = 1; goto RSS_OUTPUT;
-my $scrape = new ED::DevTracker::Scrape($ua);
+my $scrape = new ED::DevTracker::Scrape($ua, $forums_ignored);
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
 

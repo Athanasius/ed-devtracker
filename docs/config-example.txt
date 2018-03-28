@@ -20,3 +20,5 @@ forum_password: YOUR FRONTIER FORUM PASSWORD
 forum_base_url: https://forums.frontier.co.uk/
 # File containing the forum members to check for activity.
 memberid_file: ed-devtracker-memberids.json
+# File containing URLs of forums to ignore
+forum_ignore_file: ed-devtracker-forums-ignored.json

@@ -61,6 +61,8 @@ sub new {
 			$config{'forum_base_url'} = $1;
 		} elsif (/^memberid_file:\s+(.+)$/i) {
 			$config{'memberid_file'} = $1;
+		} elsif (/^forum_ignore_file:\s+(.+)$/i) {
+			$config{'forum_ignore_file'} = $1;
 		} else {
 			printf STDERR "Unknown (or badly formatted) field in config file '%s', line %d : %s\n", $file, $line, $_;
 		}
