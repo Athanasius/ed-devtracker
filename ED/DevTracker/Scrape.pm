@@ -211,7 +211,7 @@ sub get_member_new_posts {
 		$post{'whoid'} = $whoid;
 #		print STDERR Dumper(\%post), "\n";
 		if (!defined($fulltext_post->{'error'}) or $fulltext_post->{'error'}->{'no_post_message'} != 1) {
-			printf STDERR "Adding post...\n";
+#			printf STDERR "Adding post...\n";
 			push(@new_posts, \%post);
 		}
 		last;
