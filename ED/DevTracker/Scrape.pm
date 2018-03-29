@@ -292,8 +292,11 @@ sub get_fulltext {
 					if ($fi_numberonly eq $scraped_forum_url) {
 					# XXX: We don't want to just return...
 						$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
-						printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
-						return \%post;
+						if (! $self->{'db'}->check_if_post_ignored($page_url)) {
+							printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
+							$self->{'db'}->add_ignored_post($page_url);
+						}
+#						else { printf STDERR "Already ignoring '%s' in forum '%s'\n", $page_url, $scraped_forum_url; } return \%post;
 					}
 				}
 			}

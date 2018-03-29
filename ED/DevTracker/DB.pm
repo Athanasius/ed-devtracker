@@ -168,6 +168,7 @@ sub set_post_unavailable {
 }
 ###########################################################################
 
+###########################################################################
 sub ts_search {
 	my ($self, $query, $in_title, $in_precis) = @_;
 	#printf STDERR "ED::DevTracker::DB->precis_ts_search - query is '%s' with in_title '%s' and in_precis '%s'\n", $query, $in_title, $in_precis;
@@ -202,5 +203,45 @@ sub ts_search {
 	}
 	return \@posts;
 }
+###########################################################################
 
+###########################################################################
+# Remembering ignored posts
+###########################################################################
+sub add_ignored_post {
+	my ($self, $post) = @_;
+
+#	printf STDERR "ED:DevTracker:DB->add_ignored_post - adding '%s'\n", $post;
+
+	my $sth = $dbh->prepare("INSERT INTO ignored_posts (url) VALUES (?)");
+	my $rv = $sth->execute($post);
+	if (! $rv) {
+		printf STDERR "ED:DevTracker:DB->add_ignored_post - ERROR adding '%s'\n", $post;
+		return undef;
+	}
+
+	return 1;
+}
+
+###########################
+# Check if a post is already ignored
+###########################
+sub check_if_post_ignored {
+	my ($self, $post) = @_;
+
+#	printf STDERR "ED:DevTracker:DB->check_if_post_ignored - adding '%s'\n", $post;
+
+	my $sth = $dbh->prepare("SELECT * FROM ignored_posts WHERE url = ?");
+	my $rv = $sth->execute($post);
+	if (! $rv) {
+		printf STDERR "ED:DevTracker:DB->check_if_post_ignored - Failed DB query\n";
+		return undef;
+	}
+	if ($sth->rows > 0) {
+		return 1;
+	}
+	return undef;
+}
+
+###########################################################################
 1;
