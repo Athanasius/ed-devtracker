@@ -108,7 +108,7 @@ if (! $res->is_success) {
 $req = HTTP::Request->new('GET', 'https://forums.frontier.co.uk/', ['Connection' => 'close']);
 $res = $ua->request($req);
 if (! $res->is_success) {
-  printf STDERR "Failed post-login get / : %s\n", $res->status_line, "\n";
+  printf STDERR "Failed post-login get / : %s\n", $res->status_line;
   exit(2);
 }
 ###########################################################################
