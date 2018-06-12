@@ -212,10 +212,15 @@ sub get_member_new_posts {
   			$fi_numberonly =~ s/-[^0-9]+$//;
   			my @divtitle_a = $div_title->look_down(_tag => 'a'); 
   			if (@divtitle_a) {
-  				my @scraped_forum_url = $divtitle_a[2]->extract_links;
-  				if ($scraped_forum_url[0]) {
-  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, ${$scraped_forum_url[0]}[0][0];
-  					my $scraped_forum_url = 'https://forums.frontier.co.uk/' . ${$scraped_forum_url[0]}[0][0];
+					my $scraped_forum_url;
+					foreach my $a (@divtitle_a) {
+						if ($a->attr('href') =~ /forumdisplay\.php\/[0-9]+-/) {
+							$scraped_forum_url = $a->attr('href');
+						}
+					}
+  				if ($scraped_forum_url) {
+  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
+  					$scraped_forum_url = 'https://forums.frontier.co.uk/' . $scraped_forum_url;
   					$scraped_forum_url =~ s/-[^0-9]+$//;
   					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
   					if ($fi_numberonly eq $scraped_forum_url) {
