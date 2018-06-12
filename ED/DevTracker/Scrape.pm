@@ -206,7 +206,7 @@ sub get_member_new_posts {
   	if (! $div_title) {
   		printf STDERR "Failed to find post div[title]: %s\n", $page_url
   	} else {
-  		printf STDERR "Parsing div[title] for post: %s\n", $page_url;
+#  		printf STDERR "Parsing div[title] for post: %s\n", $page_url;
   		foreach my $fi (keys(%{$self->{'forums_ignored'}})) {
   			my $fi_numberonly = ${$self->{'forums_ignored'}}{$fi};
   			$fi_numberonly =~ s/-[^0-9]+$//;
@@ -219,10 +219,10 @@ sub get_member_new_posts {
 						}
 					}
   				if ($scraped_forum_url) {
-  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
+#  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
   					$scraped_forum_url = 'https://forums.frontier.co.uk/' . $scraped_forum_url;
   					$scraped_forum_url =~ s/-[^0-9]+$//;
-  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
+#  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
   					if ($fi_numberonly eq $scraped_forum_url) {
   					# XXX: We don't want to just return...
   						$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
@@ -230,7 +230,7 @@ sub get_member_new_posts {
   							printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
   							$self->{'db'}->add_ignored_post($page_url);
   						}
-  						else { printf STDERR "Already ignoring '%s' in forum '%s'\n", $page_url, $scraped_forum_url; } #return \%post;
+#  						else { printf STDERR "Already ignoring '%s' in forum '%s'\n", $page_url, $scraped_forum_url; } #return \%post;
   					}
   				}
   			}
