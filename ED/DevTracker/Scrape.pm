@@ -200,6 +200,39 @@ sub get_member_new_posts {
       print STDERR "No div_fulllink\n";
 			next;
     }
+
+  	### BEGIN: Check for if this is an ignored forum
+		my $page_url = $self->{'forum_base_url'} . $post{'guid_url'};
+  	if (! $div_title) {
+  		printf STDERR "Failed to find post div[title]: %s\n", $page_url
+  	} else {
+  		printf STDERR "Parsing div[title] for post: %s\n", $page_url;
+  		foreach my $fi (keys(%{$self->{'forums_ignored'}})) {
+  			my $fi_numberonly = ${$self->{'forums_ignored'}}{$fi};
+  			$fi_numberonly =~ s/-[^0-9]+$//;
+  			my @divtitle_a = $div_title->look_down(_tag => 'a'); 
+  			if (@divtitle_a) {
+  				my @scraped_forum_url = $divtitle_a[2]->extract_links;
+  				if ($scraped_forum_url[0]) {
+  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, ${$scraped_forum_url[0]}[0][0];
+  					my $scraped_forum_url = 'https://forums.frontier.co.uk/' . ${$scraped_forum_url[0]}[0][0];
+  					$scraped_forum_url =~ s/-[^0-9]+$//;
+  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
+  					if ($fi_numberonly eq $scraped_forum_url) {
+  					# XXX: We don't want to just return...
+  						$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
+  						if (! $self->{'db'}->check_if_post_ignored($page_url)) {
+  							printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
+  							$self->{'db'}->add_ignored_post($page_url);
+  						}
+  						else { printf STDERR "Already ignoring '%s' in forum '%s'\n", $page_url, $scraped_forum_url; } #return \%post;
+  					}
+  				}
+  			}
+  		}
+		}
+		### END:   Check for if this is an ignored forum
+
 		my $fulltext_post = $self->get_fulltext($post{'guid_url'});
 		if (!defined($fulltext_post->{'error'})) {
 			$post{'fulltext'} = $fulltext_post->{'fulltext'};
@@ -210,8 +243,8 @@ sub get_member_new_posts {
 
 		$post{'whoid'} = $whoid;
 #		print STDERR Dumper(\%post), "\n";
-		if (!defined($fulltext_post->{'error'}) or $fulltext_post->{'error'}->{'no_post_message'} != 1) {
-#			printf STDERR "Adding post...\n";
+		if (!defined($post{'error'}) and (!defined($fulltext_post->{'error'}) or $fulltext_post->{'error'}->{'no_post_message'} != 1)) {
+			printf STDERR "Adding post...\n";
 			push(@new_posts, \%post);
 		}
 		last;
@@ -268,42 +301,6 @@ sub get_fulltext {
     $tree->parse(decode("utf8", encode("utf8", $res->decoded_content())));
   }
 
-	### BEGIN: Check for if this is an ignored forum
-	my $breadcrumb = $tree->look_down(_tag => 'div', id => 'breadcrumb');
-	if (! $breadcrumb ) {
-		printf STDERR "Failed to find forum breadcrumb: %s\n", $page_url
-	} else {
-#		printf STDERR "Parsing breadcrumbs for post: %s\n", $page_url;
-		my @navbits = $breadcrumb->look_down(_tag => 'li', class => 'navbit');
-		#printf STDERR "navbits:\n%s\n", Dumper(@navbits);
-		my $nb = $navbits[-1];
-#		printf STDERR "Navbit: %s\n", $nb->as_text;
-		foreach my $fi (keys(%{$self->{'forums_ignored'}})) {
-			my $fi_numberonly = ${$self->{'forums_ignored'}}{$fi};
-			$fi_numberonly =~ s/-[^0-9]+$//;
-			my $nb_a = $nb->look_down(_tag => 'a'); 
-			if ($nb_a) {
-				my @scraped_forum_url = $nb_a->extract_links;
-				if ($scraped_forum_url[0]) {
-#					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, ${$scraped_forum_url[0]}[0][0];
-					my $scraped_forum_url = 'https://forums.frontier.co.uk/' . ${$scraped_forum_url[0]}[0][0];
-					$scraped_forum_url =~ s/-[^0-9]+$//;
-#					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
-					if ($fi_numberonly eq $scraped_forum_url) {
-					# XXX: We don't want to just return...
-						$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
-						if (! $self->{'db'}->check_if_post_ignored($page_url)) {
-							printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
-							$self->{'db'}->add_ignored_post($page_url);
-						}
-#						else { printf STDERR "Already ignoring '%s' in forum '%s'\n", $page_url, $scraped_forum_url; } return \%post;
-					}
-				}
-			}
-		}
-	}
-	### END:   Check for if this is an ignored forum
-	
   my $post_div;
   if ($is_first_post) {
 #    print STDERR "Is a first post\n";
