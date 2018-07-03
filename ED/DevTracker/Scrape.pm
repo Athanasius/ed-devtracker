@@ -89,6 +89,7 @@ sub get_member_new_posts {
 #		print STDERR "Failed to find any posts for ", $membername, " (" . $whoid, ")\n";
 		return undef;
 	}
+#	print STDERR "Found ", $#posts, " new posts for ", $membername, " (", $whoid, ")\n";
 #	print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
 #	exit(0);
 
@@ -252,7 +253,7 @@ sub get_member_new_posts {
 #			printf STDERR "Adding post...\n";
 			push(@new_posts, \%post);
 		}
-		last;
+		#last;
 	}
 
 	return \@new_posts;
