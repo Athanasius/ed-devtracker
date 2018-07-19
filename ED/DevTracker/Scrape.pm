@@ -215,14 +215,20 @@ sub get_member_new_posts {
   			if (@divtitle_a) {
 					my $scraped_forum_url;
 					foreach my $a (@divtitle_a) {
-						if ($a->attr('href') =~ /forumdisplay\.php\/[0-9]+-/) {
+# 2018-07-19 - Format of these URLs changed to forumdisplay.php?f=238
+						if ($a->attr('href') =~ /forumdisplay\.php\/[0-9]+-/
+								or $a->attr('href') =~ /forumdisplay\.php\?f=[0-9]+$/) {
 							$scraped_forum_url = $a->attr('href');
 						}
 					}
   				if ($scraped_forum_url) {
 #  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
   					$scraped_forum_url = 'https://forums.frontier.co.uk/' . $scraped_forum_url;
+						# Strip the URL-embedded forum title off
   					$scraped_forum_url =~ s/-[^0-9]+$//;
+						if ($scraped_forum_url =~ /forumdisplay\.php\?f=([0-9]+)$/) {
+							$scraped_forum_url =~ s/\?f=/\//;
+						}
 #  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
   					if ($fi_numberonly eq $scraped_forum_url) {
   					# XXX: We don't want to just return...
