@@ -245,12 +245,15 @@ sub get_member_new_posts {
 		}
 		### END:   Check for if this is an ignored forum
 
-		my $fulltext_post = $self->get_fulltext($post{'guid_url'});
-		if (!defined($fulltext_post->{'error'})) {
-			$post{'fulltext'} = $fulltext_post->{'fulltext'};
-			$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
-			$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
-			$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
+		my $fulltext_post;
+		if (!defined($post{'error'})) {
+			$fulltext_post = $self->get_fulltext($post{'guid_url'});
+			if (!defined($fulltext_post->{'error'})) {
+				$post{'fulltext'} = $fulltext_post->{'fulltext'};
+				$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
+				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
+				$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
+			}
 		}
 
 		$post{'whoid'} = $whoid;
@@ -259,7 +262,7 @@ sub get_member_new_posts {
 #			printf STDERR "Adding post...\n";
 			push(@new_posts, \%post);
 		}
-		#last;
+		#last; # XXX: This is DEBUG, don't leave it uncommented!
 	}
 
 	return \@new_posts;
