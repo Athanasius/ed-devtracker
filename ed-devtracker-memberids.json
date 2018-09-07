@@ -109,8 +109,11 @@
     {"memberid":157490,"membername":"Lloyd Morgan-Moore","active":1,"comment":"Assistant Producer"},
     {"memberid":159848,"membername":"Planet Coaster Moderator","active":0},
     {"memberid":170935,"membername":"Will Flanagan","active":1,"comment":"Community Manager"},
-    {"memberid":181211,"membername":"Vanguard","active":1,"comment":"Game Designer"},
     {"memberid":146313,"membername":"Derin Halil","active":1,"comment":"Game Designer"},
-    {"memberid":186768,"membername":"Paul Crowther","active":1,"comment":"Community Manager"}
+    {"memberid":164274,"membername":"QA-Jack","active":0,"comment":"Frontier QA Team"},
+    {"memberid":178958,"membername":"Lora Craft69","active":0,"comment":"Jurassic World Evolution Moderator"},
+    {"memberid":181211,"membername":"Vanguard","active":1,"comment":"Game Designer"},
+    {"memberid":186768,"membername":"Paul Crowther","active":1,"comment":"Community Manager"},
+    {"memberid":178958,"membername":"Luc Pestille","active":1,"comment":"Senior Digital Designer"}
   ]
 }
