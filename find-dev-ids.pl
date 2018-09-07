@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -w -I.
 # vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
 
 use strict;
@@ -54,6 +54,8 @@ my %uninteresting = (
   'Average' => 1,
   'Above Average' => 1,
   'Competent' => 1,
+  'Expert' => 1,
+  'Master' => 1,
   'Dangerous' => 1,
   'Deadly' => 1,
   'Elite' => 1,
@@ -108,7 +110,7 @@ undef $tree;
 
 select STDOUT;
 $| = 1;
-my $id = 162765; # STARTID LASTID FIRSTID (No, I can never remember what to search on to get to this line).
+my $id = 190245; # STARTID LASTID FIRSTID (No, I can never remember what to search on to get to this line).
 
 printf "Scanning from %d to %d\n...", $id, $latest_id;
 while ($id <= $latest_id) {
