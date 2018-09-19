@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Wrapper script to run ed-devtracker-collector.pl and watchdog it in
+# case it takes too long.
+
+# The script to be run
+SCRIPT="./ed-devtracker-collector.pl"
+
+# The lockfile to check
+LOCKFILE="ed-devtracker-collector.lock"
+
+# Maximum time to allow the script to run for, in seconds
+MAX_ELAPSED=900		# 15 minutes
+
+cd `dirname $0` || exit 1
+
+# Is there an already running instance?
+if [ -f "${LOCKFILE}" ];
+then
+	echo "Lockfile present"
+	LSOF=$(lsof "${LOCKFILE}" | tail -1)
+	if [ ! -z "${LSOF}" ];
+	then
+		echo "Lockfile has a process attached"
+		PID=$(echo "${LSOF}" | awk '{print $2}')
+		ELAPSED=$(ps --no-headers -o etimes -p ${PID})
+		if [ "${ELAPSED}" -gt "${MAX_ELAPSED}" ];
+		then
+			echo "Elapsed time since start \(${ELAPSED}\) > ${MAX_ELAPSED}"
+			kill ${PID}
+		else
+			echo "Elapsed time only ${ELAPSED}"
+			exit 0
+		fi
+	else
+		echo "Nothing currently locking"
+	fi
+else
+	echo "No lock file found"
+fi
+exec ${SCRIPT}
