@@ -17,23 +17,34 @@ cd `dirname $0` || exit 1
 # Is there an already running instance?
 if [ -f "${LOCKFILE}" ];
 then
-	echo "Lockfile present"
+	# echo "Lockfile present"
 	LSOF=$(lsof "${LOCKFILE}" | tail -1)
 	if [ ! -z "${LSOF}" ];
 	then
 		echo "Lockfile has a process attached"
 		PID=$(echo "${LSOF}" | awk '{print $2}')
-		ELAPSED=$(ps --no-headers -o etimes -p ${PID})
-		if [ "${ELAPSED}" -gt "${MAX_ELAPSED}" ];
+		if [ ! -z "${PID}" ];
 		then
-			echo "Elapsed time since start \(${ELAPSED}\) > ${MAX_ELAPSED}"
-			kill ${PID}
+			ELAPSED=$(ps --no-headers -o etimes -p ${PID})
+			if [ ! -z "${ELAPSED}" ];
+			then
+				if [ "${ELAPSED}" -gt "${MAX_ELAPSED}" ];
+				then
+					echo "Elapsed time since start \(${ELAPSED}\) > ${MAX_ELAPSED}"
+					kill ${PID}
+				else
+					echo "Elapsed time only ${ELAPSED}"
+					exit 0
+				fi
+			else
+				echo "Process disappeared before ps"
+			fi
 		else
-			echo "Elapsed time only ${ELAPSED}"
-			exit 0
+			echo "Process disappeared before lsof"
 		fi
 	else
-		echo "Nothing currently locking"
+		# echo "Nothing currently locking"
+		:;
 	fi
 else
 	echo "No lock file found"
