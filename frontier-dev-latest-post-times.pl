@@ -35,7 +35,7 @@ print<<EOH;
 EOH
 foreach my $r (sort({$b cmp $a} keys(%$rows))) {
   #print Dumper(%$rows{$r}), "\n";
-  printf("   <tr><td>%s</td><td>%s</td></tr>\n", $rows->{$r}->{'who'}, $rows->{$r}->{'datestamp'});
+  printf("   <tr><td>%s</td><td>%s UTC</td></tr>\n", $rows->{$r}->{'who'}, $rows->{$r}->{'datestamp'});
 }
 
 print<<EOH;
