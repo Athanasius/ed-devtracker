@@ -9,3 +9,8 @@ ed_devtracker.psql
 ed-devtracker-collector.lock
 collector.log
 live-db.dmp
+frontier-dev-latest-post-times.html
+tmp/
+new-devs.txt
+backfill-failures.log
+*.psql-dump
