@@ -10,8 +10,8 @@ pp = pprint.PrettyPrinter(indent=2, depth=10, compact=False)
 
 import eddtrss
 
-import PyRSS2Gen as RSS
-import datetime
+import feedgen.feed as RSS
+import datetime, pytz
 ###########################################################################
 """
  "  Configuration
@@ -57,8 +57,22 @@ def generate(db, fulltext = True):
 
   posts = db.get_latest_posts(7)
 
-  items = []
+  latest_date = posts[0].datestamp.strftime("%a, %e %b %Y %H:%M:%S +0000")
+  # Set up RSS channel
+  rss = RSS.FeedGenerator()
+  rss.title('Elite: Dangerous - Dev Posts (Unofficial Tracker)')
+  rss.link(href='https://ed.miggy.org/devposts.html')
+  rss.description('Elite: Dangerous Dev Posts (Unofficial Tracker)')
+  rss.language('en')
+  rss.lastBuildDate(latest_date)
+  rss.author( {'name':'Athanasius', 'email':'edrss@miggy.org'} )
+  rss.logo('https://ed.miggy.org/pics/elite-dangerous-favicon.png')
+  #rss.  generator       = 'PyRSS2Gen from custom scraped data',
+  #rss.  managingEditor  = 'edrss@miggy.org (Athanasius)',
+  #rss.  webMaster       = 'edrss@miggy.org (Athanasius)',
+
   for p in posts:
+    p.datestamp = pytz.utc.localize(p.datestamp)
     if (fulltext and p.fulltext):
       description = p.fulltext
       # This is far from simple.  We need to:
@@ -72,38 +86,13 @@ def generate(db, fulltext = True):
      ### Convert \n to <br/>
      ### Insert post title URL at start
 
-    ## Actually add post as RSS Item
-    items.append(RSS.RSSItem(
-      title           = p.who + " - " + p.threadtitle + " (" + p.forum + ")",
-      link            = __config.get('forum_base_url') + p.url,
-      description     = description,
-      author          = p.who,
-      comments        = p.forum,
-      pubDate         = p.datestamp,
-      guid            = __config.get('forum_base_url') + p.guid_url
-    ))
-
-
-
-  latest_date = posts[0].datestamp.strftime("%a, %e %b %Y %H:%M:%S +0000")
-  # Set up RSS channel
-  rss = RSS.RSS2(
-    title           = 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
-    link            = 'https://ed.miggy.org/devposts.html',
-    description     = 'Elite: Dangerous Dev Posts (Unofficial Tracker)',
-    language        = 'en',
-    lastBuildDate   = latest_date,
-    generator       = 'PyRSS2Gen from custom scraped data',
-    managingEditor  = 'edrss@miggy.org (Athanasius)',
-    webMaster       = 'edrss@miggy.org (Athanasius)',
-    image           = RSS.Image(
-      url             = 'https://ed.miggy.org/pics/elite-dangerous-favicon.png',
-      title           = 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
-      link            = 'https://ed.miggy.org/devposts.html',
-      description     = 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
-    ),
-    items           = items
-  )
+    ## Actually add post as RSS Entry
+    e = rss.add_entry()
+    e.title(p.who + " - " + p.threadtitle + " (" + p.forum + ")")
+    e.link(href=__config.get('forum_base_url') + p.url)
+    e.description(description)
+    e.pubDate(p.datestamp)
+    e.guid(__config.get('forum_base_url') + p.guid_url, permalink=True)
 
   return rss
 
@@ -113,7 +102,7 @@ def main():
   __db = eddtrss.database("postgresql://" + __config.get('db_user') + ":" + __config.get('db_password') + "@" + __config.get('db_host') + "/" + __config.get('db_name'), __logger)
 
   rss = generate(__db, fulltext=False)
-  print(rss.to_xml())
+  print(rss.rss_str(pretty=True))
 
 if __name__ == '__main__':
   main()
