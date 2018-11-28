@@ -60,6 +60,7 @@ def generate(db, fulltext = True):
   latest_date = posts[0].datestamp.strftime("%a, %e %b %Y %H:%M:%S +0000")
   # Set up RSS channel
   rss = RSS.FeedGenerator()
+  rss.id('https://ed.miggy.org/devposts.html')
   rss.title('Elite: Dangerous - Dev Posts (Unofficial Tracker)')
   rss.link(href='https://ed.miggy.org/devposts.html')
   rss.description('Elite: Dangerous Dev Posts (Unofficial Tracker)')
@@ -89,6 +90,8 @@ def generate(db, fulltext = True):
     ## Actually add post as RSS Entry
     e = rss.add_entry()
     e.title(p.who + " - " + p.threadtitle + " (" + p.forum + ")")
+    e.author({'name':p.who})
+    e.summary(p.forum)
     e.link(href=__config.get('forum_base_url') + p.url)
     e.description(description)
     e.pubDate(p.datestamp)
@@ -102,7 +105,9 @@ def main():
   __db = eddtrss.database("postgresql://" + __config.get('db_user') + ":" + __config.get('db_password') + "@" + __config.get('db_host') + "/" + __config.get('db_name'), __logger)
 
   rss = generate(__db, fulltext=False)
-  print(rss.rss_str(pretty=True))
+  #print(rss.atom_str(pretty=True))
+  rss.atom_file('ed-dev-posts-python.atom')
+  rss.rss_file('ed-dev-posts-python.rss')
 
 if __name__ == '__main__':
   main()
