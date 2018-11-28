@@ -14,3 +14,4 @@ tmp/
 new-devs.txt
 backfill-failures.log
 *.psql-dump
+__pycache__/
