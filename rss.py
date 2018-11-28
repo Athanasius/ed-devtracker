@@ -9,6 +9,9 @@ import pprint
 pp = pprint.PrettyPrinter(indent=2, depth=10, compact=False)
 
 import eddtrss
+
+import PyRSS2Gen as RSS
+import datetime
 ###########################################################################
 """
  "  Configuration
@@ -49,36 +52,68 @@ if __args.loglevel:
 
 # database
 
-def generate():
+def generate(db, fulltext = True):
   __logger.debug('generate()')
-  # posts = db->get_latest_posts(7)
-  # Timezone is UTC
+
+  posts = db.get_latest_posts(7)
+
+  items = []
+  for p in posts:
+    if (fulltext and p.fulltext):
+      description = p.fulltext
+      # This is far from simple.  We need to:
+      # 0) Change the <blockquote class="postcontent restore"> into a div
+      # 1) Change the class="bbcode_quote" <div> elements into <blockquote> elements, all of them.
+      # 2) Remove the <img class="inlineimg" ... /> elements
+      # 3) Remove the whole <i class="fa fa-quote-left"> element (or just the aria-hidden="true" attribute on it, but the element is moot anyway).
+      # 4) Ensure the <a class="quotelink"...> element's href is fully qualified
+    else:
+      description = p.precis
+     ### Convert \n to <br/>
+     ### Insert post title URL at start
+
+    ## Actually add post as RSS Item
+    items.append(RSS.RSSItem(
+      title           = p.who + " - " + p.threadtitle + " (" + p.forum + ")",
+      link            = __config.get('forum_base_url') + p.url,
+      description     = description,
+      author          = p.who,
+      comments        = p.forum,
+      pubDate         = p.datestamp,
+      guid            = __config.get('forum_base_url') + p.guid_url
+    ))
+
+
+
+  latest_date = posts[0].datestamp.strftime("%a, %e %b %Y %H:%M:%S +0000")
   # Set up RSS channel
-  # Loop over posts
+  rss = RSS.RSS2(
+    title           = 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
+    link            = 'https://ed.miggy.org/devposts.html',
+    description     = 'Elite: Dangerous Dev Posts (Unofficial Tracker)',
+    language        = 'en',
+    lastBuildDate   = latest_date,
+    generator       = 'PyRSS2Gen from custom scraped data',
+    managingEditor  = 'edrss@miggy.org (Athanasius)',
+    webMaster       = 'edrss@miggy.org (Athanasius)',
+    image           = RSS.Image(
+      url             = 'https://ed.miggy.org/pics/elite-dangerous-favicon.png',
+      title           = 'Elite: Dangerous - Dev Posts (Unofficial Tracker)',
+      link            = 'https://ed.miggy.org/devposts.html',
+      description     = 'Assets borrowed from Elite: Dangerous, with permission of Frontier Developments plc'
+    ),
+    items           = items
+  )
 
-  ## Parse date
-  ## Post date
-
-  ## Description:
-  ## If we have full text
-  ### Perform necessary transforms
-  ## Else just precis
-  ### Convert \n to <br/>
-  ### Insert post title URL at start
-  ## fI
-
-  ## Actually add post as RSS Item
-
+  return rss
 
 def main():
   __logger.debug('Start-Up')
 
-  print('db_name: {}'.format(__config.get('db_name')))
-
   __db = eddtrss.database("postgresql://" + __config.get('db_user') + ":" + __config.get('db_password') + "@" + __config.get('db_host') + "/" + __config.get('db_name'), __logger)
-  posts = __db.get_latest_posts(7)
-  for p in posts:
-    print(p.id)
+
+  rss = generate(__db, fulltext=False)
+  print(rss.to_xml())
 
 if __name__ == '__main__':
   main()
