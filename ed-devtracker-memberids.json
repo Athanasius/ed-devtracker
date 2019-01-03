@@ -5,7 +5,7 @@
     {"memberid":6,"membername":"David Walsh","active":1},
     {"memberid":7,"membername":"David Braben","active":1},
     {"memberid":8,"membername":"Colin Davis","active":1},
-    {"memberid":13,"membername":"Natalie Amos","active":0},
+    {"memberid":13, "membername":"Natalie Amos","active":1,"comment":"Lead Tester"},
     {"memberid":52,"membername":"BrettC","active":1,"comment":"Community Assistant"},
     {"memberid":119,"membername":"Sam Denney","active":0},
     {"memberid":1110,"membername":"Stefan Mars","active":1},
@@ -116,7 +116,9 @@
     {"memberid":186768,"membername":"Paul Crowther","active":1,"comment":"Community Manager"},
     {"memberid":170983,"membername":"Luc Pestille","active":1,"comment":"Senior Digital Designer"},
     {"memberid":110070,"membername":"Tamara Tirjak","active":1,"comment":"Reported as a dev by 'Barking_Mad'"},
-    {"memberid":157351,"membername":"Philip Kearns","active":1,"comment":"Reported as a dev by 'Barking_Mad'"}
-
+    {"memberid":157351,"membername":"Philip Kearns","active":1,"comment":"Reported as a dev by 'Barking_Mad'"},
+    {"memberid":180467,"membername":"Polyot","active":1,"comment":"Reported as a dev by 'CMDR MAIN SEQUENCE'"}
+  ]
+}
   ]
 }
