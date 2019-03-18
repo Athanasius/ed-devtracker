@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <title>Elite: Dangerous - Unofficial Dev Forum Posts Tracker, by Athanasius</title>
+  <link href="style.css" rel="stylesheet" type="text/css"/>
+
+  <link rel="alternate" type="application/rss+xml" title="Elite: Dangerous Dev Posts" href="https://ed.miggy.org/devtracker/ed-dev-posts.rss" />
+  <link rel="alternate" type="application/rss+xml" title="Elite: Dangerous Dev Posts (Full Text)" href="https://ed.miggy.org/devtracker/ed-dev-posts-full.rss" />
+ </head>
+ <body>
+  <h2>
+   What is this?
+  </h2>
+  <p>
+  If you're a fan of <a href="http://www.elitedangerous.com/">Elite:
+  Dangerous</a> then you may also follow the
+  <a href="http://frontier.co.uk/">Frontier Developments</a> <a
+  href="http://forums.frontier.co.uk/">forums</a>.  If you do that then you may be
+  frustrated at the lack of an easy way to see just the developer
+  posts.
+  </p>
+  <p>
+  You could learn who they are and check around their profile pages
+  manually now and then.
+  </p>
+  <p>
+  You could write a <a href="https://elitedevtracker.com/">simple scraper that aggregates all the known
+  developer posts onto one page</a>.
+  </p>
+  <p>
+  Or you could decide that you much prefer an <a
+  href="http://www.rssboard.org/rss-specification">RSS feed</a>, so write a
+  scraper and RSS output for it all.  That's what I did.  I even ended
+  up making an additional feed with the full "clicked-through" text of
+  each post.
+  </p>
+  <h2>
+   How do I get it?
+  </h2>
+  <p>
+  If your web browser is set up with an RSS feed extension then you
+  should see the RSS icon up in your URL bar.  Simply click on that and
+  get on with adding one of the feeds to your reader.
+  </p>
+  <p>
+  NB: The feeds are updated at most every 5 minutes, more slowly if the
+  forums are especially busy.  Thus there's no point polling these feeds
+  more often than every 5 minutes.  Also the output contains the last 7 days
+  worth of posts, so if you check the feed any less frequently than that
+  you will miss posts.
+  </p>
+  <p>
+  If for some reason you need to enter a feed manually, then these are
+  the URLs:
+  </p>
+  <ol>
+   <li>
+    The legacy 'precis text only' feed - <a href="https://ed.miggy.org/devtracker/ed-dev-posts.rss">https://ed.miggy.org/devtracker/ed-dev-posts.rss</a>
+   </li>
+   <li>
+    The newer 'full text' feed - <a href="https://ed.miggy.org/devtracker/ed-dev-posts-fulltext.rss">https://ed.miggy.org/devtracker/ed-dev-posts-fulltext.rss</a>
+   </li>
+  </ol>
+  <p>
+   <b>Caveat 1</b> - The feeds will only contain the fully public
+  posts from the forums, i.e. nothing from the Private Backers Forum or
+  the Alpha Backers Forum.  Also you'll see <i>all Frontier Developments
+  forum posts, not just those relating to Elite: Dangerous, <b>unless I
+  got around to blacklisting a particular non-ED forum</b>.</i>
+  </p>
+  <p>
+   <b>Caveat 2</b> - Each post in the 'precis text only' feed will be as it is seen on the
+   appropriate member profile page's "Activity List".  That means you'll
+   only ever see the new text (only a portion of it for longer posts),
+   and never any quoted text.
+   <br/>
+   <br/>
+   The 'full text' feed will usually contain full text, including any
+   quotes, from the relevant post.  Sometimes it may have fallen back to
+   just the precis text.  This would happen if the 'click-through' to
+   retrieve the full post text failed.  Instead of failing the whole
+   post, and possibly missing one entirely, I decided to store, and use,
+   at least what I could.
+  <p>
+   <b>Caveat 3</b> - I have specifically chosen to not include the QA-*
+   or Support-* accounts in my scraping, as they seldom post anything of
+   much value (to anyone but who they're replying to).
+  </p>
+  <p>
+   <b>Caveat 4</b> - Each post will be as it appeared on the forums at
+   the time the scraper first saw it.  Posts in the RSS feed are never
+   updated for later edits.
+  </p>
+  <h2>Searching</h2>
+  <p>
+    There's a search available on <a href="devtracker/">the main feed
+    page</a>.  Or maybe you're curious about <a
+    href="devtracker/frontier-dev-latest-post-times.html">the latest
+    seen and scraped post for each tracked developer</a>. This will
+    update after each run of the collector script (so currently every 5
+    minutes)
+  </p>
+  <h2>
+   Who are you?
+  </h2>
+  <p>
+  I go by the name 'Athanasius' online, and indeed I'm 'Cmdr Athanasius'
+  in Elite: Dangerous.  You'll also find me as 'Athan' on <a
+  href="https://www.quakenet.org/">QuakeNet</a>'s
+  <a href="http://webchat.quakenet.org/?channels=elite-dangerous&uio=d4">#elite-dangerous</a>
+  and on the <a
+  href="http://forums.frontier.co.uk/member.php?u=28846">Frontier
+  Forums</a>.
+  </p>
+ <hr/>
+  <a name="news"></a>
+  <h1>
+   News
+  </h1>
+  <p><u>2018-07-13 15:30 UTC</u><br />
+   I've added "Off-Topic Discussion" to the list of ignored forums, for
+   what should be obvious reasons.
+  </p>
+  <p><u>2018-06-12 16:50 UTC</u><br />
+   All of the new JWE related forums are now on the ignore list.  A
+   bunch got added for the game launch, so a few posts leaked into this
+   RSS feed.
+  </p>
+  <p><u>2018-03-28 15:45 UTC</u><br />
+   I've just implemented ignoring of selected forums.  This is initially
+   the current four "Jurassic World: Evolution" forums. Once I'm
+   confident this is working without causing issues I may expand that
+   list so that any forum not specific to ED is ignored.
+  </p>
+  <p><u>2018-02-03 22:53 UTC</u><br />
+   I've removed 'Dale Emasiri' from the scraping as he's no longer
+   working at Frontier.
+  </p>
+  <p><u>2017-11-06 13:50 UTC</u><br />
+   I've just removed Drew Wagar from the monitored forum accounts.  He's
+   no longer actively writing for ED and his posts aren't really
+   relevant to the game any more.  Someone let me know if this changes
+   and I'll consider adding him back.
+  </p>
+  <p><u>2017-10-10 16:53 UTC</u><br />
+   Updated all the URLS to utilise https://ed.miggy.org/ instead of
+   https://miggy.org/games/elite-dangerous/
+  </p>
+  <p><u>2017-09-21 09:15 UTC</u><br />
+   The new 'full text' feed hasn't shown any issues in over a week of
+   testing, so it's now described and linked to on this page.
+  </p>
+  <p><u>2017-06-05 20:05 UTC</u><br />
+   Added Lloyd Morgan-Moore (157490) to the scraped forum accounts.
+  </p>
+  <p><u>2017-03-10 17:20 UTC</u><br />
+   I've just finished work to use what I hope are truly unique
+   <strong>and static</strong> GUIDs for each post.  Before this change
+   if someone on the Frontier Forums edited the title of a topic then the
+   scraper would use the changed URL as the permaLink and thus put it
+   out as an additional new post.  Where several posts had already been
+   made within the topic this would cause spam after the edit.
+  </p>
+  <p>I now strip out the embedded topic title from the URL, using just
+  those parts that are necessary to reach it on the forums.  A
+  side-effect of setting this up is that the feed just got spammed with
+  a huge amount of not-actually-new posts due to changing over to using
+  these better GUIDs in the permaLink property of each post.  This will
+  be a one-off thing.
+  </p>
+  <p><u>2016-12-01 02:49 UTC</u><br />
+   Changed the behaviour of the scraper so it no longer takes the
+   <em>first</em> known post it sees as evidence that it is up to date
+   for that forum member's activity.  It will still mean skipping that
+   individual post, but it will continue to check all other posts
+   visible on the activity page.  <strong>NB: This assumes there'll be
+   no more than 50 posts on an Activity List at any one time, else it
+   will think additional ones are new.</strong>
+  </p>
+
+  <p><u>2016-12-01 02:49 UTC</u><br />
+  Removed Greg Ryder from the list of monitored accounts, as apparently
+  he's been gone from Frontier for over a year now.
+  </p>
+
+  <p><u>2016-11-15 13:28 UTC</u><br />
+  I've just added Drew Wagar to the monitored forum posters.  He's the
+  author of one of the official books and driver of the 'Formidine Rift'
+  mystery.  He doesn't seem to post too much, but when he does it's
+  likely about said mystery.
+  </p>
+
+  <p><u>2016-08-26 15:12 UTC</u><br />
+  I've just changed the code to strip the topic titles out of posts
+  URLs.  If they change, and they can with a moderator edit, the code
+  would see all the posts in that thread as new again.  This is what
+  happened over the past day or so with the "The Galaxy - Is its size
+  now considered to be a barrier to gameplay by the Developers?" thread
+  in "Dangerous Discussion".
+  </p>
+
+  <p><u>2016-08-13 09:41 UTC</u><br />
+  I've now removed Ben Parry from the collector.  He only ever posts in
+  there Star Citizen thread now.
+  </p>
+
+  <p><u>2016-06-12 18:50 UTC</u><br />
+  The issue with the post URLs seems to have been fixed.
+  </p><p>
+  Do note that because the URLs now include the thread title in text
+  form it means my scraper has seen a lot of older posts as now-new, as
+  it uses exactly that URL to know if it's seen a post before.  So
+  there's been a splurge of ~50 posts repeated in the feed.
+  </p>
+
+  <p><u>2016-06-12</u><br />
+  There have been some forum changes that are breaking my scraper. I've
+  got code to work around one (putting text like " 4 replies and 242
+  views" inside the element of class=date). But the links in the
+  Activity Lists are now also broken, not properly containing the anchor
+  to the specific post within the thread.
+  </p><p>
+  I've PM'd BrettC about both and hopefully he'll fix things.
+  </p>
+
+  <p><u>2016-05-05 00:41 UTC</u><br/>
+   All URLs have been changed to use https://miggy.org/... rather than
+   http://www.miggy.org/.  You may want to update your RSS readers.  The
+   certificate for HTTPS/SSL is from LetsEncrypt and includes a full
+   enough chain of Certificate Authorities that it should validate in
+   any modern, up to date, web browser.
+  </p>
+  <p><u>2016-05-05 00:17 UTC</u><br/>
+   Added " (&lt;Forum Name&gt;)" text to the end of item titles.  This
+   will only be the sub-forum name, but in most cases should help with
+   things like knowing if a post is in an Xbox forum, or a more general
+   one.
+  </p>
+  <p><u>2015-07-02 19:00 BST</u><br/>
+   As the QA-* accounts mostly seem to post things like "thanks for that
+   report", and otherwise things that aren't all that relevant I've
+   decided to no longer scrape them for this feed.  Note that FD do now
+   seem to be pushing patch notes/changlogs to <a
+   href="https://community.elitedangerous.com/patch-notes">the Community
+   Site</a>, and that page has its own RSS feed.
+   <br/>
+   <br/>
+   Any posts I'd already scraped for QA-* accounts will stay in the
+   database but no new ones will appear.  Also, lack of probably
+   usefulness is why I've not added the Support-* accounts either.
+  </p>
+  <p><u>2015-06-16 00:00 BST</u><br/>
+   I've just finished putting together a very basic <a href="devtracker/">Search
+   Interface</a> for the 'precis' text of all the posts in the database
+   that drives this RSS feed.  Any feedback appreciated through the
+   usual channels.
+  </p>
+  <p><u>2015-06-12 16:04 BST</u><br/>
+  A small tweak to the scraping code means white space in posts is no
+  longer collapsed, this will preserve the formatting where a post
+  contains multiple paragraphs, bullet points etc.<br/>
+  Past posts will remain 'broken' in this respect.
+  </p>
+  <p><u>2015-06-12 15:45 BST</u><br/>
+  Tweaked the output code to use the https:// URI scheme instead of
+  http://, given the FD forums are enforcing the former now anyway.
+  <b>NB: this change will have caused GUIDs to change and thus the last
+  7 days worth of posts to re-appear in your feed.</b>
+  </p>
+  <p><u>2015-06-05 20:00 BST</u><br/>
+  I've just changed the RSS generation to output the last 7 days worth
+  of posts, rather than the last 100 posts as it was before.  This
+  should hopefully avoid any issue in the future with low-frequency
+  pollers missing posts due to high dev post rate.
+  </p>
+  <p><u>2015-05-25 21:15 BST</u><br/>
+  Further to the last news post there's also an issue with superscripts
+  in posts.  I've not yet time to look into this, but it will do things
+  like cause '10<sup>11</sup>' to be collapsed to '1011'.<br/>
+  <br/>
+  Also, there's a becoming-a-FAQ; "Why don't you show the full post,
+  including quotes where present, on each post in the feed?".  The
+  answer being:
+  <blockquote>Currently the scraping is simple, look at (only the first
+  page/initial load of) each users' latest posts on their activity list.
+  That's what only contains what I scrape. To get the full posts and
+  quotes I'd have to follow each post link, incurring an extra page
+  load. As I've already been co-ordinating with the head moderator
+  BrettC on ensuring my scraper bot doesn't cause problems with
+  hammering the forums, particularly when during those times the forums
+  are already under high load, I can't afford to cause that extra load.
+  </blockquote>
+  </p>
+  <p><u>2015-01-27 20:05 GMT</u><br/>
+   It's come to my attention that despite claiming utf-8 output the feed
+   sometimes attempts to include characters from other encodings.
+   Unfortunately the source of the problem is that the FD forums are
+   telling my scraper script that they're in iso-8859-1 format but
+   allowing characters from windows-1252 encoding through as well.
+  </p>
+  <p>
+   Whilst I could try to hack around this with changing the input
+   encoding or doing some search/replace that feels like it will break
+   on something else in the future, so for now you'll have to put up
+   with the weirdness and blame FD's forum setup for allowing the 'bad'
+   characters'.
+  </p>
+  <p><u>2014-10-25 00:47 BST</u><br/>
+   I've now updated my scripts for the new forums.  All looks to be OK,
+   although you might have refreshed the feed just as I had a date error
+   in it (the cause of which has been found and rectified).
+  </p>
+  <p>
+   If you did then you might fail to pick up new items until one appears
+   after Sat, 25 Oct 2014 16:24:00 +0000, depending on how your RSS
+   reader acts.
+  </p>
+  <hr/>
+ <a href="http://feedvalidator.org/check.cgi?url=https%3A//ed.miggy.org/devtracker/ed-dev-posts.rss"><img src="valid-rss-rogers.png" alt="[Valid RSS]" title="Validate my RSS feed" /></a>
+ </body>
+</html>
