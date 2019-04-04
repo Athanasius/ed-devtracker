@@ -18,18 +18,21 @@ use HTTP::Request;
 use Encode;
 use Data::Dumper;
 use Date::Manip;
+use JSON::PP;
 
 sub new {
 	my ($class, $ua, $forums_ignored) = @_;
   my $self = {};
 
-	my $config = new ED::DevTracker::Config('file' => 'config.txt');
-	$self->{'db'} = new ED::DevTracker::DB('config' => $config);;
+	$self->{'config'} = new ED::DevTracker::Config('file' => 'config.txt');
+	$self->{'db'} = new ED::DevTracker::DB('config' => $self->{'config'});
 
 	$self->{'ua'} = $ua;
 
-	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
-	$self->{'forum_member_base_url'} = 'https://forums.frontier.co.uk/members/%s/latest-activity';
+	$self->{'forum_base_url'} = $self->{'config'}->getconf('forum_base_url');
+	$self->{'forum_member_base_url'} = $self->{'forum_base_url'} . "/members/%s/latest-activity";
+	$self->{'xf_api_baseurl'} = $self->{'config'}->getconf('xf_api_baseurl');
+	$self->{'xf_api_key'} = $self->{'config'}->getconf('xf_api_key');
 	$self->{'forums_ignored'} = $forums_ignored;
   bless($self, $class);
   return $self;
@@ -87,6 +90,7 @@ sub get_member_new_posts {
 	my @new_posts;
 	foreach my $p (@posts) {
 		my %post;
+		print STDERR "\n";
 
 		my $content = $p->look_down(_tag => 'div', class => 'contentRow-main');
 		#printf STDERR "Post text:\n%s\n", $content->as_text;
@@ -114,83 +118,82 @@ sub get_member_new_posts {
 				);
 				if ($who) {
 					$post{'who'} = $who->as_text;
-					printf STDERR "Who: '%s'\n", $post{'who'};
+						printf STDERR "Who: '%s'\n", $post{'who'};
+					} else {
+						print STDERR "Can't find thread poster\n";
+						next;
+					}
+					$post{'whourl'} = $a[0]->attr('href');
+					printf STDERR "Who URL: '%s'\n", $post{'whourl'};
+# XXX: Check if this is a 'reaction' and ignore if so.
+					$post{'threadtitle'} = $a[1]->as_text;
+					printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
+					$post{'url'} = $a[1]->attr('href');
+					printf STDERR "Post URL: '%s'\n", $post{'url'};
 				} else {
-					print STDERR "Can't find thread poster\n";
+					print STDERR "No 'a' under div->title\n";
 					next;
 				}
-				$post{'whourl'} = $a[0]->attr('href');
-				printf STDERR "Who URL: '%s'\n", $post{'whourl'};
-				$post{'threadtitle'} = $a[1]->as_text;
-				printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
-				$post{'threadurl'} = $a[1]->attr('href');
-				printf STDERR "Thread URL: '%s'\n", $post{'threadurl'};
-				# XXX $post{'forum'} = $a[2]->as_text;
 			} else {
-				print STDERR "No 'a' under div->title\n";
+				print STDERR "No div->title\n";
 				next;
 			}
-		} else {
-			print STDERR "No div->title\n";
-			next;
-		}
 
-		my $div_excerpt = $content->look_down(_tag => 'div', class => 'contentRow-snippet');
-		if ($div_excerpt) {
-			$post{'precis'} = $div_excerpt->as_text;
-		} else {
-			print STDERR "No precis\n";
-			next;
-		}
-		next;
+			my $div_excerpt = $content->look_down(_tag => 'div', class => 'contentRow-snippet');
+			if ($div_excerpt) {
+				$post{'precis'} = $div_excerpt->as_text;
+				printf STDERR "Precis:\n'%s'\n", $post{'precis'}
+			} else {
+				print STDERR "No precis\n";
+				next;
+			}
 
-    my $div_fulllink = $content->look_down(_tag => 'div', class => 'fulllink');
-    if ($div_fulllink) {
-      my $a = $div_fulllink->look_down(_tag => 'a');
-      if ($a) {
-        $post{'url'} = $a->attr('href');
-        $post{'urltext'} = $a->as_text;
-#				printf STDERR "Thread '%s' at '%s' new '%s'\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
-        # Newer: showthread.php/283153-The-Galaxy-Is-its-size-now-considered-to-be-a-barrier-to-gameplay-by-the-Developers?p=4414769#post4414769
-        # New: showthread.php?t=51464&p=902587#post902587
-        # Old: showthread.php?p=902218#post902218
-        $post{'guid_url'} = $post{'url'};
-        $post{'guid_url'} =~ s/t=[0-9]+\&//;
-        # Strip the embedded topic title
-        $post{'guid_url'} =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
-        $post{'guid_url'} =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
-#        printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'guid_url'};
-        # Forum Activity List is unreliable, 'Frontier QA' showing just a single post from March, and none since, so our 'last 20 posts' check fails to find the dupe
-        if ($post{'guid_url'} eq 'showthread.php?t=179414'
-          or $post{'guid_url'} eq 'showthread.php?t=179414&p=2765130#post2765130'
-          or $post{'guid_url'} eq 'showthread.php/290119'
-          or $post{'guid_url'} eq 'showthread.php/290119?p=4525010#post4525010'
-          ) {
-#          print STDERR "Bailing because of a problematic post\n";
-          next;
-        }
-#        printf STDERR "Checking for %s in latest posts\n", $post{'guid_url'};
-        if (defined(${$latest_posts}{$post{'guid_url'}})) {
-          my $l = ${${$latest_posts}{$post{'guid_url'}}}{'guid_url'};
-          $l =~ s/t=[0-9]+\&//;
-          $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)$/$+{'start'}/;
-          $l =~ s/^(?<start>showthread.php\/[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
-#          printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'threadurl'}, $l, $post{'threadurl'}, $post{'guid_url'};
-          if ($l eq $post{'guid_url'}) {
-#            print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
-            next;
-          } else {
-#            print STDERR "Post is new despite guid_url in latest_posts: ", $post{'guid_url'}, "\n";
-          }
-        } #else {
-          # Post is 'simply' new
-#          print STDERR "guid_url of new post not found in latest posts\n";
-        #}
+			$post{'urltext'} = $post{'threadtitle'};
+#		printf STDERR "Thread '%s' at '%s' new '%s'\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
+			# XF2: /posts/7715924/
+    $post{'guid_url'} = $post{'url'};
+# XXX: Is this a thread-starting post?  If so guid_url should be a /threads/ one
+    printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'url'}, $post{'guid_url'};
+    printf STDERR "Checking for %s in latest posts\n", $post{'guid_url'};
+    if (defined(${$latest_posts}{$post{'guid_url'}})) {
+      my $l = ${${$latest_posts}{$post{'guid_url'}}}{'guid_url'};
+    	# Old: showthread.php?p=902218#post902218
+			$l =~ s/^showthread\.php\?p=(?<postid>[0-9]+)(\#post[0-9]+)?$/\/posts\/$+{'postid'}\//;
+    	# New: showthread.php?t=51464&p=902587#post902587
+			$l =~ s/^showthread\.php\?t=[0-9]+\&p=(?<postid>[0-9]+)(\#post[0-9]+)?$/\/posts\/$+{'postid'}\//;
+    	# Newer (final vBulletin): showthread.php/283153-The-Galaxy-Is-its-size-now-considered-to-be-a-barrier-to-gameplay-by-the-Developers?p=4414769#post4414769
+      $l =~ s/^showthread\.php\/(?<start>[0-9]+)(-[^\?]+)$/\/posts\/$+{'start'}\//;
+
+      $l =~ s/^showthread\.php\/(?<start>[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
+
+      printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'url'}, $l, $post{'url'}, $post{'guid_url'};
+      if ($l eq $post{'guid_url'}) {
+#        print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
+        next;
+      } else {
+#        print STDERR "Post is new despite guid_url in latest_posts: ", $post{'guid_url'}, "\n";
       }
-    } else {
-      print STDERR "No div_fulllink\n";
-			next;
-    }
+    } #else {
+      # Post is 'simply' new
+      print STDERR "guid_url of new post not found in latest posts\n";
+    #}
+
+		### BEGIN: Retrieve fulltext of post
+		my $fulltext_post;
+		if (!defined($post{'error'})) {
+			$fulltext_post = $self->get_fulltext($post{'guid_url'});
+			if (!defined($fulltext_post->{'error'})) {
+				$post{'fulltext'} = $fulltext_post->{'fulltext'};
+				$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
+				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
+				$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
+				$post{'guid_url'} = $fulltext_post{'guid_url'};
+# XXX Need to fill in $post{'threadurl'} and $post{'forum'} (forum name)
+				$post{'threadurl'} = $fulltext_post{'threadurl'};
+				$post{'forum'} = $fulltext_post{'forum'};
+			}
+		}
+		### END: Retrieve fulltext of post
 
   	### BEGIN: Check for if this is an ignored forum
 		my $page_url = $self->{'forum_base_url'} . $post{'guid_url'};
@@ -213,7 +216,7 @@ sub get_member_new_posts {
 					}
   				if ($scraped_forum_url) {
 #  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
-  					$scraped_forum_url = 'https://forums.frontier.co.uk/' . $scraped_forum_url;
+  					$scraped_forum_url = $self->{'forum_base_url'} . $scraped_forum_url;
 						# Strip the URL-embedded forum title off
   					$scraped_forum_url =~ s/-[^0-9]+$//;
 						if ($scraped_forum_url =~ /forumdisplay\.php\?f=([0-9]+)$/) {
@@ -235,17 +238,6 @@ sub get_member_new_posts {
 		}
 		### END:   Check for if this is an ignored forum
 
-		my $fulltext_post;
-		if (!defined($post{'error'})) {
-			$fulltext_post = $self->get_fulltext($post{'guid_url'});
-			if (!defined($fulltext_post->{'error'})) {
-				$post{'fulltext'} = $fulltext_post->{'fulltext'};
-				$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
-				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
-				$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
-			}
-		}
-
 		$post{'whoid'} = $whoid;
 #		print STDERR Dumper(\%post), "\n";
 		if (!defined($post{'error'}) and (!defined($fulltext_post->{'error'}) or $fulltext_post->{'error'}->{'no_post_message'} != 1)) {
@@ -262,104 +254,125 @@ sub get_fulltext {
 	my ($self, $guid_url) = @_;
 	my %post;
 
+	printf STDERR "get_fulltext: guid_url = '%s'\n", $guid_url;
   my $page_url = $self->{'forum_base_url'} . $guid_url;
-  my ($postid, $is_first_post);
-  $is_first_post = undef;
-  if ($page_url =~ /\#post(?<postid>[0-9]+)$/) {
-#    printf STDERR "Found #postNNNNN in page URL: %s\n", $page_url;
-    $postid = $+{'postid'};
-  } elsif ($page_url =~ /showthread.php\/(?<postid>[0-9]+)/) {
-#    printf STDERR "Found 1st post in page URL: %s\n", $page_url;
-    $postid = $+{'postid'};
-    $is_first_post = 1;
-  } elsif ($page_url =~ /showthread.php\?t=[0-9]+\&p=(?<postid>[0-9]+)\#/) {
-#    printf STDERR "Found old-style not-1st post in page URL: %s\n", $page_url;
-    $postid = $+{'postid'};
-  } elsif ($page_url =~ /showthread.php\?t=(?<postid>[0-9]+)$/) {
-#    printf STDERR "Found old-style 1st post in page URL: %s\n", $page_url;
-    $postid = $+{'postid'};
-    $is_first_post = 1;
+  my ($postid, $threadid, $is_first_post);
+  if ($page_url =~ /\/threads\/.*\.(?<threadid>[0-9]+)\//) {
+    printf STDERR "Found 1st post in page URL: %s\n", $page_url;
+    $threadid = $+{'threadid'};
+	} elsif ($page_url =~ /\/posts\/(?<postid>[0-9]+)\/$/) {
+    printf STDERR "Found reply post in page URL: %s\n", $page_url;
+		$postid = $+{'postid'};
   } else {
     printf STDERR "Couldn't find any postid in page URL: %s\n", $page_url;
 		$post{'error'} = {'message' => "Couldn't find any postid in page URL"};
     return \%post;
   }
 
-  my $req = HTTP::Request->new('GET', $page_url);
-  my $res = $self->{'ua'}->request($req);
-  if (! $res->is_success) {
-    printf STDERR "Failed to retrieve post page for '%s': (%d) %s\n", $page_url, $res->code, $res->message;
-		$post{'error'} = {'http_code' => $res->code, 'http_message' => $res->message};
-    return \%post;
-  }
+	my $res;
+	my $api_post;
+	if (defined($threadid)) {
+		my $req = HTTP::Request->new( 'GET', $self->{'xf_api_baseurl'} . "/threads/" . $threadid . "/?with_posts=1");
+		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
+		$res = $self->{'ua'}->request($req);
+		if (! $res->is_success) {
+			printf STDERR "XF API call for a thread failed: %s\n", $res->status;
+			return undef;
+		}
+		my $api = decode_json($res->content);
+#		print STDERR Dumper($api->{'posts'});
+		$api_post = @{$api->{'posts'}}[0]
+		$post{'guid_url'} = "/threads/" . $threadid . "/";
+		$post{'threadurl'} = $post{'guid_url'};
 
-  my $hct = $res->header('Content-Type');
-  if ($hct =~ /charset=(?<ct>[^[:space:]]+)/) {
-    $hct = $+{'ct'};
-  } else {
-    undef $hct;
-  }
-  my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
-  if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
-    $tree->parse(decode("utf8", encode("utf8", $res->decoded_content('charset' => 'windows-1252'))));
-  } else {
-    $tree->parse(decode("utf8", encode("utf8", $res->decoded_content())));
-  }
+	} elsif (defined($postid)) {
+		my $req = HTTP::Request->new( 'GET', $self->{'xf_api_baseurl'} . "/posts/" . $postid . "/");
+		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
+		$res = $self->{'ua'}->request($req);
+		if (! $res->is_success) {
+			printf STDERR "XF API call for a post failed: %s\n", $res->status;
+			return undef;
+		}
+		$api_post = decode_json($res->content);
+		$api_post = $api_post->{'post'};
+		$post{'guid_url'} = "/posts/" . $postid . "/";
+		$post{'threadurl'} = "/threads/" . $api_post->{'thread_id'} , "/";
+	} 
 
-  my $post_div;
-  if ($is_first_post) {
-#    print STDERR "Is a first post\n";
-    $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
-    if (! $post_div) {
-      printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
-			my $error = $self->check_forum_error($tree);
-			if (defined($error)) {
-				$post{'error'} = $error;
-			} else {
-				$post{'error'} = {'message' => 'Failed to find the post div element for first post in thread', 'no_post_message' => 1};
-			}
-     	return \%post;
-    }
-  } else {
-#    print STDERR "Is NOT a first post\n";
-    $post_div = $tree->look_down('id', "post_message_" . $postid);
-    if (! $post_div) {
-      printf STDERR "Failed to find the post div element for post %d\n", $postid;
-#			printf STDERR $tree->as_HTML, "\n";
-#			printf STDERR Dumper($tree), "\n";
-			my $error = $self->check_forum_error($tree);
-#			printf STDERR Dumper($error), "\n"; # XXX why does this sometimes give no output, despite other checks showing $error is defined ?
-			if (defined($error)) {
-				$post{'error'} = $error;
-			} else {
-				$post{'error'} = {'message' => 'Failed to find the post div element for post', 'no_post_message' => 1};
-			}
-      return \%post;
-    }
-  }
-  my $new_content = $post_div->look_down(_tag => 'blockquote');
-  if (! $new_content) {
-    printf STDERR "Couldn't find main blockquote of post\n";
-		$post{'error'} = {'message' => "Couldn't find main blockquote of post", 'no_blockquote' => 1};
-    return \%post;
-  }
-#  printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
-  $post{'fulltext'} = $post_div->as_HTML;
-  $post{'fulltext_stripped'} = $post_div->format;
+	$post{'forum'} = $api_post->{'Forum'}->{'title'};
+	#print STDERR Dumper($api_post);
+# XXX: Could do forum ignore here:
+#      		$api_post->{'Forum'}->{'node_id'}
 
-  my $post_div_stripped = $post_div;
-  # Post with multiple 'code' segments: https://forums.frontier.co.uk/showthread.php/275151-Commanders-log-manual-and-data-sample?p=5885045&viewfull=1#post5885045
-  # thankfully they use class="bbcode_container", not "bbcode_quote"
-  my @bbcode_quote = $post_div_stripped->look_down(_tag => 'div', class => 'bbcode_quote');
-  foreach my $bbq (@bbcode_quote) {
-    $bbq->delete_content;
-  }
-  my $text = $post_div_stripped->as_trimmed_text;
-#    printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
-  # This probably works for full-text search.  May have to strip ' * ' and ' - ' (used in lists) from it.
-#    printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
-  $post{'fulltext_noquotes'} = $post_div_stripped->as_HTML;
-  $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
+	$post{'fulltext'} = $api_post->{'message'};
+	printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
+# XXX: Munge user quoting into something that works in RSS feed/readers.
+# XXX: See Parse::BBCode
+# [QUOTE="hos, post: 7716228, member: 222029"]
+# nice way to hide the amount of issues. good job.
+# [/QUOTE]
+# 
+# The Issue Tracker makes the number of reports more visible than the previous forum system and helps you keep track of their progress.
+# XXX: Actually populate these properly, or abandon the feature:
+	$post{'fulltext_stripped'} = $post{'fulltext'};
+	$post{'fulltext_noquotes'} = $post{'fulltext'};
+	$post{'fulltext_noquotes_stripped'} = $post{'fulltext'};
+
+# XXX: Below here is the old scraping code
+######   my $post_div;
+######   if ($is_first_post) {
+###### #    print STDERR "Is a first post\n";
+######     $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
+######     if (! $post_div) {
+######       printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
+###### 			my $error = $self->check_forum_error($tree);
+###### 			if (defined($error)) {
+###### 				$post{'error'} = $error;
+###### 			} else {
+###### 				$post{'error'} = {'message' => 'Failed to find the post div element for first post in thread', 'no_post_message' => 1};
+###### 			}
+######      	return \%post;
+######     }
+######   } else {
+###### #    print STDERR "Is NOT a first post\n";
+######     $post_div = $tree->look_down('id', "post_message_" . $postid);
+######     if (! $post_div) {
+######       printf STDERR "Failed to find the post div element for post %d\n", $postid;
+###### #			printf STDERR $tree->as_HTML, "\n";
+###### #			printf STDERR Dumper($tree), "\n";
+###### 			my $error = $self->check_forum_error($tree);
+###### #			printf STDERR Dumper($error), "\n"; # XXX why does this sometimes give no output, despite other checks showing $error is defined ?
+###### 			if (defined($error)) {
+###### 				$post{'error'} = $error;
+###### 			} else {
+###### 				$post{'error'} = {'message' => 'Failed to find the post div element for post', 'no_post_message' => 1};
+###### 			}
+######       return \%post;
+######     }
+######   }
+######   my $new_content = $post_div->look_down(_tag => 'blockquote');
+######   if (! $new_content) {
+######     printf STDERR "Couldn't find main blockquote of post\n";
+###### 		$post{'error'} = {'message' => "Couldn't find main blockquote of post", 'no_blockquote' => 1};
+######     return \%post;
+######   }
+###### #  printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
+######   $post{'fulltext'} = $post_div->as_HTML;
+######   $post{'fulltext_stripped'} = $post_div->format;
+###### 
+######   my $post_div_stripped = $post_div;
+######   # Post with multiple 'code' segments: https://forums.frontier.co.uk/showthread.php/275151-Commanders-log-manual-and-data-sample?p=5885045&viewfull=1#post5885045
+######   # thankfully they use class="bbcode_container", not "bbcode_quote"
+######   my @bbcode_quote = $post_div_stripped->look_down(_tag => 'div', class => 'bbcode_quote');
+######   foreach my $bbq (@bbcode_quote) {
+######     $bbq->delete_content;
+######   }
+######   my $text = $post_div_stripped->as_trimmed_text;
+###### #    printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
+######   # This probably works for full-text search.  May have to strip ' * ' and ' - ' (used in lists) from it.
+###### #    printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
+######   $post{'fulltext_noquotes'} = $post_div_stripped->as_HTML;
+######   $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
 
 	return \%post;
 }
