@@ -77,40 +77,50 @@ my $forums_ignored;
 ###########################################################################
 # First let's make sure we're logged in.
 ###########################################################################
-my $login_url = 'https://forums.frontier.co.uk/login.php?do=login';
+# Load the login page to get cookies set up
+my $login_form_url = 'https://forums.frontier.co.uk/login';
+my $lf_req = HTTP::Request->new('GET', $login_form_url, ['Connection' => 'close']);
+my $lf_res = $ua->request($lf_req);
+#print $lf_res->as_string;
+#print Dumper($lf_res->content);
+my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
+$tree->parse($lf_res->decoded_content());
+$tree->eof();
+my $xft = $tree->look_down('name', '_xfToken');
+my $xfToken =  $xft->attr_get_i('value');
+undef $tree;
+
+my $login_url = 'https://forums.frontier.co.uk/login/login';
 my $login_user = $config->getconf('forum_user');
-my $vb_login_password = $config->getconf('forum_password');
-my $vb_login_md5password = md5_hex($vb_login_password);
+my $login_password = $config->getconf('forum_password');
 my $req = HTTP::Request->new('POST', $login_url, ['Connection' => 'close']);
-$req->header('Origin' => 'https://forums.frontier.co.uk');
-$req->header('Referer' => 'https://forums.frontier.co.uk/');
+$req->header('Origin' => 'https://forums.frontier.co.uk/login');
+$req->header('Referer' => 'https://forums.frontier.co.uk/login');
 $req->header('Content-Type' => 'application/x-www-form-urlencoded');
 $req->content(
-  "vb_login_username=" . $login_user
-  . "&do=login"
-  . "&vb_login_md5password=" . $vb_login_md5password
-  . "&vb_login_md5password_utf=" . $vb_login_md5password
+  "login=" . $login_user
+  . "&password=" . $login_password
+  . "&remember=1"
+  . "&_xfRedirect=/"
+  . "&_xfToken=" . $xfToken
 );
 #  . "&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=guest&do=login"
 #print STDERR Dumper($req), "\n";
 #print STDERR $req->as_string, "\n";
 #exit(0);
 my $res = $ua->request($req);
-if (! $res->is_success) {
+#print STDERR $res->as_string;
+#print STDERR Dumper($res->content);
+# In XenForo 2 HTTP 303 (See Other) indicates login success
+# HTTP 200 (success) means "already logged in"
+if ($res->code != 303 and ! $res->is_success) {
   print STDERR "Failed to login: ", $res->status_line, "\n";
   exit(1);
 }
-
-#print STDERR $res->as_string;
-#print STDERR Dumper($res->content);
 #exit(0);
-# Now 'follow the redirect' to the front page
-$req = HTTP::Request->new('GET', 'https://forums.frontier.co.uk/', ['Connection' => 'close']);
-$res = $ua->request($req);
-if (! $res->is_success) {
-  printf STDERR "Failed post-login get / : %s\n", $res->status_line;
-  exit(2);
-}
+
+printf STDERR "Login done\n";
+#exit(0);
 ###########################################################################
 
 my $new_posts_total = 0;

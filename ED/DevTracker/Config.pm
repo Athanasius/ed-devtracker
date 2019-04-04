@@ -57,6 +57,8 @@ sub new {
 			$config{'forum_user'} = $1;
 		} elsif (/^forum_password:\s+(.+)$/i) {
 			$config{'forum_password'} = $1;
+		} elsif (/^xf_api_key:\s+(.+)$/i) {
+			$config{'xf_api_key'} = $1;
 		} elsif (/^forum_base_url:\s+(.+)$/i) {
 			$config{'forum_base_url'} = $1;
 		} elsif (/^memberid_file:\s+(.+)$/i) {
