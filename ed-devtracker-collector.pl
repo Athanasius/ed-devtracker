@@ -78,7 +78,7 @@ my $forums_ignored;
 # First let's make sure we're logged in.
 ###########################################################################
 # Load the login page to get cookies set up
-my $login_form_url = 'https://forums.frontier.co.uk/login';
+my $login_form_url = $config->getconf('forum_base_url') . "/login";
 my $lf_req = HTTP::Request->new('GET', $login_form_url, ['Connection' => 'close']);
 my $lf_res = $ua->request($lf_req);
 #print $lf_res->as_string;
@@ -90,12 +90,12 @@ my $xft = $tree->look_down('name', '_xfToken');
 my $xfToken =  $xft->attr_get_i('value');
 undef $tree;
 
-my $login_url = 'https://forums.frontier.co.uk/login/login';
+my $login_url = $config->getconf('forum_base_url') . "/login/login";
 my $login_user = $config->getconf('forum_user');
 my $login_password = $config->getconf('forum_password');
 my $req = HTTP::Request->new('POST', $login_url, ['Connection' => 'close']);
-$req->header('Origin' => 'https://forums.frontier.co.uk/login');
-$req->header('Referer' => 'https://forums.frontier.co.uk/login');
+$req->header('Origin' => $config->getconf('forum_base_url') . "/login");
+$req->header('Referer' => $config->getconf('forum_base_url') . "/login");
 $req->header('Content-Type' => 'application/x-www-form-urlencoded');
 $req->content(
   "login=" . $login_user
@@ -104,7 +104,6 @@ $req->content(
   . "&_xfRedirect=/"
   . "&_xfToken=" . $xfToken
 );
-#  . "&vb_login_password=&vb_login_password_hint=Password&s=&securitytoken=guest&do=login"
 #print STDERR Dumper($req), "\n";
 #print STDERR $req->as_string, "\n";
 #exit(0);
@@ -151,7 +150,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
   while (defined($p)) { 
 	  #print STDERR Dumper($p), "\n";
     if (${$p}{'datestamp'}) {
-	    $db->insert_post($p);
+	    #$db->insert_post($p);
     }
     $new_posts_total++;
     $p = pop(@{$new_posts});
