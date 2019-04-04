@@ -1,3 +1,36 @@
+- XenForo 2 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*) Ensure all guid_url values are valid:
+	*) In some cases we have only url = 'showthread.php?t=53456'
+	   or url = 'showthread.php/53456-<title>'
+
+	   i.e. no actual post ID, and the thread IDs aren't the
+	   same/valid on XF2.
+
+	   To fix this we have to do a forum search on the thread title
+	   in order to find the appropriate post to then look up the
+	   *post* ID to fix the guid_url.
+	   Ah, except *some* thread IDs *are* valid, so could be used to
+	   automate some of this cleanup.
+	   Check against
+	   https://forums.frontier.co.uk/threads/<threadid>/ and if that
+	   loads then grab the postid of the first post and use that in
+	   new guid_url.
+	   It's possible others might have been deleted.
+
+   And make sure the search output is using these guid_url values so
+   they'll actually work on the new forum!
+
+   Likewise we might want to update any forum URLs in post content to be
+   the proper format and a valid postid.
+
+   See:
+
+   SELECT id,url,guid_url FROM posts WHERE url NOT LIKE 'showthread.php/t=%p=%' AND url NOT LIKE 'showthread.php?p=%#post%' AND url NOT LIKE 'showthread.php?t=%&p=%' AND url NOT LIKE 'showthread.php/%-%?p=%#post%' ORDER BY id ASC;
+   (1311 rows)
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Pre-XenForo2 below here:
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 1) Once we have access use
 https://forums.frontier.co.uk/memberlist.php?order=asc&sort=joindate&pp=100&usergroupid=9
 to spot new dev accounts.
@@ -51,18 +84,6 @@ https://forums.frontier.co.uk/search.php?do=showspecialz
 	4) EDCD feedbot -> "show_sample_entry.py" script with the URL:
 	https://github.com/freiheit/discord_feedbot
 
-*) A file lock for runs of the collector, in case it takes longer than
-the cron interval.
 *) 'Everything' into the config file, no hard coded 'config' values.
 *) ED::DevTracker::Forums.pm to hold all the forum interaction code,
 i.e. login, URL retrieval...
-*) Forum blacklisting, base this on the URL, i.e.
-   https://forums.frontier.co.uk/forumdisplay.php/30-Dangerous-Discussion
-   the "30-Dangerous-Discussion" part.  Using both numerical ID and text
-   name means hopefully at worst letting something through we didn't want
-   to, if forum layout/numbering changes.  Except what if some
-   "15-General-Discussion" turns in to "20-General-Discussion" and vice
-   versa, with us wanting to ignore only one ?
-
-   Perhaps do this in the 'click-through' utilising the forum
-   breadcrumbs ?
