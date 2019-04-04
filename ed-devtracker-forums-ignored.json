@@ -1,28 +1,126 @@
 {
-	"JWE: News & Announcements": "https://forums.frontier.co.uk/forumdisplay.php/238-News-amp-Announcements",
-	"JWE: InGen Database": "https://forums.frontier.co.uk/forumdisplay.php/259-InGen-Database",
-	"JWE: Jurassic World Evolution Discussions": "https://forums.frontier.co.uk/forumdisplay.php/237-Jurassic-World-Evolution-Discussions",
-	"JWE: New Visitor Welcome Centre": "https://forums.frontier.co.uk/forumdisplay.php/239-New-Visitor-Welcome-Center",
-	"JWE: FAQ's & How Do I...": "https://forums.frontier.co.uk/forumdisplay.php/270-FAQ-s-amp-How-Do-I",
-	"JWE: Dinosaur & Attraction Discussions": "https://forums.frontier.co.uk/forumdisplay.php/258-Dinosaur-amp-Attraction-Discussions",
-	"JWE: Bug Reports": "https://forums.frontier.co.uk/forumdisplay.php/242-Bug-Reports",
-	"JWE: PC Bug Reports": "https://forums.frontier.co.uk/forumdisplay.php/260-PC-Bug-Reports",
-	"JWE: PlayStation 4 Bug Reports": "https://forums.frontier.co.uk/forumdisplay.php/264-PlayStation-4-Bug-Reports",
-	"JWE: Xbox One Bug Reports": "https://forums.frontier.co.uk/forumdisplay.php/262-Xbox-One-Bug-Reports",
-	"JWE: Bug Reports Requiring More Information": "https://forums.frontier.co.uk/forumdisplay.php/266-Bug-Reports-Requiring-More-Information",
-	"JWE: Tech Support": "https://forums.frontier.co.uk/forumdisplay.php/243-Tech-Support",
-	"JWE: The Bunker": "https://forums.frontier.co.uk/forumdisplay.php/244-The-Bunker",
-	"Off-Topic Discussion": "https://forums.frontier.co.uk/forumdisplay.php/17-Off-Topic-Discussion",
-	"General Gaming Discussion": "https://forums.frontier.co.uk/forumdisplay.php/3-General-Gaming-Discussion",
-	"Astronomy Forum": "https://forums.frontier.co.uk/forumdisplay.php/40-Astronomy-Forum",
-	"Hardware & Technical Forum": "https://forums.frontier.co.uk/forumdisplay.php/41-Hardware-amp-Technical-Forum",
-	"RollerCoaster Tycoon 3 for IOS": "https://forums.frontier.co.uk/forumdisplay.php/150-RollerCoaster-Tycoon-3-for-IOS",
-	"Screamride": "https://forums.frontier.co.uk/forumdisplay.php/107-Screamride",
-	"Zoo Tycoon": "https://forums.frontier.co.uk/forumdisplay.php/42-Zoo-Tycoon",
-	"Coaster Crazy": "https://forums.frontier.co.uk/forumdisplay.php/27-Coaster-Crazy",
-	"Kinect: Disneyland Adventures": "https://forums.frontier.co.uk/forumdisplay.php/26-Kinect-Disneyland-Adventures",
-	"LostWinds": "https://forums.frontier.co.uk/forumdisplay.php/23-LostWinds",
-	"Kinectimals": "https://forums.frontier.co.uk/forumdisplay.php/25-Kinectimals",
-	"RollerCoaster Tycoon 3 for PC": "https://forums.frontier.co.uk/forumdisplay.php/5-RollerCoaster-Tycoon-3-for-PC",
-	"Thrillville": "https://forums.frontier.co.uk/forumdisplay.php/10-Thrillville"
+	"PC: News": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-news/",
+		"id": 346
+	},
+	"PC: General Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-general/",
+		"id": 297
+	},
+	"PC: GD: Suggestions": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-suggestions/",
+		"id": 298
+	},
+	"PC: GD: How Do I and FAQ's": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-how-do-i-and-faqs/",
+		"id": 299
+	},
+	"PC: Bug Reports": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-bug-reports/",
+		"id": 302
+	},
+	"PC: Thememakers Toolkit": {
+		"url": "https://forums.frontier.co.uk/categories/thememakers-toolkit.340/",
+		"id": 340
+	},
+	"PC: TT: Discussions": {
+		"url": "https://forums.frontier.co.uk/forums/thememakers-toolkit-discussions/",
+		"id": 341
+	},
+	"PC: TT: Help & Guides": {
+		"url": "https://forums.frontier.co.uk/forums/thememakers-toolkit-guides-help/",
+		"id": 344
+	},
+	"PC: TT: Your Creations": {
+		"url": "https://forums.frontier.co.uk/forums/thememakers-toolkit-creations/",
+		"id": 342
+	},
+	"PC: Community Creations": {
+		"url": "https://forums.frontier.co.uk/categories/community-creations.326/",
+		"id": 326
+	},
+	"PC: CC: Parks & Scenarios": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-parks-scenarios/",
+		"id": 337
+	}, 
+	"PC: CC: Rides": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-rides/",
+		"id": 328
+	},
+	"PC: CC: Shops & Scenery": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster-shops-scenery/",
+		"id": 333
+	},
+	"JWE": {
+		"url": "https://forums.frontier.co.uk/categories/jurassic-world-evolution.63/",
+		"id": 63
+	},
+	"JWE: News": {
+		"url": "https://forums.frontier.co.uk/forums/jwe-news/",
+		"id": 238
+	},
+	"JWE: Jurassic World Evolution Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/jwe-discussions/",
+		"id": 368
+	},
+	"JWE: JWED: Guides": {
+		"url": "https://forums.frontier.co.uk/forums/jwe-discussions/",
+		"id": 0
+	},
+	"JWE: JWED: Ideas & Feature Requests": {
+		"url": "https://forums.frontier.co.uk/forums/jwe-ideas-feature-requests/",
+		"id": 258
+	},
+	"JWE: JWED: Dinosaurs": {
+		"url": "https://forums.frontier.co.uk/forums/jwe-dinosaurs/",
+		"id": 370
+	},
+	"JWE: Hammond Creation Lab": {
+		"url": "https://forums.frontier.co.uk/forums/jwe-hammond-creation-lab/",
+		"id": 368
+	},
+	"JWE: Bug Reports": {
+		"url": "https://forums.frontier.co.uk/forums/bug-reports.242/",
+		"id": 242
+	},
+	"JWE: BR: PC Bug Reports": {
+		"url": "https://forums.frontier.co.uk/forums/pc-bug-reports.260/",
+		"id": 260
+	},
+	"JWE: BR: PC BR: PC: Requires More Information": {
+		"url": "https://forums.frontier.co.uk/forums/pc-requires-more-information.261/",
+		"id": 267
+	},
+	"JWE: BR: Xbox One Bug Reports": {
+		"url": "https://forums.frontier.co.uk/forums/xbox-one-bug-reports.262/",
+		"id": 262
+	},
+	"JWE: BR: Xbox One BR: Xbox One: Requires More Information": {
+		"url": "https://forums.frontier.co.uk/forums/xbox-one-requires-more-information.263/",
+		"id": 268
+	},
+	"JWE: BR: PlayStation 4 Bug Reports": {
+		"url": "https://forums.frontier.co.uk/forums/playstation-4-bug-reports.264/",
+		"id": 262
+	},
+	"JWE: BR: PlayStation 4 BR: PlayStation 4: Requires More Information": {
+		"url": "https://forums.frontier.co.uk/forums/playstation-4-requires-more-information.265/",
+		"id": 269
+	},
+	"JWE: BR: Bug Reports Requiring More Information": {
+		"url": "https://forums.frontier.co.uk/forums/bug-reports-requiring-more-information.266/",
+		"id": 266
+	},
+	"JWE: BR: BRRMI: PC: Requires More Information": {
+		"url": "https://forums.frontier.co.uk/forums/pc-requires-more-information.261/",
+		"id": 261
+	},
+	"JWE: BR: BRRMI: Xbox One: Requires More Information": {
+		"url": "https://forums.frontier.co.uk/forums/xbox-one-requires-more-information.263/",
+		"id": 263
+	},
+	"JWE: BR: BRRMI: PlayStation 4: Requires More Information": {
+		"url": "https://forums.frontier.co.uk/forums/playstation-4-requires-more-information.265/",
+		"id": 265
+	}
 }
