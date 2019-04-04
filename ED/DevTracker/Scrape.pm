@@ -188,7 +188,6 @@ sub get_member_new_posts {
 				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
 				$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
 				$post{'guid_url'} = $fulltext_post{'guid_url'};
-# XXX Need to fill in $post{'threadurl'} and $post{'forum'} (forum name)
 				$post{'threadurl'} = $fulltext_post{'threadurl'};
 				$post{'forum'} = $fulltext_post{'forum'};
 			}
@@ -313,7 +312,7 @@ sub get_fulltext {
 # [/QUOTE]
 # 
 # The Issue Tracker makes the number of reports more visible than the previous forum system and helps you keep track of their progress.
-# XXX: Actually populate these properly, or abandon the feature:
+# XXX: Actually populate these properly.  We need the 'stripped' version(s) for full text search to not be full of HTML tags
 	$post{'fulltext_stripped'} = $post{'fulltext'};
 	$post{'fulltext_noquotes'} = $post{'fulltext'};
 	$post{'fulltext_noquotes_stripped'} = $post{'fulltext'};

@@ -27,6 +27,9 @@
 
    SELECT id,url,guid_url FROM posts WHERE url NOT LIKE 'showthread.php/t=%p=%' AND url NOT LIKE 'showthread.php?p=%#post%' AND url NOT LIKE 'showthread.php?t=%&p=%' AND url NOT LIKE 'showthread.php/%-%?p=%#post%' ORDER BY id ASC;
    (1311 rows)
+
+*) We need the fulltext_stripped (and noquotes version) output in order
+for the full text search to be sane.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 Pre-XenForo2 below here:
