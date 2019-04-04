@@ -29,7 +29,7 @@ sub new {
 	$self->{'ua'} = $ua;
 
 	$self->{'forum_base_url'} = $config->getconf('forum_base_url');
-	$self->{'forum_member_base_url'} = 'https://forums.frontier.co.uk/member.php/%s?tab=activitystream&type=user';
+	$self->{'forum_member_base_url'} = 'https://forums.frontier.co.uk/members/%s/latest-activity';
 	$self->{'forums_ignored'} = $forums_ignored;
   bless($self, $class);
   return $self;
@@ -45,98 +45,87 @@ sub get_member_new_posts {
 #	 print Dumper($latest_posts);
 
 	my $req = HTTP::Request->new('GET', sprintf($self->{'forum_member_base_url'}, $whoid), ['Connection' => 'close']);
-#	printf STDERR "Script time is: %s\n", strftime("%Y-%m-%d %H:%M:%S %Z", localtime());
-#	printf STDERR "Request:\n%s\n", Dumper($req);
-#	printf STDERR "Cookies:\n%s\n", $self->{'ua'}->cookie_jar->as_string();
+	printf STDERR "Script time is: %s\n", strftime("%Y-%m-%d %H:%M:%S %Z", localtime());
+	#printf STDERR "Request:\n%s\n", Dumper($req);
+	#printf STDERR "Cookies:\n%s\n", $self->{'ua'}->cookie_jar->as_string();
 	my $res = $self->{'ua'}->request($req);
 	if (! $res->is_success) {
 		print STDERR "Failed to retrieve profile page: ", $whoid, " (", $membername, ")", $res->code, "(", $res->message, ")\n";
 		return undef;
 	}
+	#printf STDERR "RES CONTENT:\n%s\nRES CONTENT END\n\n", Dumper($res->content);
 
-#	 print STDERR $res->header('Content-Type'), "\n";
-	my $hct = $res->header('Content-Type');
-	if ($hct =~ /charset=(?<ct>[^[:space:]]+)/) {
-		$hct = $+{'ct'};
-	} else {
-		undef $hct;
-	}
-#	 print STDERR "HCT: ", $hct, "\n";
-#	 print STDERR Dumper($res->content);
-#	 print STDERR Dumper($res->decoded_content('charset' => 'windows-1252'));
-	my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
-	if (!defined($hct) or ($hct ne 'WINDOWS-1252' and $res->content =~ /[\x{7f}-\x{9f}]/)) {
-#		printf STDERR "Detected non ISO-8859-1 characters!\n";
-#		exit (1);
-		$tree->parse(decode("utf8", encode("utf8", $res->decoded_content('charset' => 'windows-1252'))));
-	} else {
-		$tree->parse(decode("utf8", encode("utf8", $res->decoded_content())));
-	}
+	my $tree = HTML::TreeBuilder->new(no_space_compacting => 1, ignore_unknown => 0);
+	$tree->parse(decode("utf8", encode("utf8", $res->decoded_content())));
 	$tree->eof();
-#	print STDERR Dumper($tree);
+	#print STDERR Dumper($tree);
+	#exit(0);
 
-	my $activitylist = $tree->look_down('id', 'activitylist');
+	my $activitylist = $tree->look_down(
+		_tag => 'ul',
+		'class', 'block-body js-newsFeedTarget'
+	);
 	if (! $activitylist) {
 		print STDERR "Failed to find the activitylist for ", $membername, " (" . $whoid, ")\n";
 		return undef;
 	}
+	#print STDERR Dumper($activitylist);
+	#exit(0);
 	
 	my @posts = $activitylist->look_down(
 		_tag => 'li',
-		sub { $_[0]->attr('class') =~ /forum_(post|thread)/; }
+		sub { if ($_[0]->attr('class')) {$_[0]->attr('class') =~ /block-row block-row--separated/; } }
 	);
 	if (! @posts) {
-#		print STDERR "Failed to find any posts for ", $membername, " (" . $whoid, ")\n";
+		print STDERR "Failed to find any posts for ", $membername, " (" . $whoid, ")\n";
 		return undef;
 	}
-#	print STDERR "Found ", $#posts, " new posts for ", $membername, " (", $whoid, ")\n";
-#	print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
-#	exit(0);
+	print STDERR "Found ", $#posts, " new posts for ", $membername, " (", $whoid, ")\n";
+	#print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
+	#exit(0);
 
 	my @new_posts;
 	foreach my $p (@posts) {
 		my %post;
 
-		my $content = $p->look_down(_tag => 'div', class => 'content hasavatar');
-#		printf STDERR "Post text:\n%s\n", $p->as_text;
+		my $content = $p->look_down(_tag => 'div', class => 'contentRow-main');
+		#printf STDERR "Post text:\n%s\n", $content->as_text;
 		if ($content) {
 		# datetime
-			my $span_date = $content->look_down(_tag => 'span', class => 'date');
-			my $span_time = $content->look_down(_tag => 'span', class => 'time');
-# <span class="date">Today,&nbsp;<span class="time">2:00 PM</span> · 4 replies and 284 views.</span>
-			$post{'datestampstr'} = $span_date->as_text;
-			$post{'datestampstr'} =~ s/\xA0/ /g;
-			$post{'datestampstr'} =~ s/ . [0-9]+ replies and [0-9]+ views\.//;
-#			print STDERR "Date = '", $post{'datestampstr'}, "'\n";
-			my $timestr = $span_time->as_text;
-#			print STDERR "Time = '", $timestr, "'\n";
-			my $date = new Date::Manip::Date;
-			$date->config(
-				'DateFormat' => 'GB',
-				'SetDate' => 'now,UTC'
-			);
-			my $err = $date->parse($post{'datestampstr'});
-			if (!$err) {
-				$post{'datestamp'} = $date->secs_since_1970_GMT();
-#				print STDERR "Date: ", $date->printf('%Y-%m-%d %H:%M:%S %Z'), "\n";
-			} else {
-				printf(STDERR "Problem parsing $post{'datestampstr'}, from $whoid\n");
-				next;
-			}
+			#printf STDERR "Post Content:\n%s\n\n", Dumper($content);
+			my $datetime = $content->look_down(_tag => 'time', class => 'u-dt');
+# <time class="u-dt" dir="auto" datetime="2019-04-04T10:16:43+0100" data-time="1554369403" data-date-string="Apr 4, 2019" data-time-string="10:16 AM" title="Apr 4, 2019 at 10:16 AM">Today at 10:16 AM</time>
+			$post{'datestampstr'} = $datetime->as_text;
+			print STDERR "Date = '", $post{'datestampstr'}, "'\n";
+			$post{'datestamp'} = $datetime->attr('data-time');
+			printf STDERR "Unix timestamp = '%s'\n", $post{'datestamp'};
 		} else {
 			print STDERR "No content (didn't find div->content/hasavatar)\n";
 			next;
 		}
 		# thread title and URL
-		my $div_title = $content->look_down(_tag => 'div', class => 'title');
+		my $div_title = $content->look_down(_tag => 'div', class => 'contentRow-title');
 		if ($div_title) {
 			my @a = $div_title->look_down(_tag => 'a');
 			if (@a) {
-				$post{'who'} = $a[0]->as_text;
+				my $who = $a[0]->look_down(
+					_tag => 'span',
+					sub { if ($_[0]->attr('class')) {$_[0]->attr('class') =~ /username--/; } }
+				);
+				if ($who) {
+					$post{'who'} = $who->as_text;
+					printf STDERR "Who: '%s'\n", $post{'who'};
+				} else {
+					print STDERR "Can't find thread poster\n";
+					next;
+				}
 				$post{'whourl'} = $a[0]->attr('href');
+				printf STDERR "Who URL: '%s'\n", $post{'whourl'};
 				$post{'threadtitle'} = $a[1]->as_text;
+				printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
 				$post{'threadurl'} = $a[1]->attr('href');
-				$post{'forum'} = $a[2]->as_text;
+				printf STDERR "Thread URL: '%s'\n", $post{'threadurl'};
+				# XXX $post{'forum'} = $a[2]->as_text;
 			} else {
 				print STDERR "No 'a' under div->title\n";
 				next;
@@ -146,13 +135,14 @@ sub get_member_new_posts {
 			next;
 		}
 
-		my $div_excerpt = $content->look_down(_tag => 'div', class => 'excerpt');
+		my $div_excerpt = $content->look_down(_tag => 'div', class => 'contentRow-snippet');
 		if ($div_excerpt) {
 			$post{'precis'} = $div_excerpt->as_text;
 		} else {
 			print STDERR "No precis\n";
 			next;
 		}
+		next;
 
     my $div_fulllink = $content->look_down(_tag => 'div', class => 'fulllink');
     if ($div_fulllink) {
