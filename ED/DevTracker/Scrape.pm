@@ -194,6 +194,7 @@ sub get_member_new_posts {
       printf STDERR "Checking for %s in ignored posts\n", $post{'guid_url'};
 			if ($self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
 				printf STDERR "%s is already ignored (ignored forum), skipping...\n", $post{'guid_url'};
+				# NO!!! $dupe_count++; This means a run of ignored forum posts at the top would prevent scanning for more!
 				next;
 			}
 
