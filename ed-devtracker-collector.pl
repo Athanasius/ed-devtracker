@@ -122,7 +122,7 @@ if ($res->code != 303 and ! $res->is_success) {
 }
 #exit(0);
 
-printf STDERR "Login done\n";
+#printf STDERR "Login done\n";
 #exit(0);
 ###########################################################################
 
