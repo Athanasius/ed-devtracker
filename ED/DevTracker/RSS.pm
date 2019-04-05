@@ -113,9 +113,6 @@ sub generate {
 		if ($self->{'rss_fulltext'} =~ /^true$/i and defined(${$p}{'fulltext'})) {
 #			printf STDERR "ED::DevTracker::RSS->generate: Using fulltext\n";
 			$description = ${$p}{'fulltext'};
-
-			$description = $tree->look_down(_tag => 'div')->as_HTML;
-			}
 		} else {
     	$description = ${$p}{'precis'};
     	$description =~ s/\n/<br\/>/g;
