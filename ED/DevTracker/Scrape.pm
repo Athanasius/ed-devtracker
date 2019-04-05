@@ -190,7 +190,7 @@ sub get_member_new_posts {
 
       #printf STDERR "Checking for %s in ignored posts\n", $post{'guid_url'};
 			if ($self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
-				printf STDERR "%s is already ignored (ignored forum), skipping...\n", $post{'guid_url'};
+				#printf STDERR "%s is already ignored (ignored forum), skipping...\n", $post{'guid_url'};
 				# NO!!! $dupe_count++; This means a run of ignored forum posts at the top would prevent scanning for more!
 				next;
 			}
@@ -264,7 +264,7 @@ sub get_member_new_posts {
 		$req = HTTP::Request->new('GET', $self->{'forum_base_url'} . $loadmore_url, ['Connection' => 'close']);
 	}
 	if ($dupe_count >= 5) {
-		printf STDERR "Dupe count reached 5 for %s(%s)\n", $membername, $whoid;
+		#printf STDERR "Dupe count reached 5 for %s(%s)\n", $membername, $whoid;
 	}
 
 	#printf STDERR "get_member_new_posts: DONE\n";
