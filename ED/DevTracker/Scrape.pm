@@ -110,6 +110,14 @@ sub get_member_new_posts {
 		# thread title and URL
 		my $div_title = $content->look_down(_tag => 'div', class => 'contentRow-title');
 		if ($div_title) {
+			# Check if this is a 'reaction' and ignore if so.
+			my $title = $div_title->as_text;
+			printf STDERR "Post Title: '%s'\n", $title;
+			if ($title =~ /^[^ ]+ +reacted to .+ post in the thread.+with/) {
+				printf STDERR "Skipping reaction\n";
+				next;
+			}
+
 			my @a = $div_title->look_down(_tag => 'a');
 			if (@a) {
 				my $who = $a[0]->look_down(
@@ -125,7 +133,6 @@ sub get_member_new_posts {
 					}
 					$post{'whourl'} = $a[0]->attr('href');
 					printf STDERR "Who URL: '%s'\n", $post{'whourl'};
-# XXX: Check if this is a 'reaction' and ignore if so.
 					$post{'threadtitle'} = $a[1]->as_text;
 					printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
 					$post{'url'} = $a[1]->attr('href');
@@ -187,9 +194,9 @@ sub get_member_new_posts {
 				$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
 				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
 				$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
-				$post{'guid_url'} = $fulltext_post{'guid_url'};
-				$post{'threadurl'} = $fulltext_post{'threadurl'};
-				$post{'forum'} = $fulltext_post{'forum'};
+				$post{'guid_url'} = $fulltext_post->{'guid_url'};
+				$post{'threadurl'} = $fulltext_post->{'threadurl'};
+				$post{'forum'} = $fulltext_post->{'forum'};
 			}
 		}
 		### END: Retrieve fulltext of post
@@ -280,7 +287,7 @@ sub get_fulltext {
 		}
 		my $api = decode_json($res->content);
 #		print STDERR Dumper($api->{'posts'});
-		$api_post = @{$api->{'posts'}}[0]
+		$api_post = @{$api->{'posts'}}[0];
 		$post{'guid_url'} = "/threads/" . $threadid . "/";
 		$post{'threadurl'} = $post{'guid_url'};
 
@@ -295,7 +302,7 @@ sub get_fulltext {
 		$api_post = decode_json($res->content);
 		$api_post = $api_post->{'post'};
 		$post{'guid_url'} = "/posts/" . $postid . "/";
-		$post{'threadurl'} = "/threads/" . $api_post->{'thread_id'} , "/";
+		$post{'threadurl'} = "/threads/" . $api_post->{'thread_id'} . "/";
 	} 
 
 	$post{'forum'} = $api_post->{'Forum'}->{'title'};
