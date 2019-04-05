@@ -28,8 +28,14 @@
    SELECT id,url,guid_url FROM posts WHERE url NOT LIKE 'showthread.php/t=%p=%' AND url NOT LIKE 'showthread.php?p=%#post%' AND url NOT LIKE 'showthread.php?t=%&p=%' AND url NOT LIKE 'showthread.php/%-%?p=%#post%' ORDER BY id ASC;
    (1311 rows)
 
-*) We need the fulltext_stripped (and noquotes version) output in order
-for the full text search to be sane.
+*) Convert ignored_posts.url values to new forum format.  Really needed?
+This is a record of posts ignored due to the forum they're in, and
+currently only used to bail early on posts we'll ignore anyway.
+
+*) Last pre-XF2 posts.id is 30096
+
+*) Remember to tweak the number of days in the feed to back-date to 26th
+March 2019 when feed first starts back up.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 Pre-XenForo2 below here:
