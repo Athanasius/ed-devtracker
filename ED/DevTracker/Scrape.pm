@@ -208,7 +208,7 @@ sub get_member_new_posts {
 		print STDERR grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}}), "\n";
 		if (grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}})) {
 			printf STDERR "Skipping post/thread for ignored forum\n";
-			# XXX: We don't want to just return...
+			# We don't want to just return...
 			$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
 			# Mark the post as ignored for future reference.
   		if (! $self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
@@ -285,7 +285,7 @@ sub get_fulltext {
 
 	$post{'fulltext'} = $api_post->{'message'};
 	#printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
-# XXX: Munge user quoting into something that works in RSS feed/readers.
+# Munge user quoting into something that works in RSS feed/readers.
 # [QUOTE="hos, post: 7716228, member: 222029"]
 # nice way to hide the amount of issues. good job.
 # [/QUOTE]
@@ -293,47 +293,61 @@ sub get_fulltext {
 # The Issue Tracker makes the number of reports more visible than the previous forum system and helps you keep track of their progress.
 	my $pbb = Parse::BBCode->new();
 	my $bb = $pbb->render($post{'fulltext'});
-	my $bbt = HTML::TreeBuilder->new(no_space_compacting => 1, ignore_unknown => 0);
+	my $bbt = HTML::TreeBuilder->new(no_space_compacting => 1);
 	$bbt->parse($bb);
 	$bbt->eof();
 	#printf STDERR Dumper($bbt);
 	my @quotes = $bbt->look_down(_tag => 'div', 'class' => 'bbcode_quote_header');
 	for my $q (@quotes) {
+		$q->tag('blockquote');
+		my $quote_container = HTML::Element->new('div', class => 'quote_container');
+		$q->preinsert($quote_container);
+		my $qq = $q->clone();
+		$q->destroy();
+		$quote_container->push_content($qq);
+		$q = $qq;
 		#printf STDERR "Quote:\n%s\n", Dumper($q);
-		printf STDERR "Original Version: '%s'\n", $q->as_HTML;
+		#printf STDERR "Original Version: '%s'\n", $q->as_HTML;
 		#printf STDERR "bbcode_quote_header: %s\n", $q->{'_content'}[0];
 		my $qh = $q->{'_content'}[0];
 		if ($qh =~ /^(?<poster>[^,]+), post: (?<postid>[0-9]+), member: (?<posterid>[0-9]+)/) {
-			printf STDERR "\tMatched the string\n";
+			#printf STDERR "\tMatched the string\n";
 			# <a href="member profile url">member name</a> <a href="post url">Source</a>
 			#$q->{'_content'}[0] = sprintf("");
 			my $quoted = HTML::Element->new(
 				'a',
 				href => sprintf("%s/members/%s/", $self->{'forum_base_url'}, $+{'posterid'})
 			);
-			$quoted->push_content($+{'poster'});
+			$quoted->push_content($+{'poster'} . " ");
 			my $source = HTML::Element->new(
 				'a',
 				'href' => sprintf("%s/posts/%s/", $self->{'forum_base_url'}, $+{'postid'}),
 			);
-			$source->push_content("Source");
+			$source->push_content("Source" . " ");
 
 			$q->splice_content(0, 1, $quoted, $source);
 			#printf STDERR "\tReplace 'quoted': '%s'\n", $quoted->as_HTML();
 			#printf STDERR "\tReplace 'source': '%s'\n", $source->as_HTML;
-			printf STDERR "Replaced Version: '%s'\n", $q->as_HTML;
+			#printf STDERR "Replaced Version: '%s'\n", $q->as_HTML;
 		}
 	}
-	printf STDERR "New full text:\n'%s'\n", $bbt->guts()->as_HTML;
+  # For some reason this is stripping the HTML, *including* the quote text.
+	$post{'fulltext_stripped'} = $bbt->format;
+	#printf STDERR "New full text:\n'%s'\n", $bbt->guts()->as_HTML;
 	$post{'fulltext'} = $bbt->guts()->as_HTML;
-# XXX: Actually populate these properly.  We need the 'stripped' version(s) for full text search to not be full of HTML tags
-	$post{'fulltext_stripped'} = $post{'fulltext'};
-	$post{'fulltext_noquotes'} = $post{'fulltext'};
-	$post{'fulltext_noquotes_stripped'} = $post{'fulltext'};
 
-###### #    printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
-######   $post{'fulltext_noquotes'} = $post_div_stripped->as_HTML;
-######   $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
+  # Remove all the quotes from the post
+	@quotes = $bbt->look_down(_tag => 'div', 'class' => 'bbcode_quote_header');
+	for my $q (@quotes) {
+		$q->detach();
+	}
+	$post{'fulltext_noquotes'} = $bbt->guts()->as_HTML;
+	$post{'fulltext_noquotes_stripped'} = $bbt->format;
+
+	#printf STDERR "Full Text:\n%s\n.\n", $post{'fulltext'};
+	#printf STDERR "Full Text, stripped:\n%s\n.\n", $post{'fulltext_stripped'};
+	#printf STDERR "Full Text, noquotes:\n%s\n.\n", $post{'fulltext_noquotes'};
+	#printf STDERR "Full Text, noquotes, stripped:\n%s\n.\n", $post{'fulltext_noquotes_stripped'};
 
 	return \%post;
 }
