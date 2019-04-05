@@ -60,7 +60,8 @@ sub generate {
 	# NB: the argument to get_latest_posts() is assumed to NOT be user-supplied.
   #     If It becomes user-supplied then it needs sanitising/checking before
   #     being passed in.
-	my $posts = $self->{'db'}->get_latest_posts(7);
+#XXX : Should go back to 7 days in the future.
+	my $posts = $self->{'db'}->get_latest_posts(28);
   $ENV{'TZ'} = 'UTC';
   my $date = new Date::Manip::Date;
   $date->config(
@@ -113,6 +114,17 @@ sub generate {
 		if ($self->{'rss_fulltext'} =~ /^true$/i and defined(${$p}{'fulltext'})) {
 #			printf STDERR "ED::DevTracker::RSS->generate: Using fulltext\n";
 			$description = ${$p}{'fulltext'};
+
+			my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
+			$tree->parse($description);
+			$tree->eof();
+			# Some of the pre-XF2 munging:
+			# 3) Remove the whole <i class="fa fa-quote-left"> element (or just the aria-hidden="true" attribute on it, but the element is moot anyway).
+			my @i_quotes = $tree->look_down(_tag => 'i', class => 'fa fa-quote-left');
+			foreach my $i (@i_quotes) {
+				$i->delete;
+			}
+			$description = $tree->guts()->as_HTML;
 		} else {
     	$description = ${$p}{'precis'};
     	$description =~ s/\n/<br\/>/g;
