@@ -112,7 +112,7 @@ sub get_member_new_posts {
 		if ($div_title) {
 			# Check if this is a 'reaction' and ignore if so.
 			my $title = $div_title->as_text;
-			printf STDERR "Post Title: '%s'\n", $title;
+			#printf STDERR "Post Title: '%s'\n", $title;
 			if ($title =~ /^[^ ]+ +reacted to .+ post in the thread.+with/) {
 				printf STDERR "Skipping reaction\n";
 				next;
@@ -127,39 +127,41 @@ sub get_member_new_posts {
 				if ($who) {
 					$post{'who'} = $who->as_text;
 						printf STDERR "Who: '%s'\n", $post{'who'};
-					} else {
-						print STDERR "Can't find thread poster\n";
-						next;
-					}
-					$post{'whourl'} = $a[0]->attr('href');
-					printf STDERR "Who URL: '%s'\n", $post{'whourl'};
-					$post{'threadtitle'} = $a[1]->as_text;
-					printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
-					$post{'url'} = $a[1]->attr('href');
-					printf STDERR "Post URL: '%s'\n", $post{'url'};
 				} else {
-					print STDERR "No 'a' under div->title\n";
+					print STDERR "Can't find thread poster\n";
 					next;
 				}
+				$post{'whourl'} = $a[0]->attr('href');
+				printf STDERR "Who URL: '%s'\n", $post{'whourl'};
+				$post{'threadtitle'} = $a[1]->as_text;
+				printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
+				$post{'url'} = $a[1]->attr('href');
+				printf STDERR "Post URL: '%s'\n", $post{'url'};
 			} else {
-				print STDERR "No div->title\n";
+				print STDERR "No 'a' under div->title\n";
 				next;
 			}
+		} else {
+			print STDERR "No div->title\n";
+			next;
+		}
 
-			my $div_excerpt = $content->look_down(_tag => 'div', class => 'contentRow-snippet');
-			if ($div_excerpt) {
-				$post{'precis'} = $div_excerpt->as_text;
-				printf STDERR "Precis:\n'%s'\n", $post{'precis'}
-			} else {
-				print STDERR "No precis\n";
-				next;
-			}
+		my $div_excerpt = $content->look_down(_tag => 'div', class => 'contentRow-snippet');
+		if ($div_excerpt) {
+			$post{'precis'} = $div_excerpt->as_text;
+			printf STDERR "Precis:\n'%s'\n", $post{'precis'}
+		} else {
+			print STDERR "No precis\n";
+			next;
+		}
 
-			$post{'urltext'} = $post{'threadtitle'};
+		$post{'urltext'} = $post{'threadtitle'};
+
 #		printf STDERR "Thread '%s' at '%s' new '%s'\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
-			# XF2: /posts/7715924/
+		# XF2: /posts/7715924/ or /threads/186768/
     $post{'guid_url'} = $post{'url'};
-# XXX: Is this a thread-starting post?  If so guid_url should be a /threads/ one
+		# Strip embedded title
+		$post{'guid_url'} =~ s/^(?<start>\/(posts|threads)\/).+\.(?<id>[0-9]+)\/$/$+{'start'}$+{'id'}\//;
     printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'url'}, $post{'guid_url'};
     printf STDERR "Checking for %s in latest posts\n", $post{'guid_url'};
     if (defined(${$latest_posts}{$post{'guid_url'}})) {
@@ -175,10 +177,10 @@ sub get_member_new_posts {
 
       printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'url'}, $l, $post{'url'}, $post{'guid_url'};
       if ($l eq $post{'guid_url'}) {
-#        print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
+        print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
         next;
       } else {
-#        print STDERR "Post is new despite guid_url in latest_posts: ", $post{'guid_url'}, "\n";
+        print STDERR "Post is new despite guid_url in latest_posts: ", $post{'guid_url'}, "\n";
       }
     } #else {
       # Post is 'simply' new
@@ -194,52 +196,23 @@ sub get_member_new_posts {
 				$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
 				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
 				$post{'fulltext_noquotes_stripped'} = $fulltext_post->{'fulltext_noquotes_stripped'};
-				$post{'guid_url'} = $fulltext_post->{'guid_url'};
 				$post{'threadurl'} = $fulltext_post->{'threadurl'};
 				$post{'forum'} = $fulltext_post->{'forum'};
+				$post{'forumid'} = $fulltext_post->{'forumid'};
 			}
 		}
 		### END: Retrieve fulltext of post
 
   	### BEGIN: Check for if this is an ignored forum
-		my $page_url = $self->{'forum_base_url'} . $post{'guid_url'};
-  	if (! $div_title) {
-  		printf STDERR "Failed to find post div[title]: %s\n", $page_url
-  	} else {
-#  		printf STDERR "Parsing div[title] for post: %s\n", $page_url;
-  		foreach my $fi (keys(%{$self->{'forums_ignored'}})) {
-  			my $fi_numberonly = ${$self->{'forums_ignored'}}{$fi};
-  			$fi_numberonly =~ s/-[^0-9]+$//;
-  			my @divtitle_a = $div_title->look_down(_tag => 'a'); 
-  			if (@divtitle_a) {
-					my $scraped_forum_url;
-					foreach my $a (@divtitle_a) {
-# 2018-07-19 - Format of these URLs changed to forumdisplay.php?f=238
-						if ($a->attr('href') =~ /forumdisplay\.php\/[0-9]+-/
-								or $a->attr('href') =~ /forumdisplay\.php\?f=[0-9]+$/) {
-							$scraped_forum_url = $a->attr('href');
-						}
-					}
-  				if ($scraped_forum_url) {
-#  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
-  					$scraped_forum_url = $self->{'forum_base_url'} . $scraped_forum_url;
-						# Strip the URL-embedded forum title off
-  					$scraped_forum_url =~ s/-[^0-9]+$//;
-						if ($scraped_forum_url =~ /forumdisplay\.php\?f=([0-9]+)$/) {
-							$scraped_forum_url =~ s/\?f=/\//;
-						}
-#  					printf STDERR "Compare stored '%s' to scraped '%s'\n", $fi_numberonly, $scraped_forum_url;
-  					if ($fi_numberonly eq $scraped_forum_url) {
-  					# XXX: We don't want to just return...
-  						$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
-  						if (! $self->{'db'}->check_if_post_ignored($page_url)) {
-  							printf STDERR "Ignoring post '%s' in forum '%s'\n", $page_url, $scraped_forum_url;
-  							$self->{'db'}->add_ignored_post($page_url);
-  						}
-#  						else { printf STDERR "Already ignoring '%s' in forum '%s'\n", $page_url, $scraped_forum_url; } #return \%post;
-  					}
-  				}
-  			}
+		print STDERR grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}}), "\n";
+		if (grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}})) {
+			printf STDERR "Skipping post/thread for ignored forum\n";
+			# XXX: We don't want to just return...
+			$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
+			# Mark the post as ignored for future reference.
+  		if (! $self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
+  			printf STDERR "Ignoring post '%s' in forum '%s'\n", $post{'guid_url'}, $post{'forum'};
+  			$self->{'db'}->add_ignored_post($post{'guid_url'});
   		}
 		}
 		### END:   Check for if this is an ignored forum
@@ -263,7 +236,7 @@ sub get_fulltext {
 	printf STDERR "get_fulltext: guid_url = '%s'\n", $guid_url;
   my $page_url = $self->{'forum_base_url'} . $guid_url;
   my ($postid, $threadid, $is_first_post);
-  if ($page_url =~ /\/threads\/.*\.(?<threadid>[0-9]+)\//) {
+  if ($page_url =~ /\/threads\/(?<threadid>[0-9]+)\//) {
     printf STDERR "Found 1st post in page URL: %s\n", $page_url;
     $threadid = $+{'threadid'};
 	} elsif ($page_url =~ /\/posts\/(?<postid>[0-9]+)\/$/) {
@@ -286,11 +259,11 @@ sub get_fulltext {
 			return undef;
 		}
 		my $api = decode_json($res->content);
-#		print STDERR Dumper($api->{'posts'});
+		#print STDERR Dumper($api);
 		$api_post = @{$api->{'posts'}}[0];
-		$post{'guid_url'} = "/threads/" . $threadid . "/";
 		$post{'threadurl'} = $post{'guid_url'};
-
+		$post{'forum'} = $api->{'thread'}->{'Forum'}->{'title'};
+		$post{'forumid'} = $api->{'thread'}->{'Forum'}->{'node_id'};
 	} elsif (defined($postid)) {
 		my $req = HTTP::Request->new( 'GET', $self->{'xf_api_baseurl'} . "/posts/" . $postid . "/");
 		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
@@ -301,17 +274,16 @@ sub get_fulltext {
 		}
 		$api_post = decode_json($res->content);
 		$api_post = $api_post->{'post'};
-		$post{'guid_url'} = "/posts/" . $postid . "/";
 		$post{'threadurl'} = "/threads/" . $api_post->{'thread_id'} . "/";
+		$post{'forum'} = $api_post->{'Thread'}->{'Forum'}->{'title'};
+		$post{'forumid'} = $api_post->{'Thread'}->{'Forum'}->{'node_id'};
 	} 
 
-	$post{'forum'} = $api_post->{'Forum'}->{'title'};
 	#print STDERR Dumper($api_post);
-# XXX: Could do forum ignore here:
-#      		$api_post->{'Forum'}->{'node_id'}
+	printf STDERR "Setting forum '%s' and forumid '%s'\n", $post{'forum'}, $post{'forumid'};
 
 	$post{'fulltext'} = $api_post->{'message'};
-	printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
+	#printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
 # XXX: Munge user quoting into something that works in RSS feed/readers.
 # XXX: See Parse::BBCode
 # [QUOTE="hos, post: 7716228, member: 222029"]

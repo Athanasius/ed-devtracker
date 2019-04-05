@@ -57,7 +57,7 @@ my $developers;
   #exit(0);
 }
 
-my $forums_ignored;
+my @forums_ignored;
 {
   local $/ = undef;
   if (!open(FORUMIGNORES, $config->getconf('forum_ignore_file'))) {
@@ -65,13 +65,17 @@ my $forums_ignored;
     exit(-1);
   }
   binmode FORUMIGNORES;
-  my $forums_ignored_urls = <FORUMIGNORES>;
+  my $forums_ignored_input = <FORUMIGNORES>;
   close(FORUMIGNORES);
 #  print STDERR $forums_ignored_urls, "\n";
-  $forums_ignored= decode_json($forums_ignored_urls);
-#  print STDERR Dumper($forums_ignored);
-#  print STDERR Dumper( map { if ($_->{'active'}) { $_->{'memberid'}; } } @{$developers->{'members'}});
-#  exit(0);
+  my $forums_ignored_json = decode_json($forums_ignored_input);
+#  print STDERR Dumper($forums_ignored_json);
+  foreach my $f (keys(%{$forums_ignored_json})) {
+    #printf STDERR "Forum ignore: %s\n", $f;
+    push(@forums_ignored, $forums_ignored_json->{$f}->{'id'});
+  }
+  #print Dumper(sort(@forums_ignored));
+  #exit(0);
 }
 
 ###########################################################################
@@ -124,7 +128,7 @@ printf STDERR "Login done\n";
 
 my $new_posts_total = 0;
 # $new_posts_total = 1; goto RSS_OUTPUT;
-my $scrape = new ED::DevTracker::Scrape($ua, $forums_ignored);
+my $scrape = new ED::DevTracker::Scrape($ua, \@forums_ignored);
 foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'active'} } @{$developers->{'members'}})) {
   my $err;
 
