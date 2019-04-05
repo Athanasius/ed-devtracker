@@ -314,7 +314,7 @@ sub get_fulltext {
 			$quoted->push_content($+{'poster'});
 			my $source = HTML::Element->new(
 				'a',
-				'href' => sprintf("%s/postys/%s/", $self->{'forum_base_url'}, $+{'postid'}),
+				'href' => sprintf("%s/posts/%s/", $self->{'forum_base_url'}, $+{'postid'}),
 			);
 			$source->push_content("Source");
 
