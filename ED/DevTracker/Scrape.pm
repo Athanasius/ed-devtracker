@@ -74,7 +74,8 @@ sub get_member_new_posts {
   		'class', 'block-body js-newsFeedTarget'
   	);
   	if (! $activitylist) {
-  		print STDERR "Failed to find the activitylist for ", $membername, " (" . $whoid, ")\n";
+			# in XF2 this can simply mean there's been no activity on the user yet
+  		#print STDERR "Failed to find the activitylist for ", $membername, " (" . $whoid, ")\n";
   		last;
   	}
   	#print STDERR Dumper($activitylist);
@@ -148,15 +149,11 @@ sub get_member_new_posts {
   
   			my @a = $div_title->look_down(_tag => 'a');
   			if (@a) {
-  				my $who = $a[0]->look_down(
-  					_tag => 'span',
-  					sub { if ($_[0]->attr('class')) {$_[0]->attr('class') =~ /username--/; } }
-  				);
-  				if ($who) {
-  					$post{'who'} = $who->as_text;
-  						#printf STDERR "Who: '%s'\n", $post{'who'};
+					if ($a[0]->as_text) {
+  					$post{'who'} = $a[0]->as_text;
+  					#printf STDERR "Who: '%s'\n", $post{'who'};
   				} else {
-  					print STDERR "Can't find thread poster\n";
+  					printf STDERR "Can't find thread poster (membername: %s(%s)\n", $membername, $whoid;
   					next;
   				}
   				$post{'whourl'} = $a[0]->attr('href');
@@ -170,7 +167,7 @@ sub get_member_new_posts {
   				next;
   			}
   		} else {
-  			print STDERR "No div->title\n";
+  			printf STDERR "No div[contentRow-title] (membername: %s(%s)\n", $membername, $whoid;
   			next;
   		}
   
@@ -267,7 +264,7 @@ sub get_member_new_posts {
 		$req = HTTP::Request->new('GET', $self->{'forum_base_url'} . $loadmore_url, ['Connection' => 'close']);
 	}
 	if ($dupe_count >= 5) {
-		print STDERR "Dupe count reached 5\n";
+		printf STDERR "Dupe count reached 5 for %s(%s)\n", $membername, $whoid;
 	}
 
 	#printf STDERR "get_member_new_posts: DONE\n";
@@ -391,14 +388,16 @@ sub get_fulltext {
 
 	$post{'fulltext_stripped'} = $bbt->format;
 	#printf STDERR "New full text:\n'%s'\n", $bbt->guts()->as_HTML;
-	$post{'fulltext'} = $bbt->guts()->as_HTML;
+	my $guts = $bbt->clone();
+	$guts = $guts->guts();
+	$post{'fulltext'} = $guts->as_HTML;
 
   # Remove all the quotes from the post
 	@quotes = $bbt->look_down(_tag => 'div', 'class' => 'bbcode_quote_header');
 	for my $q (@quotes) {
 		$q->detach();
 	}
-	$post{'fulltext_noquotes'} = $bbt->guts()->as_HTML;
+	$post{'fulltext_noquotes'} = $guts->as_HTML;
 	$post{'fulltext_noquotes_stripped'} = $bbt->format;
 
 	#printf STDERR "Full Text:\n%s\n.\n", $post{'fulltext'};
