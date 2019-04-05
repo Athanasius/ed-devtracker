@@ -53,8 +53,9 @@ sub get_member_new_posts {
 	#printf STDERR "Request:\n%s\n", Dumper($req);
 	#printf STDERR "Cookies:\n%s\n", $self->{'ua'}->cookie_jar->as_string();
 	my $member_done = 0;
+	my $dupe_count = 0;
  	my @new_posts;
-	while (! $member_done) {
+	while (! $member_done and $dupe_count < 5) {
 		my $res = $self->{'ua'}->request($req);
   	if (! $res->is_success) {
   		print STDERR "Failed to retrieve profile page: ", $whoid, " (", $membername, ")", $res->code, "(", $res->message, ")\n";
@@ -212,6 +213,7 @@ sub get_member_new_posts {
         printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'url'}, $l, $post{'url'}, $post{'guid_url'};
         if ($l eq $post{'guid_url'}) {
           print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
+					$dupe_count++;
           next;
         } else {
           print STDERR "Post is new despite guid_url in latest_posts: ", $post{'guid_url'}, "\n";
@@ -262,6 +264,9 @@ sub get_member_new_posts {
   	}
 		# $member_done = 1; # XXX: Remove once we have proper detection of being done.
 		$req = HTTP::Request->new('GET', $self->{'forum_base_url'} . $loadmore_url, ['Connection' => 'close']);
+	}
+	if ($dupe_count >= 5) {
+		print STDERR "Dupe count reached 5\n";
 	}
 
 	printf STDERR "get_member_new_posts: DONE\n";
