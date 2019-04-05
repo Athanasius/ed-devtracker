@@ -376,7 +376,7 @@ sub get_fulltext {
 				'a',
 				'href' => sprintf("%s/posts/%s/", $self->{'forum_base_url'}, $+{'postid'}),
 			);
-			$source->push_content("Source" . " ");
+			$source->push_content("(Source) ");
 
 			$q->splice_content(0, 1, $quoted, $source);
 			#printf STDERR "\tReplace 'quoted': '%s'\n", $quoted->as_HTML();
