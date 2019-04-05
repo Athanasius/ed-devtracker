@@ -80,7 +80,7 @@ sub insert_post {
 
 sub user_latest_known {
 	my ($self, $id) = @_;
-	my $sth = $dbh->prepare('SELECT * FROM posts WHERE whoid=? ORDER BY datestamp DESC,id DESC LIMIT 50');
+	my $sth = $dbh->prepare('SELECT * FROM posts WHERE whoid=? ORDER BY datestamp DESC,id DESC LIMIT 100');
 	my $rv = $sth->execute($id);
 	if (! $rv) {
 		printf "ED::DevTracker::DB->user_latest_known - Failed to get latest known posts by id", $id, "\n";
