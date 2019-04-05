@@ -122,5 +122,217 @@
 	"JWE: BR: BRRMI: PlayStation 4: Requires More Information": {
 		"url": "https://forums.frontier.co.uk/forums/playstation-4-requires-more-information.265/",
 		"id": 265
+	},
+	"Frontier International" : {
+		"url": "https://forums.frontier.co.uk/categories/frontier-international.349/",
+		"id": 349
+	},
+	"FI: German": {
+		"url": "https://forums.frontier.co.uk/forums/german/",
+		"id": 350
+	},
+	"FI: German: Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/categories/elite-dangerous.60/",
+		"id": 60
+	},
+	"FI: German: ED: Elite: Dangerous Diskussionen": {
+		"url": "https://forums.frontier.co.uk/forums/elite-dangerous-diskussionen.61/",
+		"id": 61
+	},
+	"FI: German: ED: Elite: Dangerous XBOX Diskussionen": {
+		"url": "https://forums.frontier.co.uk/forums/elite-dangerous-xbox-diskussionen.168/",
+		"id": 168
+	},
+	"FI: German: ED: Off Topic (Deutsch)": {
+		"url": "https://forums.frontier.co.uk/forums/off-topic-deutsch.62/",
+		"id": 62
+	},
+	"FI: German: ED: Groups / Recruitment": {
+		"url": "https://forums.frontier.co.uk/forums/groups-recruitment.81/",
+		"id": 81
+	},
+	"FI: German: Planet Coaster": {
+		"url": "https://forums.frontier.co.uk/forums/german-planet-coaster/",
+		"id": 356
+	},
+	"FI: German: Jurassic World Evolution": {
+		"url": "https://forums.frontier.co.uk/forums/german-jurassic-world-evolution/",
+		"id": 357
+	},
+	"FI: French": {
+		"url": "https://forums.frontier.co.uk/forums/french/",
+		"id": 351
+	},
+	"FI: French: Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/categories/elite-dangerous.78/",
+		"id": 78
+	},
+	"FI: French: ED: Présentations": {
+		"url": "https://forums.frontier.co.uk/forums/presentations.201/",
+		"id": 201
+	},
+	"FI: French: ED: Discussions Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/forums/discussions-elite-dangerous.79/",
+		"id": 79
+	},
+	"FI: French: ED: Recrutements et Groupes": {
+		"url": "https://forums.frontier.co.uk/forums/recrutements-et-groupes.82/",
+		"id": 82
+	},
+	"FI: French: ED: Autres sujets": {
+		"url": "https://forums.frontier.co.uk/forums/autres-sujets.80/",
+		"id": 80
+	},
+	"FI: French: ED: Évènements et Initiatives": {
+		"url": "https://forums.frontier.co.uk/forums/evenements-et-initiatives.210/",
+		"id": 210
+	},
+	"FI: French: Planet Coaster": {
+		"url": "https://forums.frontier.co.uk/forums/french-planet-coaster/",
+		"id": 358
+	},
+	"FI: French: Jurassic World Evolution": {
+		"url": "https://forums.frontier.co.uk/forums/jurassic-world-evolution.359/",
+		"id": 359
+	},
+	"FI: Russian": {
+		"url": "https://forums.frontier.co.uk/forums/russian/",
+		"id": 352
+	},
+	"FI: Russian: Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/categories/elite-dangerous.54/",
+		"id": 54
+	},
+	"FI: Russian: ED: Обсуждение Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/forums/obsuzhdenie-elite-dangerous.55/",
+		"id": 55
+	},
+	"FI: Russian: ED: Groups / Recruitment": {
+		"url": "https://forums.frontier.co.uk/forums/groups-recruitment.84/",
+		"id": 84
+	},
+	"FI: Russian: ED: Оффтопик": {
+		"url": "https://forums.frontier.co.uk/forums/offtopik.56/",
+		"id": 56
+	},
+	"FI: Russian: Planet Coaster": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster.360/",
+		"id": 360
+	},
+	"FI: Russian: Jurassic World Evolution": {
+		"url": "https://forums.frontier.co.uk/forums/jurassic-world-evolution.361/",
+		"id": 361
+	},
+	"FI: Spanish": {
+		"url": "https://forums.frontier.co.uk/forums/spanish/",
+		"id": 353
+	},
+	"FI: Spanish: Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/categories/elite-dangerous.95/",
+		"id": 95
+	},
+	"FI: Spanish: ED: Discusión General": {
+		"url": "https://forums.frontier.co.uk/forums/discusion-general.96/",
+		"id": 96
+	},
+	"FI: Spanish: ED: Grupos / Reclutamiento": {
+		"url": "https://forums.frontier.co.uk/forums/grupos-reclutamiento.97/",
+		"id": 97
+	},
+	"FI: Spanish: ED: PvP": {
+		"url": "https://forums.frontier.co.uk/forums/pvp.254/",
+		"id": 254
+	},
+	"FI: Spanish: ED: Otros Temas": {
+		"url": "https://forums.frontier.co.uk/forums/otros-temas.98/",
+		"id": 98
+	},
+	"FI: Spanish: ED: Interpretación de rol": {
+		"url": "https://forums.frontier.co.uk/forums/interpretacion-de-rol.194/",
+		"id": 194
+	},
+	"FI: Spanish: Planet Coaster": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster.362/",
+		"id": 362
+	},
+	"FI: Spanish: Jurassic World Evolution": {
+		"url": "https://forums.frontier.co.uk/forums/jurassic-world-evolution.363/",
+		"id": 363
+	},
+	"FI: Polish": {
+		"url": "https://forums.frontier.co.uk/forums/polish/",
+		"id": 354
+	},
+	"FI: Polish: Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/categories/elite-dangerous.57/",
+		"id": 57
+	},
+	"FI: Polish: ED: Elite Dangerous Dyskusja": {
+		"url": "https://forums.frontier.co.uk/forums/elite-dangerous-dyskusja.58/",
+		"id": 58
+	},
+	"FI: Polish: ED: Groups / Recruitment": {
+		"url": "https://forums.frontier.co.uk/forums/groups-recruitment.83/",
+		"id": 83
+	},
+	"FI: Polish: ED: Poza Tematem.": {
+		"url": "https://forums.frontier.co.uk/forums/poza-tematem.59/",
+		"id": 59
+	},
+	"FI: Polish: Planet Coaster": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster.364/",
+		"id": 364
+	},
+	"FI: Polish: Jurassic World Evolution": {
+		"url": "https://forums.frontier.co.uk/forums/jurassic-world-evolution.365/",
+		"id": 365
+	},
+	"FI: Portuguese": {
+		"url": "https://forums.frontier.co.uk/forums/portuguese/",
+		"id": 355
+	},
+	"FI: Portuguese: Elite Dangerous": {
+		"url": "https://forums.frontier.co.uk/categories/elite-dangerous.140/",
+		"id": 140
+	},
+	"FI: Portuguese: ED: Discussão Geral": {
+		"url": "https://forums.frontier.co.uk/forums/discussao-geral.141/",
+		"id": 141
+	},
+	"FI: Portuguese: ED: Grupos / Recrutamento": {
+		"url": "https://forums.frontier.co.uk/forums/grupos-recrutamento.142/",
+		"id": 142
+	},
+	"FI: Portuguese: ED: Outros Tópicos": {
+		"url": "https://forums.frontier.co.uk/forums/outros-topicos.143/",
+		"id": 143
+	},
+	"FI: Portuguese: Planet Coaster": {
+		"url": "https://forums.frontier.co.uk/forums/planet-coaster.366/",
+		"id": 366
+	},
+	"FI: Portuguese: Jurassic World Evolution": {
+		"url": "https://forums.frontier.co.uk/forums/jurassic-world-evolution.367/",
+		"id": 367
+	},
+	"Off-Topic": {
+		"url": "https://forums.frontier.co.uk/categories/off-topic.18/",
+		"id": 18
+	},
+	"OT: Games by Frontier Developments": {
+		"url": "https://forums.frontier.co.uk/forums/frontier-games/",
+		"id": 8
+	},
+	"OT: Off-Topic Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/off-topic/",
+		"id": 17
+	},
+	"OT: General Gaming Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/general-gaming-discussion/",
+		"id": 3
+	},
+	"OT: Forum Support & Feedback": {
+		"url": "https://forums.frontier.co.uk/forums/forum-support/",
+		"id": 6
 	}
 }
