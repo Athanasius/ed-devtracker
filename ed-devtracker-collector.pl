@@ -154,7 +154,7 @@ foreach my $whoid ( sort({$a <=> $b} map { $_->{'memberid'} } grep { $_->{'activ
   while (defined($p)) { 
 	  #print STDERR Dumper($p), "\n";
     if (${$p}{'datestamp'}) {
-	    #$db->insert_post($p);
+	    $db->insert_post($p);
     }
     $new_posts_total++;
     $p = pop(@{$new_posts});
