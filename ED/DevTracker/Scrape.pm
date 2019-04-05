@@ -91,7 +91,7 @@ sub get_member_new_posts {
 			$member_done = 1;
 		} else {
 			$loadmore_url = $loadmore->attr('href');
-			printf STDERR "Load More: %s\n", $loadmore_url;
+			#printf STDERR "Load More: %s\n", $loadmore_url;
 		}
 
   	my @posts = $activitylist->look_down(
@@ -102,7 +102,7 @@ sub get_member_new_posts {
   		print STDERR "Failed to find any posts for ", $membername, " (" . $whoid, ")\n";
   		return undef;
   	}
-  	print STDERR "Found ", $#posts, " new posts for ", $membername, " (", $whoid, ")\n";
+  	#print STDERR "Found ", $#posts, " new posts for ", $membername, " (", $whoid, ")\n";
   	#print STDERR "Posts: ", Dumper(\@posts), "\nEND Posts\n";
   	#exit(0);
   
@@ -142,7 +142,7 @@ sub get_member_new_posts {
   			my $title = $div_title->as_text;
   			#printf STDERR "Post Title: '%s'\n", $title;
   			if ($title =~ /^[^ ]+ +reacted to .+ post in the thread.+with/) {
-  				printf STDERR "Skipping reaction\n";
+  				#printf STDERR "Skipping reaction\n";
   				next;
   			}
   
@@ -191,7 +191,7 @@ sub get_member_new_posts {
   		# Strip embedded title
   		$post{'guid_url'} =~ s/^(?<start>\/(posts|threads)\/).+\.(?<id>[0-9]+)\/$/$+{'start'}$+{'id'}\//;
 
-      printf STDERR "Checking for %s in ignored posts\n", $post{'guid_url'};
+      #printf STDERR "Checking for %s in ignored posts\n", $post{'guid_url'};
 			if ($self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
 				printf STDERR "%s is already ignored (ignored forum), skipping...\n", $post{'guid_url'};
 				# NO!!! $dupe_count++; This means a run of ignored forum posts at the top would prevent scanning for more!
@@ -199,7 +199,7 @@ sub get_member_new_posts {
 			}
 
       #printf STDERR "Compare Thread '%s', new '%s'(%s)\n", $post{'threadtitle'}, $post{'url'}, $post{'guid_url'};
-      printf STDERR "Checking for %s in latest posts\n", $post{'guid_url'};
+      #printf STDERR "Checking for %s in latest posts\n", $post{'guid_url'};
       if (defined(${$latest_posts}{$post{'guid_url'}})) {
         my $l = ${${$latest_posts}{$post{'guid_url'}}}{'guid_url'};
       	# Old: showthread.php?p=902218#post902218
@@ -211,9 +211,9 @@ sub get_member_new_posts {
   
         $l =~ s/^showthread\.php\/(?<start>[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
   
-        printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'url'}, $l, $post{'url'}, $post{'guid_url'};
+        #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'url'}, $l, $post{'url'}, $post{'guid_url'};
         if ($l eq $post{'guid_url'}) {
-          print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
+          #print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
 					$dupe_count++;
           next;
         } else {
@@ -221,7 +221,7 @@ sub get_member_new_posts {
         }
       } #else {
         # Post is 'simply' new
-        print STDERR "guid_url of new post not found in latest posts\n";
+        #print STDERR "guid_url of new post not found in latest posts\n";
       #}
   
   		### BEGIN: Retrieve fulltext of post
@@ -229,7 +229,7 @@ sub get_member_new_posts {
   		if (!defined($post{'error'})) {
   			$fulltext_post = $self->get_fulltext($post{'guid_url'});
   			if (!defined($fulltext_post->{'error'})) {
-					printf STDERR "No error on post, populating remaining fields...\n";
+					#printf STDERR "No error on post, populating remaining fields...\n";
   				$post{'fulltext'} = $fulltext_post->{'fulltext'};
   				$post{'fulltext_stripped'} = $fulltext_post->{'fulltext_stripped'};
   				$post{'fulltext_noquotes'} = $fulltext_post->{'fulltext_noquotes'};
@@ -244,12 +244,12 @@ sub get_member_new_posts {
     	### BEGIN: Check for if this is an ignored forum
   		#print STDERR grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}}), "\n";
   		if (grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}})) {
-  			printf STDERR "Skipping post/thread for ignored forum\n";
+  			#printf STDERR "Skipping post/thread for ignored forum\n";
   			# We don't want to just return...
   			$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
   			# Mark the post as ignored for future reference.
     		if (! $self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
-    			printf STDERR "Ignoring post '%s' in forum '%s'\n", $post{'guid_url'}, $post{'forum'};
+    			#printf STDERR "Ignoring post '%s' in forum '%s'\n", $post{'guid_url'}, $post{'forum'};
     			$self->{'db'}->add_ignored_post($post{'guid_url'});
     		}
   		}
@@ -270,7 +270,7 @@ sub get_member_new_posts {
 		print STDERR "Dupe count reached 5\n";
 	}
 
-	printf STDERR "get_member_new_posts: DONE\n";
+	#printf STDERR "get_member_new_posts: DONE\n";
 	return \@new_posts;
 }
 
@@ -278,14 +278,14 @@ sub get_fulltext {
 	my ($self, $guid_url) = @_;
 	my %post;
 
-	printf STDERR "get_fulltext: guid_url = '%s'\n", $guid_url;
+	#printf STDERR "get_fulltext: guid_url = '%s'\n", $guid_url;
   my $page_url = $self->{'forum_base_url'} . $guid_url;
   my ($postid, $threadid, $is_first_post);
   if ($page_url =~ /\/threads\/(?<threadid>[0-9]+)\//) {
-    printf STDERR "Found 1st post in page URL: %s\n", $page_url;
+    #printf STDERR "Found 1st post in page URL: %s\n", $page_url;
     $threadid = $+{'threadid'};
 	} elsif ($page_url =~ /\/posts\/(?<postid>[0-9]+)\/$/) {
-    printf STDERR "Found reply post in page URL: %s\n", $page_url;
+    #printf STDERR "Found reply post in page URL: %s\n", $page_url;
 		$postid = $+{'postid'};
   } else {
     printf STDERR "Couldn't find any postid in page URL: %s\n", $page_url;
@@ -296,7 +296,7 @@ sub get_fulltext {
 	my $res;
 	my $api_post;
 	if (defined($threadid)) {
-		printf STDERR "Thread, calling API...\n";
+		#printf STDERR "Thread, calling API...\n";
 		my $req = HTTP::Request->new( 'GET', $self->{'xf_api_baseurl'} . "/threads/" . $threadid . "/?with_posts=1");
 		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
 		$res = $self->{'ua'}->request($req);
@@ -311,7 +311,7 @@ sub get_fulltext {
 		$post{'forum'} = $api->{'thread'}->{'Forum'}->{'title'};
 		$post{'forumid'} = $api->{'thread'}->{'Forum'}->{'node_id'};
 	} elsif (defined($postid)) {
-		printf STDERR "Post, calling API...\n";
+		#printf STDERR "Post, calling API...\n";
 		my $req = HTTP::Request->new( 'GET', $self->{'xf_api_baseurl'} . "/posts/" . $postid . "/");
 		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
 		$res = $self->{'ua'}->request($req);
@@ -327,7 +327,7 @@ sub get_fulltext {
 	} 
 
 	#print STDERR Dumper($api_post);
-	printf STDERR "Setting forum '%s' and forumid '%s'\n", $post{'forum'}, $post{'forumid'};
+	#printf STDERR "Setting forum '%s' and forumid '%s'\n", $post{'forum'}, $post{'forumid'};
 
 	$post{'fulltext'} = $api_post->{'message'};
 	#printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
@@ -401,7 +401,7 @@ sub get_fulltext {
 	$post{'fulltext_noquotes'} = $bbt->guts()->as_HTML;
 	$post{'fulltext_noquotes_stripped'} = $bbt->format;
 
-	printf STDERR "Full Text:\n%s\n.\n", $post{'fulltext'};
+	#printf STDERR "Full Text:\n%s\n.\n", $post{'fulltext'};
 	#printf STDERR "Full Text, stripped:\n%s\n.\n", $post{'fulltext_stripped'};
 	#printf STDERR "Full Text, noquotes:\n%s\n.\n", $post{'fulltext_noquotes'};
 	#printf STDERR "Full Text, noquotes, stripped:\n%s\n.\n", $post{'fulltext_noquotes_stripped'};
