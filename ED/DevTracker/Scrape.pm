@@ -19,6 +19,7 @@ use Encode;
 use Data::Dumper;
 use Date::Manip;
 use JSON::PP;
+use Parse::BBCode;
 
 sub new {
 	my ($class, $ua, $forums_ignored) = @_;
@@ -285,69 +286,51 @@ sub get_fulltext {
 	$post{'fulltext'} = $api_post->{'message'};
 	#printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
 # XXX: Munge user quoting into something that works in RSS feed/readers.
-# XXX: See Parse::BBCode
 # [QUOTE="hos, post: 7716228, member: 222029"]
 # nice way to hide the amount of issues. good job.
 # [/QUOTE]
 # 
 # The Issue Tracker makes the number of reports more visible than the previous forum system and helps you keep track of their progress.
+	my $pbb = Parse::BBCode->new();
+	my $bb = $pbb->render($post{'fulltext'});
+	my $bbt = HTML::TreeBuilder->new(no_space_compacting => 1, ignore_unknown => 0);
+	$bbt->parse($bb);
+	$bbt->eof();
+	#printf STDERR Dumper($bbt);
+	my @quotes = $bbt->look_down(_tag => 'div', 'class' => 'bbcode_quote_header');
+	for my $q (@quotes) {
+		#printf STDERR "Quote:\n%s\n", Dumper($q);
+		printf STDERR "Original Version: '%s'\n", $q->as_HTML;
+		#printf STDERR "bbcode_quote_header: %s\n", $q->{'_content'}[0];
+		my $qh = $q->{'_content'}[0];
+		if ($qh =~ /^(?<poster>[^,]+), post: (?<postid>[0-9]+), member: (?<posterid>[0-9]+)/) {
+			printf STDERR "\tMatched the string\n";
+			# <a href="member profile url">member name</a> <a href="post url">Source</a>
+			#$q->{'_content'}[0] = sprintf("");
+			my $quoted = HTML::Element->new(
+				'a',
+				href => sprintf("%s/members/%s/", $self->{'forum_base_url'}, $+{'posterid'})
+			);
+			$quoted->push_content($+{'poster'});
+			my $source = HTML::Element->new(
+				'a',
+				'href' => sprintf("%s/postys/%s/", $self->{'forum_base_url'}, $+{'postid'}),
+			);
+			$source->push_content("Source");
+
+			$q->splice_content(0, 1, $quoted, $source);
+			#printf STDERR "\tReplace 'quoted': '%s'\n", $quoted->as_HTML();
+			#printf STDERR "\tReplace 'source': '%s'\n", $source->as_HTML;
+			printf STDERR "Replaced Version: '%s'\n", $q->as_HTML;
+		}
+	}
+	printf STDERR "New full text:\n'%s'\n", $bbt->guts()->as_HTML;
+	$post{'fulltext'} = $bbt->guts()->as_HTML;
 # XXX: Actually populate these properly.  We need the 'stripped' version(s) for full text search to not be full of HTML tags
 	$post{'fulltext_stripped'} = $post{'fulltext'};
 	$post{'fulltext_noquotes'} = $post{'fulltext'};
 	$post{'fulltext_noquotes_stripped'} = $post{'fulltext'};
 
-# XXX: Below here is the old scraping code
-######   my $post_div;
-######   if ($is_first_post) {
-###### #    print STDERR "Is a first post\n";
-######     $post_div = $tree->look_down(_tag => 'div', id => qr/^post_message_[0-9]+$/);
-######     if (! $post_div) {
-######       printf STDERR "Failed to find the post div element for first post in thread %d\n", $postid;
-###### 			my $error = $self->check_forum_error($tree);
-###### 			if (defined($error)) {
-###### 				$post{'error'} = $error;
-###### 			} else {
-###### 				$post{'error'} = {'message' => 'Failed to find the post div element for first post in thread', 'no_post_message' => 1};
-###### 			}
-######      	return \%post;
-######     }
-######   } else {
-###### #    print STDERR "Is NOT a first post\n";
-######     $post_div = $tree->look_down('id', "post_message_" . $postid);
-######     if (! $post_div) {
-######       printf STDERR "Failed to find the post div element for post %d\n", $postid;
-###### #			printf STDERR $tree->as_HTML, "\n";
-###### #			printf STDERR Dumper($tree), "\n";
-###### 			my $error = $self->check_forum_error($tree);
-###### #			printf STDERR Dumper($error), "\n"; # XXX why does this sometimes give no output, despite other checks showing $error is defined ?
-###### 			if (defined($error)) {
-###### 				$post{'error'} = $error;
-###### 			} else {
-###### 				$post{'error'} = {'message' => 'Failed to find the post div element for post', 'no_post_message' => 1};
-###### 			}
-######       return \%post;
-######     }
-######   }
-######   my $new_content = $post_div->look_down(_tag => 'blockquote');
-######   if (! $new_content) {
-######     printf STDERR "Couldn't find main blockquote of post\n";
-###### 		$post{'error'} = {'message' => "Couldn't find main blockquote of post", 'no_blockquote' => 1};
-######     return \%post;
-######   }
-###### #  printf STDERR "Full post text:\n'%s'\n", $post_div->as_HTML;
-######   $post{'fulltext'} = $post_div->as_HTML;
-######   $post{'fulltext_stripped'} = $post_div->format;
-###### 
-######   my $post_div_stripped = $post_div;
-######   # Post with multiple 'code' segments: https://forums.frontier.co.uk/showthread.php/275151-Commanders-log-manual-and-data-sample?p=5885045&viewfull=1#post5885045
-######   # thankfully they use class="bbcode_container", not "bbcode_quote"
-######   my @bbcode_quote = $post_div_stripped->look_down(_tag => 'div', class => 'bbcode_quote');
-######   foreach my $bbq (@bbcode_quote) {
-######     $bbq->delete_content;
-######   }
-######   my $text = $post_div_stripped->as_trimmed_text;
-###### #    printf STDERR "Stripped content (HTML):\n'%s'\n", $post_div_stripped->as_HTML;
-######   # This probably works for full-text search.  May have to strip ' * ' and ' - ' (used in lists) from it.
 ###### #    printf STDERR "Stripped content (format):\n'%s'\n", $post_div_stripped->format;
 ######   $post{'fulltext_noquotes'} = $post_div_stripped->as_HTML;
 ######   $post{'fulltext_noquotes_stripped'} = $post_div_stripped->format;
