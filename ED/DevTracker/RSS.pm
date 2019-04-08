@@ -75,7 +75,7 @@ sub generate {
   }
   my $latest_date = $date->printf("%a, %e %b %Y %H:%M:%S %z");
 
-	printf STDERR "RSS.pm:generate: base_url '%s'\n", $self->{'base_url'};
+	#printf STDERR "RSS.pm:generate: base_url '%s'\n", $self->{'base_url'};
   
   $self->{'rss'} = XML::RSS->new(version => '2.0', encoding => 'UTF-8', encode_output => 1, encode_cb => \&ed_rss_encode);
 	$self->{'rss'}->add_module(prefix => 'atom', uri => 'http://www.w3.org/2005/Atom');
