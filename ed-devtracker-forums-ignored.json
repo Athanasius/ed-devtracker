@@ -1,7 +1,7 @@
 {
 	"PC: News": {
 		"url": "https://forums.frontier.co.uk/forums/planet-coaster-news/",
-		"id": 346
+		"id": 339
 	},
 	"PC: General Discussion": {
 		"url": "https://forums.frontier.co.uk/forums/planet-coaster-general/",
@@ -64,8 +64,8 @@
 		"id": 237
 	},
 	"JWE: JWED: Guides": {
-		"url": "https://forums.frontier.co.uk/forums/jwe-discussions/",
-		"id": 0
+		"url": "https://forums.frontier.co.uk/forums/jwe-guides/",
+		"id": 270
 	},
 	"JWE: JWED: Ideas & Feature Requests": {
 		"url": "https://forums.frontier.co.uk/forums/jwe-ideas-feature-requests/",
@@ -105,7 +105,7 @@
 	},
 	"JWE: BR: PlayStation 4 BR: PlayStation 4: Requires More Information": {
 		"url": "https://forums.frontier.co.uk/forums/playstation-4-requires-more-information.265/",
-		"id": 269
+		"id": 265
 	},
 	"JWE: BR: Bug Reports Requiring More Information": {
 		"url": "https://forums.frontier.co.uk/forums/bug-reports-requiring-more-information.266/",
