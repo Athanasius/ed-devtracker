@@ -36,6 +36,9 @@ currently only used to bail early on posts we'll ignore anyway.
 
 *) Remember to tweak the number of days in the feed to back-date to 26th
 March 2019 when feed first starts back up.
+
+*) Ensure search works and its output is sane, i.e. URLs are in valid
+formats to be useful.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 Pre-XenForo2 below here:
