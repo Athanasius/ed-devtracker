@@ -8,24 +8,31 @@
   <link rel="alternate" type="application/rss+xml" title="Elite: Dangerous Dev Posts (Full Text)" href="https://ed.miggy.org/devtracker/ed-dev-posts-full.rss" />
  </head>
  <body>
-  <h1>Not currently collecting new posts</h1>
+  <h1>Now collecting new posts on new forums</h1>
   <p>
-   As I type this it is 2019-03-25 and the Frontier forums are in the
-   process of migrating away from vBulletin to XenForo.  The new forums
-   should provide their own 'Dev' RSS feed, negating the need for me to
-   continue scraping them.  Thus I've now stopped my scraping.
+   As I type this it is 2019-04-08 and the Frontier forums have been up
+   again on the XenForo v2 version for 11 days.  Sadly it turned out
+   that the 'Dev Feed' has two problems:
+   <ol>
+    <li>
+      The "<a href="https://forums.frontier.co.uk/find-threads/staffpost">Staff / Developer Posts</a>" is only listing threads that 'dev's <i>started</i>, and in order of the last reply by anyone on them.
+    </li>
+    <li>
+     Even given that issue, there's currently no RSS output for that
+     URL.
+    </li>
+   </ol>
   </p>
   <p>
-   If the new feed proves in some way inadequate (e.g. if it covers all
-   Frontier games), then I will try to find the time to write a filter
-   to continue producing my own feed.
+    So I felt obligated to update my scraper to work against the new
+    forums.  In some ways this proved to be easier than for the old site
+    (e.g. consistent Content-Type of utf8, instead of randomly changing, so no
+    hacks required to deal with that).  I have also been given a key for
+    the XF2 API which makes retrieving some of the data cleaner, with
+    less load on the forums servers.
   </p>
   <p>
-   I also intend to utilise the new feed to continue feeding my archive
-   of posts.
-  </p>
-  <p>
-   There are currently three archives of the posts available:
+   For historical purposes I'll keepo the three archives of the pre-XF2 posts available:
    <ol>
     <li>
      Postgresql 'pg_dump --format=plain': <a href="devtracker/archives/athan-ed-dev-rss-archive-20190325.sql.gz">athan-ed-dev-rss-archive-20190325.sql.gz</a>
@@ -148,6 +155,17 @@
   <h1>
    News
   </h1>
+  <p><u>2019-04-08 10:56 UTC</u><br />
+   Now scraping against the XF2 forums for the live feed.  There's still
+   a little fix up that needs doing on some historical posts (where they
+   started a thread, rather than being a reply) to have the URLs point
+   to the actual thread on the new forums, rather than "Not Found".
+  </p>
+  <p>
+   Other than that everything should be working again, including the
+   search interface (although with a double '/' in some URLs for now,
+   which is harmless).
+  </p>
   <p><u>2019-03-25 11:00 UTC</u><br />
    The old forums are now down for the move to the new forums.  I've
    stopped my scraper from running and will shortly make archives of the
