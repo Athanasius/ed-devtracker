@@ -134,9 +134,14 @@ sub generate {
       $description = "<a href=\"" . $self->{'base_url'} . ${$p}{'url'} . "\">" . ${$p}{'urltext'} . "</a>\n<p>" . $description . "\n</p>";
 		}
 		#printf STDERR "Threadtitle = '%s'\n", ${$p}{'threadtitle'};
+		my $link_url = $self->{'base_url'};
+		if (${$p}{'url'} =~ /^[^\/]/) {
+			$link_url .= "/";
+		}
+		$link_url .= ${$p}{'url'};
     $self->{'rss'}->add_item(
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'} . " (" . ${$p}{'forum'} . ")",
-      link  => $self->{'base_url'} . ${$p}{'url'},
+      link  => $link_url,
       pubDate => $post_date,
       permaLink  => $self->{'base_url'} . ${$p}{'guid_url'},
       description => $description,
