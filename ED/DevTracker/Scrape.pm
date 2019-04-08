@@ -141,9 +141,9 @@ sub get_member_new_posts {
   		if ($div_title) {
   			# Check if this is a 'reaction' and ignore if so.
   			my $title = $div_title->as_text;
-  			#printf STDERR "Post Title: '%s'\n", $title;
-  			if ($title =~ /^[^ ]+ +reacted to .+ post in the thread.+with/) {
-  				#printf STDERR "Skipping reaction\n";
+  			printf STDERR "Post Title: '%s'\n", $title;
+  			if ($title =~ /reacted to .+ post in the thread.+with/) {
+  				printf STDERR "Skipping reaction\n";
   				next;
   			}
   
