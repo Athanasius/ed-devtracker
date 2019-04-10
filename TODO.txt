@@ -1,4 +1,12 @@
 - XenForo 2 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*) bbcode
+	[CENTER][ATTACH type="full" alt="127332"]127332[/ATTACH][/CENTER]
+		https://forums.frontier.co.uk/attachments/aprilupdate-jpg.127332/
+	[COLOR=rgb(243, 121, 52)]Beginner's Zone[/COLOR]
+		<span style="color: rgb(243, 121, 52)">New Modules</span>
+	[INDENT][COLOR=rgb(243, 121, 52)]Advanced Docking Computer[/COLOR][/INDENT]
+		<div style="margin-left: 20px"><b><span style="color: rgb(243, 121, 52)">Advanced Docking Computer</span></b>​</div>
+
 *) Ensure all guid_url values are valid:
 	*) In some cases we have only url = 'showthread.php?t=53456'
 	   or url = 'showthread.php/53456-<title>'
