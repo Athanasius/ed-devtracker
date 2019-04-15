@@ -6,6 +6,11 @@
 		<span style="color: rgb(243, 121, 52)">New Modules</span>
 	[INDENT][COLOR=rgb(243, 121, 52)]Advanced Docking Computer[/COLOR][/INDENT]
 		<div style="margin-left: 20px"><b><span style="color: rgb(243, 121, 52)">Advanced Docking Computer</span></b>​</div>
+	[INDENT=3]no longer includes spurious ammo stats for energy weapons[/INDENT]
+		<div style="margin-left: 60px">no longer includes spurious ammo stats for energy weapons​</div>
+		<https://forums.frontier.co.uk/threads/journal-docs-for-v3-4.508702/>
+	[URL='https://www.twitch.tv/deejayknight']Twitch[/URL]
+		<a href="https://www.twitch.tv/deejayknight" target="_blank" class="link link--external" data-proxy-href="/proxy.php?link=https%3A%2F%2Fwww.twitch.tv%2Fdeejayknight&amp;hash=65da98a088dfc596708d2f664393fe42" rel="noopener">Twitch</a>
 
 *) Ensure all guid_url values are valid:
 	*) In some cases we have only url = 'showthread.php?t=53456'
