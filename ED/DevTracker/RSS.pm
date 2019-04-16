@@ -139,6 +139,10 @@ sub generate {
 			$link_url .= "/";
 		}
 		$link_url .= ${$p}{'url'};
+		if (!defined(${$p}{'forum'})) {
+			#printf STDERR "forum !defined: id %d\n", ${$p}{'id'};
+			${$p}{'forum'} = "Their Profile";
+		}
     $self->{'rss'}->add_item(
       title => ${$p}{'who'} . " - " . ${$p}{'threadtitle'} . " (" . ${$p}{'forum'} . ")",
       link  => $link_url,
