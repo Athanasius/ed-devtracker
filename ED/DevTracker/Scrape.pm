@@ -159,6 +159,7 @@ sub get_member_new_posts {
   				$post{'whourl'} = $a[0]->attr('href');
   				#printf STDERR "Who URL: '%s'\n", $post{'whourl'};
   				$post{'threadtitle'} = $a[1]->as_text;
+					# XXX: Is this a 'status' ?
   				#printf STDERR "Thread Title: '%s'\n", $post{'threadtitle'};
   				$post{'url'} = $a[1]->attr('href');
   				#printf STDERR "Post URL: '%s'\n", $post{'url'};
