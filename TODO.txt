@@ -12,6 +12,23 @@
 	[URL='https://www.twitch.tv/deejayknight']Twitch[/URL]
 		<a href="https://www.twitch.tv/deejayknight" target="_blank" class="link link--external" data-proxy-href="/proxy.php?link=https%3A%2F%2Fwww.twitch.tv%2Fdeejayknight&amp;hash=65da98a088dfc596708d2f664393fe42" rel="noopener">Twitch</a>
 
+*) Decide how to handle Forum activity for 'status':
+
+	Brett C updated their status.
+	Away until April 28th.
+	Today at 6:06 AM
+
+	<div class="contentRow-title">
+		<a href="/members/brett-c.52/" class="username " dir="auto" data-user-id="52" data-xf-init="member-tooltip" id="js-XFUniqueId2"><span class="username--staff username--moderator username--admin">Brett C</span></a>
+		updated their <a href="/profile-posts/23368/">status</a>.  
+	</div>
+	<div class="contentRow-snippet">Away until April 28th.</div>
+	<div class="contentRow-minor">
+		<time class="u-dt" dir="auto" datetime="2019-04-16T06:06:27+0100" data-time="1555391187" data-date-string="Apr 16, 2019" data-time-string="6:06 AM" title="Apr 16, 2019 at 6:06 AM">
+			Today at 6:06 AM
+		</time>
+	</div>
+
 *) Ensure all guid_url values are valid:
 	*) In some cases we have only url = 'showthread.php?t=53456'
 	   or url = 'showthread.php/53456-<title>'
