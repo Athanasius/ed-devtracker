@@ -93,7 +93,7 @@ function displaySearchResults(data) {
     // <a href="URL">ThreadTitle</a> (Forum)
     var new_r_url = new_r.find(".results_info_item.result_thread").html(
       $('<a>', {
-        href: 'https://forums.frontier.co.uk/' + data.results[r].url,
+        href: 'https://forums.frontier.co.uk/' + data.results[r].guid_url,
         text: data.results[r].threadtitle
       })
     );

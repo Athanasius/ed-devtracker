@@ -58,6 +58,17 @@
    SELECT id,url,guid_url FROM posts WHERE url NOT LIKE 'showthread.php/t=%p=%' AND url NOT LIKE 'showthread.php?p=%#post%' AND url NOT LIKE 'showthread.php?t=%&p=%' AND url NOT LIKE 'showthread.php/%-%?p=%#post%' ORDER BY id ASC;
    (1311 rows)
 
+   Also things like:
+
+   	<https://forums.frontier.co.uk/showthread.php/401661-Journal-Documentation-for-v3-0?p=6389830#post6389830>
+
+   Need to be things like:
+
+   	https://forums.frontier.co.uk/posts/6389830/
+
+   Should just be a case of switching from using 'url' to 'guid_url' in
+   search output.
+
 *) Convert ignored_posts.url values to new forum format.  Really needed?
 This is a record of posts ignored due to the forum they're in, and
 currently only used to bail early on posts we'll ignore anyway.

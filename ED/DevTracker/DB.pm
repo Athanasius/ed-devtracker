@@ -175,7 +175,7 @@ sub ts_search {
 
 	my $sth;
 	if ($in_title eq 'true' and $in_precis eq 'true') {
-		$sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query OR threadtitle_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
+		$sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,guid_url,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE precis_ts_indexed @@ query OR threadtitle_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
 	} elsif ($in_title eq 'true') {
 		$sth = $dbh->prepare("SELECT ts_rank_cd(precis_ts_indexed, query,4) AS rank,datestamp,url,threadurl,threadtitle,forum,who,precis,query FROM posts,to_tsquery(?) query WHERE threadtitle_ts_indexed @@ query ORDER BY rank DESC, datestamp DESC;");
 	} elsif ($in_precis eq 'true') {
