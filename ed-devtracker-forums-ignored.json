@@ -51,6 +51,26 @@
 		"url": "https://forums.frontier.co.uk/forums/planet-coaster-shops-scenery/",
 		"id": 333
 	},
+	"Planet Zoo": {
+		"url": "https://forums.frontier.co.uk/categories/planet-zoo.380/",
+		"id": 380
+	},
+	"PZ: News and Announcements": {
+		"url": "https://forums.frontier.co.uk/forums/news-and-announcements.382/",
+		"id": 382
+	},
+	"PZ: General Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/general-discussion.383/",
+		"id": 383
+	},
+	"PZ: Animals": {
+		"url": "https://forums.frontier.co.uk/forums/animals.384/",
+		"id": 384
+	},
+	"PZ: Wishlists": {
+		"url": "https://forums.frontier.co.uk/forums/wishlists.385/",
+		"id": 385
+	},
 	"JWE": {
 		"url": "https://forums.frontier.co.uk/categories/jurassic-world-evolution.63/",
 		"id": 63
