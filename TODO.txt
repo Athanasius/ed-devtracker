@@ -11,6 +11,13 @@
 		<https://forums.frontier.co.uk/threads/journal-docs-for-v3-4.508702/>
 	[URL='https://www.twitch.tv/deejayknight']Twitch[/URL]
 		<a href="https://www.twitch.tv/deejayknight" target="_blank" class="link link--external" data-proxy-href="/proxy.php?link=https%3A%2F%2Fwww.twitch.tv%2Fdeejayknight&amp;hash=65da98a088dfc596708d2f664393fe42" rel="noopener">Twitch</a>
+	[MEDIA=youtube]64EOTqrJOR0[/MEDIA]
+		<div class="bbMediaWrapper">
+			<div class="bbMediaWrapper-inner">
+				<iframe src="https://www.youtube.com/embed/64EOTqrJOR0?wmode=opaque&amp;start=0" width="
+560" height="315" frameborder="0" allowfullscreen="true"></iframe>
+			</div>
+		</div>
 	<table stuff>
 		[TABLE]
 		[TR]
