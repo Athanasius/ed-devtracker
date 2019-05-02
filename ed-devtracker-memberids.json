@@ -7,7 +7,7 @@
     {"memberid":7,"membername":"David Braben","active":1},
     {"memberid":8,"membername":"Colin Davis","active":1},
     {"memberid":13, "membername":"Natalie Fraser","active":0,"comment":"Lead Tester"},
-    {"memberid":52,"membername":"BrettC","active":1,"comment":"Community Assistant"},
+    {"memberid":52,"membername":"BrettC","active":0,"comment":"Community Assistant"},
     {"memberid":119,"membername":"Sam Denney","active":0},
     {"memberid":1110,"membername":"Stefan Mars","active":1},
     {"memberid":1388,"membername":"Kyle Rowley","active":0},
