@@ -331,7 +331,7 @@ sub get_fulltext {
 	#printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
 
 	# BEGIN: Munge user quoting into something that works in RSS feed/readers.
-	my $pbb = Parse::BBCode->new();
+	my $pbb = Parse::BBCode->new({attribute_quote => q/'"/});
 	my $bb = $pbb->render($post{'fulltext'});
 	my $bbt = HTML::TreeBuilder->new(no_space_compacting => 1, ignore_unknown => 0);
 	$bbt->parse($bb);
