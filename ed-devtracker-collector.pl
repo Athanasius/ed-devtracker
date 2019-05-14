@@ -91,6 +91,9 @@ my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
 $tree->parse($lf_res->decoded_content());
 $tree->eof();
 my $xft = $tree->look_down('name', '_xfToken');
+if (! $xft) {
+  die("Failed login: can't find _xfToken";
+}
 my $xfToken =  $xft->attr_get_i('value');
 undef $tree;
 
