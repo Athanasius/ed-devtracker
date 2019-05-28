@@ -187,7 +187,7 @@ sub get_member_new_posts {
   		# XF2: /posts/7715924/ or /threads/186768/
       $post{'guid_url'} = $post{'url'};
   		# Strip embedded title
-  		$post{'guid_url'} =~ s/^(?<start>\/(posts|threads)\/).+\.(?<id>[0-9]+)\/$/$+{'start'}$+{'id'}\//;
+  		$post{'guid_url'} =~ s/^(?<start>\/(index\.php\?)?(posts|threads)\/).+\.(?<id>[0-9]+)\/$/$+{'start'}$+{'id'}\//;
 
       #printf STDERR "Checking for %s in ignored posts\n", $post{'guid_url'};
 			if ($self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
@@ -279,10 +279,10 @@ sub get_fulltext {
 	#printf STDERR "get_fulltext: guid_url = '%s'\n", $guid_url;
   my $page_url = $self->{'forum_base_url'} . $guid_url;
   my ($postid, $threadid, $is_first_post);
-  if ($page_url =~ /\/threads\/(?<threadid>[0-9]+)\//) {
+  if ($page_url =~ /\/(index.php\?)?threads\/(?<threadid>[0-9]+)\//) {
     #printf STDERR "Found 1st post in page URL: %s\n", $page_url;
     $threadid = $+{'threadid'};
-	} elsif ($page_url =~ /\/posts\/(?<postid>[0-9]+)\/$/) {
+	} elsif ($page_url =~ /\/(index.php\?)?posts\/(?<postid>[0-9]+)\/$/) {
     #printf STDERR "Found reply post in page URL: %s\n", $page_url;
 		$postid = $+{'postid'};
   } else {
@@ -321,6 +321,7 @@ sub get_fulltext {
 		$api_post = $api_post->{'post'};
 		$post{'threadurl'} = "/threads/" . $api_post->{'thread_id'} . "/";
 		$post{'forum'} = $api_post->{'Thread'}->{'Forum'}->{'title'};
+		#printf STDERR "post's forum node_id is %d\n", $api_post->{'Thread'}->{'Forum'}->{'node_id'};
 		$post{'forumid'} = $api_post->{'Thread'}->{'Forum'}->{'node_id'};
 	} 
 
