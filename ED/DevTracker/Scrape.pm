@@ -188,6 +188,8 @@ sub get_member_new_posts {
       $post{'guid_url'} = $post{'url'};
   		# Strip embedded title
   		$post{'guid_url'} =~ s/^(?<start>\/(index\.php\?)?(posts|threads)\/).+\.(?<id>[0-9]+)\/$/$+{'start'}$+{'id'}\//;
+			# And then the XF2 forums suddenly grew a 'index.php?' at the start of the URLs.
+			$post{'guid_url'} =~ s/^\/index\.php\?/\//;
 
       #printf STDERR "Checking for %s in ignored posts\n", $post{'guid_url'};
 			if ($self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
@@ -208,7 +210,6 @@ sub get_member_new_posts {
         $l =~ s/^showthread\.php\/(?<start>[0-9]+)(-[^\?]+)$/\/posts\/$+{'start'}\//;
   
         $l =~ s/^showthread\.php\/(?<start>[0-9]+)(-[^\?]+)(?<end>\?p=[0-9]+#post[0-9]+)$/$+{'start'}$+{'end'}/;
-  
         #printf STDERR "Compare Thread '%s' at '%s'(%s) new '%s'(%s)\n", $post{'threadtitle'}, ${${$latest_posts}{$post{'guid_url'}}}{'url'}, $l, $post{'url'}, $post{'guid_url'};
         if ($l eq $post{'guid_url'}) {
           #print STDERR "We already knew this post, bailing on: ", $post{'guid_url'}, "\n";
