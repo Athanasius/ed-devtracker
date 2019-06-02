@@ -1,48 +1,7 @@
 - XenForo 2 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 *) bbcode
-	[CENTER][ATTACH type="full" width="716px" alt="133080"]133080[/ATTACH][/CENTER]
-		https://forums.frontier.co.uk/index.php?threads/featured-event-the-hutton-dusty-bento-balls-convoy.513312/
-		https://forums.frontier.co.uk/index.php?attachments/1920x1080-jpg.133080
-	[COLOR=rgb(243, 121, 52)]Beginner's Zone[/COLOR]
-		<span style="color: rgb(243, 121, 52)">New Modules</span>
-	[INDENT][COLOR=rgb(243, 121, 52)]Advanced Docking Computer[/COLOR][/INDENT]
-		<div style="margin-left: 20px"><b><span style="color: rgb(243, 121, 52)">Advanced Docking Computer</span></b>​</div>
-	[INDENT=3]no longer includes spurious ammo stats for energy weapons[/INDENT]
-		<div style="margin-left: 60px">no longer includes spurious ammo stats for energy weapons​</div>
-		<https://forums.frontier.co.uk/threads/journal-docs-for-v3-4.508702/>
-	[URL='https://www.twitch.tv/deejayknight']Twitch[/URL]
-		<a href="https://www.twitch.tv/deejayknight" target="_blank" class="link link--external" data-proxy-href="/proxy.php?link=https%3A%2F%2Fwww.twitch.tv%2Fdeejayknight&amp;hash=65da98a088dfc596708d2f664393fe42" rel="noopener">Twitch</a>
-	[MEDIA=youtube]64EOTqrJOR0[/MEDIA]
-		<div class="bbMediaWrapper">
-			<div class="bbMediaWrapper-inner">
-				<iframe src="https://www.youtube.com/embed/64EOTqrJOR0?wmode=opaque&amp;start=0" width="560" height="315" frameborder="0" allowfullscreen="true"></iframe>
-			</div>
-		</div>
-	<table stuff>
-		[TABLE]
-		[TR]
-		[TD]Distance between Sol and IC 2391 Sector FL-X
-		B1-7[/TD]
-		[TD]619ly[/TD]
-		[/TR]
-		<https://forums.frontier.co.uk/threads/bridging-the-gap-phase-one-candidate-systems.510392/>
-
-*) Decide how to handle Forum activity for 'status':
-
-	Brett C updated their status.
-	Away until April 28th.
-	Today at 6:06 AM
-
-	<div class="contentRow-title">
-		<a href="/members/brett-c.52/" class="username " dir="auto" data-user-id="52" data-xf-init="member-tooltip" id="js-XFUniqueId2"><span class="username--staff username--moderator username--admin">Brett C</span></a>
-		updated their <a href="/profile-posts/23368/">status</a>.  
-	</div>
-	<div class="contentRow-snippet">Away until April 28th.</div>
-	<div class="contentRow-minor">
-		<time class="u-dt" dir="auto" datetime="2019-04-16T06:06:27+0100" data-time="1555391187" data-date-string="Apr 16, 2019" data-time-string="6:06 AM" title="Apr 16, 2019 at 6:06 AM">
-			Today at 6:06 AM
-		</time>
-	</div>
+	All codes seen now supported.  Need to create a "kitchen sink"
+	text from the editor to be sure we have everything.
 
 *) Ensure all guid_url values are valid:
 	*) In some cases we have only url = 'showthread.php?t=53456'
@@ -84,64 +43,10 @@
    Should just be a case of switching from using 'url' to 'guid_url' in
    search output.
 
-*) Convert ignored_posts.url values to new forum format.  Really needed?
-This is a record of posts ignored due to the forum they're in, and
-currently only used to bail early on posts we'll ignore anyway.
-
 *) Last pre-XF2 posts.id is 30096
-
-*) Remember to tweak the number of days in the feed to back-date to 26th
-March 2019 when feed first starts back up.
 
 *) Ensure search works and its output is sane, i.e. URLs are in valid
 formats to be useful.
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Pre-XenForo2 below here:
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-1) Once we have access use
-https://forums.frontier.co.uk/memberlist.php?order=asc&sort=joindate&pp=100&usergroupid=9
-to spot new dev accounts.
-
-*) 'Click Through' to full post content.
-	Want to do this by viewing literally just the single post if
-	possible.  This may no longer be supported however.
-	Not working:
-		https://forums.frontier.co.uk/showthread.php?action=showpost&postid=5820343
-		showpost.php seems to just be a redirect to showthread.php
-
-So full thread scraping it is:
-	https://forums.frontier.co.uk/showthread.php/372917-Speculation-Open-Beta?p=5854315#post5854315
-	<a name="post5854315" href="showthread.php/372917-Speculation-Open-Beta?p=5854315&amp;viewfull=1#post5854315" class="postcounter">#12</a>
-which is contained fully in:
-	<li class="postbitlegacy postbitim postcontainer old" id="post_5854315" data-post-type="employee">
-
-ALSO, consider trying this, instead of activity lists:
-
-https://aw.my.com/en/forum/search.php?do=finduser&adm=6,21&contenttype=vBForum_Post&showposts=1&forumchoice%5B%5D=23&childforums=1
-
-Note the multiple IDs passed as adm=6,21
-
-https://forums.frontier.co.uk/search.php?do=showspecialz
-
-	1) 'Source' on full-text quotes needs to be made an absolute
-	URL, else they'll point to e.g.
-		https://miggy.org/games/elite-dangerous/devtracker-dev/showthread.php?p=5892514&viewfull=1#post5892514
-	OR is this only an issue with testing in a .html file ?
-
-	2) May need to put some in-line style="" in to get things
-	formatted properly.
-		<div class="bbcode_quote" style="margin: 0 10px; margin-bottom: 10px; border-radius: 2px; border: 1px solid #999;">
-	NOPE, readers strip this. Instead I need to change the
-		<div class="bbcode_quote ...>...</div>
-	into
-		<blockquote>...</blockquote>
-
-	3) Remove 'aria-hidden' attribute on <i/> element:
-		<i aria-hidden="true" class="fa fa-quote-left"></i>
-
-	4) Remove
-		<img alt="View Post" class="inlineimg" src="https://forums-cdn.frontier.co.uk/images/elite/buttons/viewpost-right.png" />
 
 *) Check any feed changes against:
 
@@ -155,3 +60,4 @@ https://forums.frontier.co.uk/search.php?do=showspecialz
 *) 'Everything' into the config file, no hard coded 'config' values.
 *) ED::DevTracker::Forums.pm to hold all the forum interaction code,
 i.e. login, URL retrieval...
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
