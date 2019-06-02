@@ -12,7 +12,18 @@ my $bbc = Parse::BBCode->new({
   tags => {
     Parse::BBCode::HTML->defaults,
     center => '<div style="text-align: center">%s</div>',
-    'indent' => '<div style="margin-left: 20px">%s</div>',
+    'indent' => {
+      code => sub {
+        my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+        printf STDERR "INDENT tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+        my $multi = 1;
+        if (defined($attr)) {
+          $multi = $attr;
+        }
+        return sprintf("<div style=\"margin-left: %dpx\">%s</div>", 20 * $multi, ${$content});
+      },
+      parse => 1,
+    },
     'url'   => 'url:<a href="%{link}A" rel="nofollow">%s</a>',
     'color' => {
       parse => 1,
