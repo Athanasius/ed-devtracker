@@ -360,6 +360,7 @@ sub get_fulltext {
             #printf STDERR "Found COLOR with %s\n", $attr;
             return sprintf("<span style=\"color: %s\">%s</span>", $+{'rgb'}, ${$content});
           }
+					return sprintf("[COLOR='%s']%s[/COLOR]", $attr, ${$content});
         },
         close => 0,
         #class => 'block'
@@ -373,6 +374,7 @@ sub get_fulltext {
             #printf STDERR "Found ATTACH with %s\n", ${$content};
             return sprintf("<img src=\"https://forums.frontier.co.uk/attachments/%s\" alt=\"%s\">", ${$content}, ${$content});
           }
+					return sprintf("[ATTACH]%s[/ATTACH]", ${$content});
         },
         close => 0,
       },
@@ -387,8 +389,21 @@ sub get_fulltext {
           if ($attr =~ 'youtube') {
             return sprintf("<div class=\"bbMediaWrapper\"><div class=\"bbMediaWrapper-inner\"><iframe src=\"https://www.youtube.com/embed/%s?wmode=opaque\&start=0\" allowfullscreen=\"true\"></iframe></div></div>", ${$content});
           }
+					return sprintf("[MEDIA='%s']%s[/MEDIA]", $attr, ${$content});
         },
         close => 0,
+      },
+      'user' => {
+        code => sub {
+          my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+          #printf STDERR "USER tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+          if (defined($attr)) {
+            return sprintf("<a href=\"https://forums.frontier.co.uk/members/%d/\" class=\"username\" data-xf-init=\"member-tooltip\" data-user-id=\"%d\" data-username=\"%s\">%s</a>", $attr, $attr, ${$content}, ${$content});
+          }
+          if (defined(${$content})) {
+            return ${$content};
+          }
+        }
       },
     },
 	});
