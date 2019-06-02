@@ -15,7 +15,7 @@ my $bbc = Parse::BBCode->new({
     'indent' => {
       code => sub {
         my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
-        printf STDERR "INDENT tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+        #printf STDERR "INDENT tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
         my $multi = 1;
         if (defined($attr)) {
           $multi = $attr;
