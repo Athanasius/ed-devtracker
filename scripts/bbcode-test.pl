@@ -64,6 +64,18 @@ my $bbc = Parse::BBCode->new({
       },
       close => 0,
     },
+    'user' => {
+      code => sub {
+        my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+        printf STDERR "USER tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+        if (defined($attr)) {
+          return sprintf("<a href=\"https://forums.frontier.co.uk/members/%d/\" class=\"username\" data-xf-init=\"member-tooltip\" data-user-id=\"%d\" data-username=\"%s\">%s</a>", $attr, $attr, ${$content}, ${$content});
+        }
+        if (defined(${$content})) {
+          return ${$content};
+        }
+      }
+    },
   },
 #  escapes => {
 #    rgb => sub {
@@ -81,6 +93,7 @@ my $incode = <<"EOBB";
 [URL='https://www.twitch.tv/deejayknight']Twitch[/URL]
 [MEDIA=youtube]64EOTqrJOR0[/MEDIA]
 [TABLE] [TR] [TD]Distance between Sol and IC 2391 Sector FL-X B1-7[/TD] [TD]619ly[/TD] [/TR] [/TABLE]
+[USER=130893]\@Paige Harvey[/USER]
 EOBB
 printf STDERR "Original:\n%s\n\n", $incode;
 
