@@ -333,8 +333,69 @@ sub get_fulltext {
 	#printf STDERR "Full Text:\n'%s'\n", $post{'fulltext'};
 
 	# BEGIN: Munge user quoting into something that works in RSS feed/readers.
-	my $pbb = Parse::BBCode->new({attribute_quote => q/'"/});
-	my $bb = $pbb->render($post{'fulltext'});
+	my $pbb = Parse::BBCode->new({
+		attribute_quote => q/'"/,
+    tags => {
+      Parse::BBCode::HTML->defaults,
+      center => '<div style="text-align: center">%s</div>',
+      'indent' => {
+        code => sub {
+          my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+          #printf STDERR "INDENT tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+          my $multi = 1;
+          if (defined($attr)) {
+            $multi = $attr;
+          }
+          return sprintf("<div style=\"margin-left: %dpx\">%s</div>", 20 * $multi, ${$content});
+        },
+        parse => 1,
+      },
+      'url'   => 'url:<a href="%{link}A" rel="nofollow">%s</a>',
+      'color' => {
+        parse => 1,
+        code => sub {
+          my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+          #printf STDERR "COLOR tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+          if ($attr =~ /^(?<rgb>rgb\([0-9]+, *[0-9]+, *[0-9]+\))$/) {
+            #printf STDERR "Found COLOR with %s\n", $attr;
+            return sprintf("<span style=\"color: %s\">%s</span>", $+{'rgb'}, ${$content});
+          }
+        },
+        close => 0,
+        #class => 'block'
+      },
+      'attach' => {
+        parse => 1,
+        code => sub {
+          my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+          #printf STDERR "ATTACH tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+          if (${$content} =~ /^(?<alt>[0-9]+)$/) {
+            #printf STDERR "Found ATTACH with %s\n", ${$content};
+            return sprintf("<img src=\"https://forums.frontier.co.uk/attachments/%s\" alt=\"%s\">", ${$content}, ${$content});
+          }
+        },
+        close => 0,
+      },
+      'table' => '<table style="width: 100%"><tbody>%s</tbody></table>',
+      'tr' => '<tr>%s</tr>',
+      'td' => '<td>%s</td>',
+      'media' => {
+        parse => 1,
+        code => sub {
+          my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+          #printf STDERR "MEDIA tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+          if ($attr =~ 'youtube') {
+            return sprintf("<div class=\"bbMediaWrapper\"><div class=\"bbMediaWrapper-inner\"><iframe src=\"https://www.youtube.com/embed/%s?wmode=opaque\&start=0\" allowfullscreen=\"true\"></iframe></div></div>", ${$content});
+          }
+        },
+        close => 0,
+      },
+    },
+	});
+	my $mungedtext = $post{'fulltext'};
+	$mungedtext =~ s/\[COLOR=(?<rgb>rgb\([^\)]+\))\]/\[COLOR='$+{'rgb'}'\]/gm;
+	$mungedtext =~ s/\[ATTACH [^\]]*(?<alt>alt="[0-9]+")[^\]]*\]/\[ATTACH $+{'alt'}\]/gm;
+	my $bb = $pbb->render($mungedtext);
 	my $bbt = HTML::TreeBuilder->new(no_space_compacting => 1, ignore_unknown => 0);
 	$bbt->parse($bb);
 	$bbt->eof();
