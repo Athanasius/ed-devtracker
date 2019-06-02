@@ -42,13 +42,24 @@ my $bbc = Parse::BBCode->new({
     'table' => '<table style="width: 100%"><tbody>%s</tbody></table>',
     'tr' => '<tr>%s</tr>',
     'td' => '<td>%s</td>',
+    'media' => {
+      parse => 1,
+      code => sub {
+        my ($parser, $attr, $content, $attribute_fallback, $tag) = @_;
+        #printf STDERR "MEDIA tag:\n\tcontent: '%s'\n\tattr: %s\n\ttag: '%s'\n", Dumper($content), Dumper($attr), Dumper($tag);
+        if ($attr =~ 'youtube') {
+          return sprintf("<div class=\"bbMediaWrapper\"><div class=\"bbMediaWrapper-inner\"><iframe src=\"https://www.youtube.com/embed/%s?wmode=opaque\&start=0\" allowfullscreen=\"true\"></iframe></div></div>", ${$content});
+        }
+      },
+      close => 0,
+    },
   },
-  escapes => {
-    rgb => sub {
-      my $color = $_[2];
-      ($color =~ m/^(?<rgb>=rgb\([0-9]+, *[0-9]+, *[0-9]+\))$/) ? $color : 'inherit';
-    }
-  }
+#  escapes => {
+#    rgb => sub {
+#      my $color = $_[2];
+#      ($color =~ m/^(?<rgb>=rgb\([0-9]+, *[0-9]+, *[0-9]+\))$/) ? $color : 'inherit';
+#    }
+#  }
 });
 
 my $incode = <<"EOBB";
