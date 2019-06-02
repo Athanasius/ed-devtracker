@@ -75,7 +75,7 @@ my $bbc = Parse::BBCode->new({
 
 my $incode = <<"EOBB";
 [COLOR=rgb(243, 121, 52)]Beginner's Zone[/COLOR]
-[CENTER][ATTACH type="full" alt="127332"]127332[/ATTACH][/CENTER]
+[CENTER][ATTACH type="full" width="716px" alt="133080"]133080[/ATTACH][/CENTER]
 [INDENT][COLOR=rgb(243, 121, 52)]Advanced Docking Computer[/COLOR][/INDENT]
 [INDENT=3]no longer includes spurious ammo stats for energy weapons[/INDENT]
 [URL='https://www.twitch.tv/deejayknight']Twitch[/URL]
@@ -86,7 +86,7 @@ printf STDERR "Original:\n%s\n\n", $incode;
 
 my $munged = $incode;
 $munged =~ s/\[COLOR=(?<rgb>rgb\([^\)]+\))\]/\[COLOR='$+{'rgb'}'\]/gm;
-$munged =~ s/\[ATTACH (?<type>type="full" )(?<alt>alt="[0-9]+")\]/\[ATTACH $+{'alt'}\]/gm;
+$munged =~ s/\[ATTACH [^\]]*(?<alt>alt="[0-9]+")[^\]]*\]/\[ATTACH $+{'alt'}\]/gm;
 printf STDERR "Munged:\n%s\n\n", $munged;
 
 my $parsed = $bbc->render($munged);
