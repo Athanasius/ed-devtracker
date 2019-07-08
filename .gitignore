@@ -16,3 +16,5 @@ backfill-failures.log
 *.psql-dump
 __pycache__/
 archive/
+archives/
+*.dmp
