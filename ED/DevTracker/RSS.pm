@@ -60,7 +60,6 @@ sub generate {
 	# NB: the argument to get_latest_posts() is assumed to NOT be user-supplied.
   #     If It becomes user-supplied then it needs sanitising/checking before
   #     being passed in.
-#XXX : Should go back to 7 days in the future.
 	my $posts = $self->{'db'}->get_latest_posts(28);
   $ENV{'TZ'} = 'UTC';
   my $date = new Date::Manip::Date;
