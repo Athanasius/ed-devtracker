@@ -381,6 +381,7 @@ sub get_fulltext {
       'table' => '<table style="width: 100%"><tbody>%s</tbody></table>',
       'tr' => '<tr>%s</tr>',
       'td' => '<td>%s</td>',
+			's' => '<s>%s</s>',
       'media' => {
         parse => 1,
         code => sub {
