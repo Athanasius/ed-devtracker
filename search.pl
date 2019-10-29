@@ -1,7 +1,9 @@
-#!/usr/bin/perl -w -I.
+#!/usr/bin/perl -w -CS -I.
 # vim: textwidth=0 wrapmargin=0 shiftwidth=2 tabstop=2 expandtab softtabstop
+# -CS forces stdin/out/err to be treated as utf8
 
 use strict;
+use utf8;
 use Data::Dumper;
 
 use CGI;
