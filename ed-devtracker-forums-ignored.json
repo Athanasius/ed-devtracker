@@ -63,6 +63,14 @@
 		"url": "https://forums.frontier.co.uk/forums/general-discussion.383/",
 		"id": 383
 	},
+	"PZ: Feedback": {
+		"url": "https://forums.frontier.co.uk/forums/feedback.400/",
+		"id": 400
+	},
+	"PZ: Feedback: Suggestions": {
+		"url": "https://forums.frontier.co.uk/forums/suggestions.401/",
+		"id": 401
+	},
 	"PZ: Animals": {
 		"url": "https://forums.frontier.co.uk/forums/animals.384/",
 		"id": 384
@@ -74,6 +82,26 @@
 	"PZ: Beta Feedback": {
 		"url": "https://forums.frontier.co.uk/forums/beta-feedback.398/",
 		"id": 398
+	},
+	"PZ: Your Creations": {
+		"url": "https://forums.frontier.co.uk/forums/your-creations.402/",
+		"id": 402
+	},
+	"PZ: Your Creations: Habitats": {
+		"url": "https://forums.frontier.co.uk/forums/habitats.403/",
+		"id": 403
+	},
+	"PZ: Your Creations: Buildings and Shops": {
+		"url": "https://forums.frontier.co.uk/forums/buildings-and-shops.404/",
+		"id": 404
+	},
+	"PZ: Your Creations: Zoos": {
+		"url": "https://forums.frontier.co.uk/forums/zoos.405/",
+		"id": 405
+	},
+	"PZ: Your Creations: Scenery": {
+		"url": "https://forums.frontier.co.uk/forums/scenery.406/",
+		"id": 406
 	},
 	"JWE": {
 		"url": "https://forums.frontier.co.uk/categories/jurassic-world-evolution.63/",
