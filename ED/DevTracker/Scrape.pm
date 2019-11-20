@@ -145,7 +145,10 @@ sub get_member_new_posts {
   			if ($title =~ /reacted to .+ post in the thread.+with/) {
   				#printf STDERR "Skipping reaction\n";
   				next;
-  			}
+  			} elsif ($title =~ /commented on .+ profile post/) {
+  				#printf STDERR "Skipping profile post comment\n";
+					next;
+				}
   
   			my @a = $div_title->look_down(_tag => 'a');
   			if (@a) {
