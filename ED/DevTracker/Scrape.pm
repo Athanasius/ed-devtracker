@@ -306,9 +306,14 @@ sub get_fulltext {
 			printf STDERR "XF API call for a thread failed: %s\n", $res->status;
 			return undef;
 		}
+		#print("API returned content: ", $res->content, "\n");
 		my $api = decode_json($res->content);
 		#print STDERR Dumper($api);
 		$api_post = @{$api->{'posts'}}[0];
+		if (!defined($api_post)) {
+			printf STDERR "XF API returned no posts[0] for Thread, alias post?\n";
+			return undef;
+		}
 		$post{'threadurl'} = $post{'guid_url'};
 		$post{'forum'} = $api->{'thread'}->{'Forum'}->{'title'};
 		$post{'forumid'} = $api->{'thread'}->{'Forum'}->{'node_id'};
@@ -321,8 +326,13 @@ sub get_fulltext {
 			printf STDERR "XF API call for a post failed: %s\n", $res->status;
 			return undef;
 		}
+		#print("API returned content: ", $res->content, "\n");
 		$api_post = decode_json($res->content);
 		$api_post = $api_post->{'post'};
+		if (!defined($api_post)) {
+			printf STDERR "XF API returned no post for Post, alias post?\n";
+			return undef;
+		}
 		$post{'threadurl'} = "/threads/" . $api_post->{'thread_id'} . "/";
 		$post{'forum'} = $api_post->{'Thread'}->{'Forum'}->{'title'};
 		#printf STDERR "post's forum node_id is %d\n", $api_post->{'Thread'}->{'Forum'}->{'node_id'};
