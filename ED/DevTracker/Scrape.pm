@@ -239,23 +239,24 @@ sub get_member_new_posts {
   				$post{'threadurl'} = $fulltext_post->{'threadurl'};
   				$post{'forum'} = $fulltext_post->{'forum'};
   				$post{'forumid'} = $fulltext_post->{'forumid'};
+
+        	### BEGIN: Check for if this is an ignored forum
+      		#print STDERR grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}}), "\n";
+      		if (grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}})) {
+      			#printf STDERR "Skipping post/thread for ignored forum\n";
+      			# We don't want to just return...
+      			$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
+      			# Mark the post as ignored for future reference.
+        		if (! $self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
+        			#printf STDERR "Ignoring post '%s' in forum '%s'\n", $post{'guid_url'}, $post{'forum'};
+        			$self->{'db'}->add_ignored_post($post{'guid_url'});
+        		}
+      		}
+      		### END:   Check for if this is an ignored forum
   			}
   		}
   		### END: Retrieve fulltext of post
   
-    	### BEGIN: Check for if this is an ignored forum
-  		#print STDERR grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}}), "\n";
-  		if (grep(/^$post{'forumid'}$/, @{$self->{'forums_ignored'}})) {
-  			#printf STDERR "Skipping post/thread for ignored forum\n";
-  			# We don't want to just return...
-  			$post{'error'} = {'message' => 'This forum is ignored', no_post_message => 1};
-  			# Mark the post as ignored for future reference.
-    		if (! $self->{'db'}->check_if_post_ignored($post{'guid_url'})) {
-    			#printf STDERR "Ignoring post '%s' in forum '%s'\n", $post{'guid_url'}, $post{'forum'};
-    			$self->{'db'}->add_ignored_post($post{'guid_url'});
-    		}
-  		}
-  		### END:   Check for if this is an ignored forum
   
   		$post{'whoid'} = $whoid;
   #		print STDERR Dumper(\%post), "\n";
