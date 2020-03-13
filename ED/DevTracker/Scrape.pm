@@ -189,6 +189,11 @@ sub get_member_new_posts {
   #		printf STDERR "Thread '%s' at '%s' new '%s'\n", $post{'threadtitle'}, $post{'threadurl'}, $post{'url'};
   		# XF2: /posts/7715924/ or /threads/186768/
       $post{'guid_url'} = $post{'url'};
+			# We're not interested in profile-posts
+			if ($post{'url'} =~ /profile-posts/) {
+				printf STDERR "Skipping profile-post from %s\n", $post{'who'};
+				next;
+			}
   		# Strip embedded title
   		$post{'guid_url'} =~ s/^(?<start>\/(index\.php\?)?(posts|threads)\/).+\.(?<id>[0-9]+)\/$/$+{'start'}$+{'id'}\//;
 			# And then the XF2 forums suddenly grew a 'index.php?' at the start of the URLs.
@@ -292,7 +297,7 @@ sub get_fulltext {
 		$postid = $+{'postid'};
   } else {
     printf STDERR "Couldn't find any postid in page URL: %s\n", $page_url;
-		$post{'error'} = {'message' => "Couldn't find any postid in page URL"};
+		$post{'error'} = {'message' => "Couldn't find any postid in page URL", 'no_post_message' => 0};
     return \%post;
   }
 
