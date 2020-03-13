@@ -190,8 +190,12 @@ sub get_member_new_posts {
   		# XF2: /posts/7715924/ or /threads/186768/
       $post{'guid_url'} = $post{'url'};
 			# We're not interested in profile-posts
-			if ($post{'url'} =~ /profile-posts/) {
-				printf STDERR "Skipping profile-post from %s\n", $post{'who'};
+			if ($post{'url'} =~ /^\/profile-posts\//) {
+        if (! $self->{'db'}->check_if_post_ignored($post{'url'})) {
+					printf STDERR "Skipping profile-post from %s: %s\n", $post{'who'}, $post{'url'};
+
+        	$self->{'db'}->add_ignored_post($post{'url'});
+				}
 				next;
 			}
   		# Strip embedded title
