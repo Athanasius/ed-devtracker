@@ -92,8 +92,12 @@ $tree->parse($lf_res->decoded_content());
 $tree->eof();
 my $xft = $tree->look_down('name', '_xfToken');
 if (! $xft) {
+  print STDERR $lf_res->decoded_content(), "\n";
   die("Failed login: can't find _xfToken");
-}
+} #else {
+#  printf STDERR "Got _xfToken\n";
+#  exit(0);
+#}
 my $xfToken =  $xft->attr_get_i('value');
 undef $tree;
 
