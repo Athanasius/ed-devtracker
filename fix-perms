@@ -2,3 +2,4 @@
 
 chmod og+rX .
 chmod -R og+rX *
+chmod 600 wp-login.php
