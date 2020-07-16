@@ -69,10 +69,10 @@ sub insert_post {
 		}
 	} else {
 		$sth = $dbh->prepare('INSERT INTO posts (datestamp,url,urltext,threadurl,threadtitle,forum,whoid,who,whourl,precis,fulltext,fulltext_stripped,fulltext_noquotes,fulltext_noquotes_stripped,guid_url) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-		#printf STDERR "INSERT INTO posts (datestamp,url,urltext,threadurl,threadtitle,forum,whoid,who,whourl,precis,guid_url) VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'}, ${$post}{'guid_url'};
 		$rv = $sth->execute(strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'}, ${$post}{'fulltext'}, ${$post}{'fulltext_stripped'}, ${$post}{'fulltext_noquotes'}, ${$post}{'fulltext_noquotes_stripped'}, ${$post}{'guid_url'});
 		if (! $rv) {
 			printf STDERR "Error inserting a post\n";
+			printf STDERR "INSERT INTO posts (datestamp,url,urltext,threadurl,threadtitle,forum,whoid,who,whourl,precis,guid_url) VALUES('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')\n", strftime("%Y-%m-%d %H:%M:%S", gmtime(${$post}{'datestamp'})), ${$post}{'url'}, ${$post}{'urltext'}, ${$post}{'threadurl'}, ${$post}{'threadtitle'}, ${$post}{'forum'}, ${$post}{'whoid'}, ${$post}{'who'}, ${$post}{'whourl'}, ${$post}{'precis'}, ${$post}{'guid_url'};
 			return undef;
 		}
 	}
