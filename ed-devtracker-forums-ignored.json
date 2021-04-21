@@ -386,5 +386,13 @@
 	"OT: Forum Support & Feedback": {
 		"url": "https://forums.frontier.co.uk/forums/forum-support/",
 		"id": 6
+	},
+	"LG: News & Announcements": {
+		"url": "https://forums.frontier.co.uk/forums/lemnis-gate-news/",
+		"id": 413
+	},
+	"LG: Discussions": {
+		"url": "https://forums.frontier.co.uk/forums/lemnis-gate-discussions/",
+		"id": 414
 	}
 }
