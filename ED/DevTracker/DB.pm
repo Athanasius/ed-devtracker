@@ -198,7 +198,7 @@ sub ts_search {
 		$row = $sth->fetchrow_hashref;
 	}
 	if ($#posts < 0) {
-		printf STDERR "ED::DevTracker::DB->ts_search - No posts?\n";
+		# printf STDERR "ED::DevTracker::DB->ts_search - No posts?\n";
 		return undef;
 	}
 	return \@posts;
