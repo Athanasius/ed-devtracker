@@ -394,5 +394,13 @@
 	"LG: Discussions": {
 		"url": "https://forums.frontier.co.uk/forums/lemnis-gate-discussions/",
 		"id": 414
+	},
+	"LG: Discussions: FAQ": {
+		"url": "https://forums.frontier.co.uk/forums/lemnis-gate-faq/",
+		"id": 415
+	},
+	"LG: Discussions: Suggestions": {
+		"url": "https://forums.frontier.co.uk/forums/lemnis-gate-suggestions/",
+		"id": 425
 	}
 }
