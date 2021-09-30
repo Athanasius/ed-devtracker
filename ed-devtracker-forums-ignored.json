@@ -402,5 +402,21 @@
 	"LG: Discussions: Suggestions": {
 		"url": "https://forums.frontier.co.uk/forums/lemnis-gate-suggestions/",
 		"id": 425
+	},
+	"WH40": {
+		"url": "https://forums.frontier.co.uk/categories/warhammer.426/",
+		"id": 426
+	},
+	"WH40: News & Announcements": {
+		"url": "https://forums.frontier.co.uk/forums/news-and-announcements.428/",
+		"id": 428
+	},
+	"WH40: General Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/chaos-gate-daemonhunters-discussion.429/",
+		"id": 429
+	},
+	"WH40: Chaos Gate - Daemonhunters Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/warhammer-40-000-general-discussion.431/",
+		"id": 431
 	}
 }
