@@ -18,7 +18,7 @@ cd `dirname $0` || exit 1
 if [ -f "${LOCKFILE}" ];
 then
 	# echo "Lockfile present"
-	LSOF=$(lsof "${LOCKFILE}" | tail -1)
+	LSOF=$(lsof "${LOCKFILE}" 2>/dev/null | tail -1)
 	if [ ! -z "${LSOF}" ];
 	then
 		echo "Lockfile has a process attached"
