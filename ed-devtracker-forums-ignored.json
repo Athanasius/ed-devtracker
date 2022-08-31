@@ -418,5 +418,17 @@
 	"WH40: Chaos Gate - Daemonhunters Discussion": {
 		"url": "https://forums.frontier.co.uk/forums/warhammer-40-000-general-discussion.431/",
 		"id": 431
+	},
+	"F1: F1 Manager 2022 News": {
+		"url": "https://forums.frontier.co.uk/forums/f1-manager-2022-news.441/",
+		"id": 441
+	},
+	"F1: Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/discussion.442/",
+		"id": 442
+	},
+	"F1: Suggestions": {
+		"url": "https://forums.frontier.co.uk/forums/suggestions.443/",
+		"id": 443
 	}
 }
