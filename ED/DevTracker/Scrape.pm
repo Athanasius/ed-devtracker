@@ -313,7 +313,8 @@ sub get_fulltext {
 		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
 		$res = $self->{'ua'}->request($req);
 		if (! $res->is_success) {
-			printf STDERR "XF API call for a thread failed: %s\n", $res->status;
+			printf STDERR "XF API call for a thread failed:";
+			printf STDERR " %s\n", $res->status;
 			return undef;
 		}
 		#print("API returned content: ", $res->content, "\n");
@@ -333,7 +334,9 @@ sub get_fulltext {
 		$req->header("XF-Api-Key" => $self->{'xf_api_key'});
 		$res = $self->{'ua'}->request($req);
 		if (! $res->is_success) {
-			printf STDERR "XF API call for a post failed: %s\n", $res->status;
+			print STDERR Dumper($res);
+			printf STDERR "XF API call for a post failed:";
+			printf STDERR " %s\n", $res->status;
 			return undef;
 		}
 		#print("API returned content: ", $res->content, "\n");
