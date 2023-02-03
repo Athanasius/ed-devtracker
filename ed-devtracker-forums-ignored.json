@@ -430,5 +430,13 @@
 	"F1: Suggestions": {
 		"url": "https://forums.frontier.co.uk/forums/suggestions.443/",
 		"id": 443
+	},
+	"TGW: WF: News": {
+		"url": "https://forums.frontier.co.uk/forums/the-great-war-news.433",
+		"id": 433
+	},
+	"TGW: WF: General Discussion": {
+		"url": "https://forums.frontier.co.uk/forums/the-great-war-general.434",
+		"id": 434
 	}
 }
