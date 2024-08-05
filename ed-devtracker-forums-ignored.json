@@ -51,6 +51,18 @@
 		"url": "https://forums.frontier.co.uk/forums/planet-coaster-shops-scenery/",
 		"id": 333
 	},
+	"PC: PC2": {
+		"url": "https://forums.frontier.co.uk/categories/planet-coaster-2.457/",
+		"id": 457
+	},
+	"PC: PC2: Discussions": {
+		"url": "https://forums.frontier.co.uk/forums/discussions.458/",
+		"id": 458
+	},
+	"PC: PC2: Discussions: Suggestions": {
+		"url": "https://forums.frontier.co.uk/forums/suggestions.459/",
+		"id": 459
+	},
 	"Planet Zoo": {
 		"url": "https://forums.frontier.co.uk/categories/planet-zoo.380/",
 		"id": 380
