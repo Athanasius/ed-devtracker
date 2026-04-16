@@ -82,11 +82,11 @@ my @forums_ignored;
 # First let's make sure we're logged in.
 ###########################################################################
 # Load the login page to get cookies set up
-my $login_form_url = $config->getconf('forum_base_url') . "/login";
+my $login_form_url = $config->getconf('forum_base_url') . "/login/";
 my $lf_req = HTTP::Request->new('GET', $login_form_url, ['Connection' => 'close']);
 my $lf_res = $ua->request($lf_req);
-#print $lf_res->as_string;
-#print Dumper($lf_res->content);
+print $lf_res->as_string;
+print Dumper($lf_res->content);
 my $tree = HTML::TreeBuilder->new(no_space_compacting => 1);
 $tree->parse($lf_res->decoded_content());
 $tree->eof();
